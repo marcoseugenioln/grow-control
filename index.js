@@ -12,6 +12,6 @@ app.get("/hello", (req, res, next) => {
 })
 
 // Server setup
-app.listen(3000, () => {
+app.listen(80, () => {
     console.log("Server is Running")
 })
