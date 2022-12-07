@@ -12,7 +12,7 @@ app.get("/hello", (req, res, next) => {
 })
 
 // Server setup
-var PORT = 443
+var PORT = 3000
 app.listen(PORT, () => {
     console.log("Server is Running. Listening to port " + PORT)
 })
