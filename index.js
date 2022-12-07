@@ -12,6 +12,7 @@ app.get("/hello", (req, res, next) => {
 })
 
 // Server setup
-app.listen(80, () => {
-    console.log("Server is Running")
+var PORT = 80
+app.listen(PORT, () => {
+    console.log("Server is Running. Listening to port " + PORT)
 })
