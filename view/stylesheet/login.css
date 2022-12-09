@@ -1,34 +1,48 @@
 body{
-    background-color: blue;
+    background-color:rgb(90, 186, 99);
 }
 
 #box{
-    background-color: whitesmoke;
-    border-radius: 50px;
-    margin-left: 5%;
-    margin-right: 5%;
-    margin-top: 25%;
-    margin-bottom: 25%;
+    background-color: aquamarine;
+    border-radius: 30px;
+    margin-left: 10cm;
+    margin-right: 10cm;
+    margin-top: 3cm;
+    margin-bottom: 3cm;
 }
 
 .text_field{
-    margin-left: 10%;
-    margin-right: 10%;
-    margin-bottom: 10%;
-}
-.label{
-    margin-top: 20%;
-    margin-left: 10%;
-    margin-right: 10%;
-    margin-bottom: 10%;
+    margin-left: 1cm;
+    margin-right: 1cm;
+    margin-bottom: 1cm;
+    display: inline-block;
+    font-size: 20px;
+    font-family: Arial, Helvetica, sans-serif;
 }
 
 #bt{
-    margin-top: 10%;
-    margin-left: 10%;
-    margin-right: 10%;
-    margin-bottom: 10%;
-
     width: 100px;
     height: auto;
+    font-size: 20px;
+    font-family: Arial, Helvetica, sans-serif;
+}
+
+div{
+    text-align: center;
+    padding: 2cm;
+    font-family:'Franklin Gothic Medium', 'Arial Narrow', Arial, sans-serif;
+    color:rgb(90, 186, 99);
+    font-size: 25px;
+}
+
+label{
+    display:inline-block;
+    width:200px;
+    text-align: center;
+    }
+
+#plant{
+    width: 4cm;
+    height: 4cm;
+    margin-bottom: 2cm;
 }
