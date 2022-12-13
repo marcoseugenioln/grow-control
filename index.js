@@ -27,23 +27,22 @@ app.get("/hello", (req, res, next) => {
 // Handling GET /insert request
 app.get("/insert", (req, res, next) => {
 
-    var soil_umidity_1 = req.query.soil_umidity_1;
-    var soil_umidity_2 = req.query.soil_umidity_2;
-    var soil_umidity_3 = req.query.soil_umidity_3;
-    var soil_umidity_4 = req.query.soil_umidity_4;
-    var air_umidity    = req.query.air_umidity;
-    var temperature    = req.query.temperature;
-    var date           = req.query.date;
-
+    var su_1 = req.query.su_1;
+    var su_2 = req.query.su_2;
+    var su_3 = req.query.su_3;
+    var su_4 = req.query.su_4;
+    var au    = req.query.au;
+    var t    = req.query.t;
     var response = 
-    `soil_umidity_1=${soil_umidity_1} 
-    soil_umidity_2=${soil_umidity_2} 
-    soil_umidity_3=${soil_umidity_3} 
-    soil_umidity_4=${soil_umidity_4} 
-    soil_umidity_4=${soil_umidity_4} 
-    air_umidity=${air_umidity} 
-    temperature=${temperature} 
-    date=${date} `
+    `su_1=${su_1} 
+    su_2=${su_2} 
+    su_3=${su_3} 
+    su_4=${su_4} 
+    su_4=${su_4} 
+    au=${au} 
+    t=${t}`
+
+    console.log(response);
     
     res.send(response);
 
@@ -51,11 +50,12 @@ app.get("/insert", (req, res, next) => {
 
     db.run(
         `INSERT INTO Grow(
-            soil_umidity_1, soil_umidity_2, soil_umidity_3, soil_umidity_4, air_umidity, temperature, date
-            ) 
-            VALUES (
-                ${soil_umidity_1}, ${soil_umidity_2}, ${soil_umidity_3}, ${soil_umidity_4}, ${air_umidity}, ${temperature}, ${date}
-                )`)
+            su_1, su_2, su_3, su_4, au, t, date
+        ) 
+        VALUES (
+            ${su_1}, ${su_2}, ${su_3}, ${su_4}, ${au}, ${t}, ${date}
+        )`
+    )
 })
 
 // Handling GET /run-query request
