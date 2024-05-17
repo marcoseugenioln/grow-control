@@ -1,0 +1,26 @@
+<br>
+<label>Automatic mode </label>
+<input type="checkbox" name="auto_mode" id="auto_mode">
+<br>
+<br>
+<label>Manual Activation: </label>
+<input type="checkbox" name="manual_activation">
+<br>
+<br>
+<label>Circulation Potency: </label>
+<input type="number" min="1" max="100" value="{{ circulation }}" name="circ_input" id="circ_input" oninput="this.form.circulation.value=this.value"/>
+<input type="range" min="1" max="100" value="{{ circulation }}" name="circulation" id="circulation" oninput="this.form.circ_input.value=this.value"/>
+<br>
+<br>
+<label>Ventilation Potency: </label>
+<input type="number" min="1" max="100" value="{{ ventilation }}" name="vent_input" id="vent_input" oninput="this.form.ventilation.value=this.value" />
+<input type="range" min="1" max="100" value="{{ ventilation }}" name="ventilation" id="ventilation" oninput="this.form.vent_input.value=this.value">
+<br>
+<br>
+<label>Activation: </label>
+<input type="time" class="text-field" name="act_time" value="{{ act_time }}" id="act_time" disabled>
+<br>
+<br>
+<label>Deactivation: </label>
+<input type="time" class="text-field" name="deact_time" value="{{ deact_time }}" id="deact_time" disabled/>
+<br>

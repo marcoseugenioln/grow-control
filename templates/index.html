@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Home</title>
+    <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='style.css')}}">
+</head>
+<body>
+    {% include 'header.html'%}
+    
+    <br><div class="centralized-div">
+        <form action="/wind">
+            <input type="submit" name="wind-button" class="btn" value="Wind" formmethod="post">
+        </form></div>
+    <br>
+
+    <br><div class="centralized-div">
+        <form action="/umidity">
+            <input type="submit" name="umidity-button" class="btn" value="Umidity" formmethod="post">
+        </form></div>
+    <br>
+
+    <br><div class="centralized-div">
+        <form action="/light">
+            <input type="submit" name="light-button" class="btn" value="Light" formmethod="post">
+        </form></div>
+    <br>
+
+    <br><div class="centralized-div">
+        <form action="/plant">
+            <input type="submit" name="plant-button" class="btn" value="Plant" formmethod="post">
+        </form></div>
+    <br>
+</body>
+</html>
