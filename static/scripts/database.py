@@ -15,13 +15,16 @@ class Database():
             self.query.executescript(sql_script)
             self.connection.commit()
 
-    def run_query(self, query):
-        print(query)
+    def run_query(self, query, debug=False):
+        if debug:
+            print(query)
+
         self.query.execute(query)
         self.connection.commit()
 
         data = self.query.fetchall()
-        print(data)
+        if debug:
+            print(data)
         if data:
             return data
         
@@ -46,3 +49,12 @@ class Database():
         self.run_query(f"update wind set act_time = time('{act_time}') where id == 1;")
     def set_deact_time(self, deact_time):
         self.run_query(f"update wind set deact_time = time('{deact_time}') where id == 1;")
+
+    def set_temperature(self, temperature):
+        self.run_query(f"update environment set temperature = {temperature} where id == 1;")
+    def set_humidity(self, humidity):
+        self.run_query(f"update environment set humidity = {humidity} where id == 1;")
+    def get_temperature(self):
+        return self.run_query(f"select temperature from environment where id == 1;")
+    def get_humidity(self):
+        return self.run_query(f"select humidity from environment where id == 1;")

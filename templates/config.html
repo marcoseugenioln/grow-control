@@ -9,18 +9,6 @@
 </head>
 <body>
     {% include 'header.html'%}
-
-    <fieldset class="card" >
-        <legend>Environment:</legend>
-        <div>
-            <br>
-            <label> Temperature: {{ temperature }}°C</label>
-            <br>
-            <br>
-            <label> Humidity:     {{ humidity }} %</label>
-            <br>
-        </div>
-    </fieldset>
-  
+    {% include 'wind/index.html' %}
 </body>
 </html>

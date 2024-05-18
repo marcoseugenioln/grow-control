@@ -2,8 +2,11 @@ from flask import Flask, redirect, url_for, request, render_template, Blueprint,
 from flask import Flask
 from static.scripts.wind import Wind
 from static.scripts.database import Database
+from static.scripts.dht import DHT
 import json
 import sys
+import time
+import threading
 
 app = Flask(__name__)
 app.secret_key = '1234'
@@ -11,24 +14,27 @@ app.secret_key = '1234'
 site = Blueprint('site', __name__, template_folder='templates')
 
 with open(str(sys.argv[1])) as config_file:
-    config = json.load(config_file)
+    app_config = json.load(config_file)
 
-database        = Database(path=config["database"], schema=config["schema"])
+database        = Database(path=app_config["database"], schema=app_config["schema"])
 wind_controller = Wind(database=database)
+dht_controller  = DHT(database=database)
 
 ##################################################################################################
 @app.route("/")
 def index():
-    return render_template('index.html')
+    return render_template('index.html', 
+                           temperature=dht_controller.get_temperature(),
+                           humidity=dht_controller.get_humidity())
 
-@app.route("/wind", methods=['GET','POST'])
-def wind():
-    return render_template('/wind/index.html', 
-                           auto=wind_controller.get_auto(),
-                           circulation=wind_controller.get_circulation(),
-                           ventilation=wind_controller.get_ventilation(),
-                           act_time=wind_controller.get_act_time(),
-                           deact_time=wind_controller.get_deact_time())
+# @app.route("/wind", methods=['GET','POST'])
+# def wind():
+#     return render_template('/wind/index.html', 
+#                            auto=wind_controller.get_auto(),
+#                            circulation=wind_controller.get_circulation(),
+#                            ventilation=wind_controller.get_ventilation(),
+#                            act_time=wind_controller.get_act_time(),
+#                            deact_time=wind_controller.get_deact_time())
 
 @app.route("/update-wind", methods=['GET','POST'])
 def update_wind():
@@ -51,12 +57,18 @@ def update_wind():
         if 'deact-time' in request.form:
             wind_controller.set_deact_time(request.form['deact_time'])
         
-    return redirect(url_for('wind'))
+    return redirect(url_for('config'))
 
 
-@app.route("/umidity", methods=['GET','POST'])
-def umidity():
-    return render_template('/umidity/index.html')
+@app.route("/config", methods=['GET','POST'])
+def config():
+    return render_template('/config.html', 
+                           auto=wind_controller.get_auto(),
+                           circulation=wind_controller.get_circulation(),
+                           ventilation=wind_controller.get_ventilation(),
+                           act_time=wind_controller.get_act_time(),
+                           deact_time=wind_controller.get_deact_time())
+
 
 @app.route("/light", methods=['GET','POST'])
 def light():
@@ -69,6 +81,6 @@ def grow():
 
 if __name__ == '__main__':
     print(config)
-    app.run(host=config["host"], 
-            port=config["port"], 
-            debug=config["debug"])
+    app.run(host=app_config["host"], 
+            port=app_config["port"], 
+            debug=app_config["debug"])
