@@ -1,12 +1,12 @@
 from flask import Flask, redirect, url_for, request, render_template, Blueprint, flash, session, abort, jsonify
 from flask import Flask
-from static.scripts.wind import Wind
-from static.scripts.database import Database
-from static.scripts.dht import DHT
+from scripts.wind import Wind
+from scripts.database import Database
+from scripts.grow import Grow
 import json
 import sys
-import time
-import threading
+from pubsub import pub
+import socket
 
 app = Flask(__name__)
 app.secret_key = '1234'
@@ -18,23 +18,21 @@ with open(str(sys.argv[1])) as config_file:
 
 database        = Database(path=app_config["database"], schema=app_config["schema"])
 wind_controller = Wind(database=database)
-dht_controller  = DHT(database=database)
+
+grow = Grow()
 
 ##################################################################################################
 @app.route("/")
 def index():
-    return render_template('index.html', 
-                           temperature=dht_controller.get_temperature(),
-                           humidity=dht_controller.get_humidity())
 
-# @app.route("/wind", methods=['GET','POST'])
-# def wind():
-#     return render_template('/wind/index.html', 
-#                            auto=wind_controller.get_auto(),
-#                            circulation=wind_controller.get_circulation(),
-#                            ventilation=wind_controller.get_ventilation(),
-#                            act_time=wind_controller.get_act_time(),
-#                            deact_time=wind_controller.get_deact_time())
+    grow_data = grow.request_grow_data()
+
+    temperature = grow_data['temperature']
+    humidity = grow_data['humidity']
+
+    return render_template('index.html', 
+                           temperature=temperature,
+                           humidity=humidity)
 
 @app.route("/update-wind", methods=['GET','POST'])
 def update_wind():
@@ -69,18 +67,11 @@ def config():
                            act_time=wind_controller.get_act_time(),
                            deact_time=wind_controller.get_deact_time())
 
-
-@app.route("/light", methods=['GET','POST'])
-def light():
-    return render_template('/light/index.html')
-
-@app.route("/plant", methods=['GET','POST'])
-def grow():
-    return render_template('/plant/index.html')
 ################################################################################################## 
 
 if __name__ == '__main__':
-    print(config)
+    print(app_config)
+    grow.start()
     app.run(host=app_config["host"], 
             port=app_config["port"], 
             debug=app_config["debug"])

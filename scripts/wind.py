@@ -1,6 +1,6 @@
 import threading
 import time
-from .database import Database
+from scripts.database import Database
 
 class Wind():
     
@@ -13,10 +13,11 @@ class Wind():
         self.deact_time = self.database.get_deact_time()[0][0]
         
 
-        self.wind_thread=threading.Thread(target=self.update_wind, daemon=True)
+        self.wind_thread=threading.Thread(target=self.loop, daemon=True)
         self.wind_thread.start()
 
-    def update_wind(self):
+    def loop(self):
+        
         previous_auto        = self.auto
         previous_ventilation = self.ventilation
         previous_circulation = self.circulation
