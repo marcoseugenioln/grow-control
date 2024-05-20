@@ -9,20 +9,30 @@ class DHT():
     def __init__(self, interval=1):
         self.interval = interval
         self.sensor = adafruit_dht.DHT11(board.D18)
+
+        self.temperature = 0
+        self.humidity = 0
+
         self.dht_thread=threading.Thread(target=self.loop, daemon=True)
 
     def start(self):
         self.dht_thread.start()
         time.sleep(self.interval)
 
+    def get_temperature(self):
+        return self.temperature
+    
+    def get_humidity(self):
+        return self.humidity
+
     def loop(self):
         while True:
             time.sleep(self.interval)
             try:
-                temperature = self.sensor.temperature
-                humidity = self.sensor.humidity
+                self.temperature = self.sensor.temperature
+                self.humidity = self.sensor.humidity
 
-                pub.sendMessage('m_dht', temperature=temperature, humidity=humidity)
+                pub.sendMessage('m_dht', temperature=self.temperature, humidity=self.humidity)
 
             except RuntimeError as error:
                 print(error.args[0])

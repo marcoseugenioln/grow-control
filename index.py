@@ -6,7 +6,6 @@ from scripts.grow import Grow
 import json
 import sys
 from pubsub import pub
-import socket
 
 app = Flask(__name__)
 app.secret_key = '1234'
@@ -16,28 +15,20 @@ site = Blueprint('site', __name__, template_folder='templates')
 with open(str(sys.argv[1])) as config_file:
     app_config = json.load(config_file)
 
-# db   = Database(path=app_config["database"], schema=app_config["schema"])
-# wind = Wind(database=db)
-
 grow = Grow()
-
 ##################################################################################################
 @app.route("/")
 def index():
 
-    grow_data = grow.request_grow_data()
-
-    temperature = grow_data['temperature']
-    humidity = grow_data['humidity']
-    ventilation_capacity = grow_data['ventilation_capacity']
-
+    dht_data = grow.request_dht_data()
     return render_template('index.html', 
-                           temperature=temperature,
-                           humidity=humidity,
-                           ventilation_capacity=ventilation_capacity)
+                           temperature=dht_data['temperature'],
+                           humidity=dht_data['humidity'],
+                           ventilation_capacity=grow.wind.get_ventilation(),
+                           circulation_capacity=grow.wind.get_circulation())
 
-@app.route("/manual-wind-config-cmd", methods=['GET','POST'])
-def manual_wind_config_cmd():
+@app.route("/wind-config-cmd", methods=['GET','POST'])
+def wind_config_cmd():
     
     if request.method == 'POST':
 
@@ -79,7 +70,24 @@ def config():
                            circulation=grow.wind.get_circulation(),
                            ventilation=grow.wind.get_ventilation(),
                            act_time=grow.wind.get_activation_time(),
-                           deact_time=grow.wind.get_deactivation_time())
+                           deact_time=grow.wind.get_deactivation_time(),
+                           humidifier_on = grow.humidifier.is_active(),
+                           humidifier_auto = grow.humidifier.get_automatic_mode())
+
+@app.route("/humidifier-cmd", methods=['GET','POST'])
+def humidifier_cmd():
+
+    manual_activation = False
+    automatic_mode = False
+
+    if 'active' in request.form:
+        manual_activation = request.form['active'] == 'on'
+    if 'auto-mode' in request.form:
+        automatic_mode = request.form['auto-mode'] == 'on'
+    
+    pub.sendMessage('m_humidifier_cmd', automatic_mode=automatic_mode, on=manual_activation)
+
+    return redirect(url_for('config'))
 
 ################################################################################################## 
 
