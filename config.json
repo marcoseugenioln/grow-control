@@ -3,5 +3,7 @@
     "port" : 3000,
     "debug"  : true,
     "schema" : "database/schema.sql",
-    "database" : "database/schema.db"
+    "database" : "database/schema.db",
+    "ventilation_fan_pin" : 14,
+    "dht_pin" : 18
 }

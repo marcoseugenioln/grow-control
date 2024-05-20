@@ -50,6 +50,14 @@ class Grow():
     
     def get_port(self):
         return self.port
+    
+    def wind_config_cmd(self, auto, ventilation, circulation, activation_time, deactivation_time):
+        pub.sendMessage('m_wind_config_cmd', 
+                        auto=auto,
+                        ventilation=ventilation, 
+                        circulation=circulation, 
+                        activation_time=activation_time,
+                        deactivation_time=deactivation_time)
 
 
         

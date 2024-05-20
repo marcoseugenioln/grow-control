@@ -16,8 +16,8 @@ site = Blueprint('site', __name__, template_folder='templates')
 with open(str(sys.argv[1])) as config_file:
     app_config = json.load(config_file)
 
-database        = Database(path=app_config["database"], schema=app_config["schema"])
-wind_controller = Wind(database=database)
+db   = Database(path=app_config["database"], schema=app_config["schema"])
+wind = Wind(database=db)
 
 grow = Grow()
 
@@ -34,26 +34,39 @@ def index():
                            temperature=temperature,
                            humidity=humidity)
 
-@app.route("/update-wind", methods=['GET','POST'])
-def update_wind():
+@app.route("/wind-config-cmd", methods=['GET','POST'])
+def wind_config_cmd():
     
     if request.method == 'POST':
-        if('auto_mode' in request.form and request.form['auto_mode'] == 'on'):
-            wind_controller.set_auto(1)
-        else:
-            wind_controller.set_auto(0)
+
+        automatic_mode = 0
+        ventilation = 0
+        circulation = 0
+        activation_time = None
+        deactivation_time = None
+        
+        
+        if('auto_mode' in request.form):
+            automatic_mode = int(request.form['auto_mode'] == 'on')
 
         if 'ventilation' in request.form:
-            wind_controller.set_ventilation(request.form['ventilation'])
+            ventilation = request.form['ventilation']
 
         if 'circulation' in request.form:
-            wind_controller.set_circulation(request.form['circulation'])
+            circulation = request.form['circulation']
 
         if 'act-time' in request.form:
-            wind_controller.set_act_time(request.form['act_time'])
+            activation_time=request.form['act_time']
 
         if 'deact-time' in request.form:
-            wind_controller.set_deact_time(request.form['deact_time'])
+            deactivation_time=request.form['deact_time']
+
+        pub.sendMessage('m_wind_config_cmd', 
+                        automatic_mode=automatic_mode,
+                        ventilation=ventilation,
+                        circulation=circulation,
+                        activation_time=activation_time,
+                        deactivation_time=deactivation_time)
         
     return redirect(url_for('config'))
 
@@ -61,11 +74,11 @@ def update_wind():
 @app.route("/config", methods=['GET','POST'])
 def config():
     return render_template('/config.html', 
-                           auto=wind_controller.get_auto(),
-                           circulation=wind_controller.get_circulation(),
-                           ventilation=wind_controller.get_ventilation(),
-                           act_time=wind_controller.get_act_time(),
-                           deact_time=wind_controller.get_deact_time())
+                           auto=wind.get_automatic_mode(),
+                           circulation=wind.get_circulation(),
+                           ventilation=wind.get_ventilation(),
+                           act_time=wind.get_activation_time(),
+                           deact_time=wind.get_deactivation_time())
 
 ################################################################################################## 
 
