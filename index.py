@@ -16,8 +16,8 @@ site = Blueprint('site', __name__, template_folder='templates')
 with open(str(sys.argv[1])) as config_file:
     app_config = json.load(config_file)
 
-db   = Database(path=app_config["database"], schema=app_config["schema"])
-wind = Wind(database=db)
+# db   = Database(path=app_config["database"], schema=app_config["schema"])
+# wind = Wind(database=db)
 
 grow = Grow()
 
@@ -29,13 +29,15 @@ def index():
 
     temperature = grow_data['temperature']
     humidity = grow_data['humidity']
+    ventilation_capacity = grow_data['ventilation_capacity']
 
     return render_template('index.html', 
                            temperature=temperature,
-                           humidity=humidity)
+                           humidity=humidity,
+                           ventilation_capacity=ventilation_capacity)
 
-@app.route("/wind-config-cmd", methods=['GET','POST'])
-def wind_config_cmd():
+@app.route("/manual-wind-config-cmd", methods=['GET','POST'])
+def manual_wind_config_cmd():
     
     if request.method == 'POST':
 
@@ -44,7 +46,6 @@ def wind_config_cmd():
         circulation = 0
         activation_time = None
         deactivation_time = None
-        
         
         if('auto_mode' in request.form):
             automatic_mode = int(request.form['auto_mode'] == 'on')
@@ -61,7 +62,7 @@ def wind_config_cmd():
         if 'deact-time' in request.form:
             deactivation_time=request.form['deact_time']
 
-        pub.sendMessage('m_wind_config_cmd', 
+        pub.sendMessage('m_manual_wind_config_cmd', 
                         automatic_mode=automatic_mode,
                         ventilation=ventilation,
                         circulation=circulation,
@@ -74,11 +75,11 @@ def wind_config_cmd():
 @app.route("/config", methods=['GET','POST'])
 def config():
     return render_template('/config.html', 
-                           auto=wind.get_automatic_mode(),
-                           circulation=wind.get_circulation(),
-                           ventilation=wind.get_ventilation(),
-                           act_time=wind.get_activation_time(),
-                           deact_time=wind.get_deactivation_time())
+                           auto=grow.wind.get_automatic_mode(),
+                           circulation=grow.wind.get_circulation(),
+                           ventilation=grow.wind.get_ventilation(),
+                           act_time=grow.wind.get_activation_time(),
+                           deact_time=grow.wind.get_deactivation_time())
 
 ################################################################################################## 
 

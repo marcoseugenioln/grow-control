@@ -1,7 +1,7 @@
 
 <fieldset class="card" >
     <legend>Wind:</legend>
-    <form action="{{ url_for('wind_config_cmd') }}" method="post">
+    <form action="{{ url_for('manual_wind_config_cmd') }}" method="post">
         {% if auto == 1 %}
             <br>
             <label>Automatic mode </label>
@@ -9,13 +9,13 @@
             <br>
             <br>
             <label>Circulation Potency: </label>
-            <input type="number" min="1" max="100" value="{{ circulation }}" name="circ_input" id="circ_input" disabled/>
-            <input type="range" min="1" max="100" value="{{ circulation }}" name="circulation" id="circulation" disabled>
+            <input type="number" min="0" max="100" value="{{ circulation }}" name="circ_input" id="circ_input" disabled/>
+            <input type="range" min="0" max="100" value="{{ circulation }}" name="circulation" id="circulation" disabled>
             <br>
             <br>
             <label>Ventilation Potency: </label>
-            <input type="number" min="1" max="100" value="{{ ventilation }}" name="vent_input" id="vent_input" disabled />
-            <input type="range" min="1" max="100" value="{{ ventilation }}" name="ventilation" id="ventilation" disabled/>
+            <input type="number" min="0" max="100" value="{{ ventilation }}" name="vent_input" id="vent_input" disabled />
+            <input type="range" min="0" max="100" value="{{ ventilation }}" name="ventilation" id="ventilation" disabled/>
             <br>
             <br>
             <label>Activation: </label>

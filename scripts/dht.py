@@ -13,7 +13,7 @@ class DHT():
 
     def start(self):
         self.dht_thread.start()
-        time.sleep(2)
+        time.sleep(self.interval)
 
     def loop(self):
         while True:
