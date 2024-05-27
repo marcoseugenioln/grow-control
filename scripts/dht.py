@@ -3,12 +3,14 @@ import board
 import adafruit_dht
 import threading
 from pubsub import pub
+from adafruit_blinka.microcontroller.bcm283x.pin import Pin
 
 class DHT():
 
-    def __init__(self, interval=1):
+    def __init__(self, interval=1, pin=21):
+        self.pin = pin
         self.interval = interval
-        self.sensor = adafruit_dht.DHT11(board.D18)
+        self.sensor = adafruit_dht.DHT11(Pin(self.pin))
 
         self.temperature = 0
         self.humidity = 0

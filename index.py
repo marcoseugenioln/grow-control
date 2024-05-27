@@ -53,7 +53,7 @@ def wind_config_cmd():
         if 'deact-time' in request.form:
             deactivation_time=request.form['deact_time']
 
-        pub.sendMessage('m_manual_wind_config_cmd', 
+        pub.sendMessage('m_wind_config_cmd', 
                         automatic_mode=automatic_mode,
                         ventilation=ventilation,
                         circulation=circulation,
