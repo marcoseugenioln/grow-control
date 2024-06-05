@@ -1,0 +1,36 @@
+
+<fieldset class="card" >
+    <legend>Grow Settings:</legend>
+    <form action="{{ url_for('grow_settings_cmd') }}" method="post">
+        {% if auto_mode %}
+            <br>
+            <label>Automatic</label>
+            <input type="checkbox" name="auto_mode" id="auto_mode" checked>
+            <br>
+        {% else %}
+            <br>
+            <label>Automatic</label>
+            <input type="checkbox" name="auto_mode" id="auto_mode">
+            <br>
+        {% endif %}
+        <br>
+        <label>Light Activation: </label>
+        <input type="time" class="text-field" name="act_time" value="{{ light_act_time }}" id="act_time">
+        <br>
+        <br>
+        <label>Light Deactivation: </label>
+        <input type="time" class="text-field" name="deact_time" value="{{ light_deact_time }}" id="deact_time"/>
+        <br>
+        <br>
+        <label>Desired Humidity: </label>
+        <input type="number" min="0" max="100" value="{{ desired_humidity }}" name="desired_humidity" id="desired_humidity"/>
+        <br>
+        <br>
+        <label>Desired Temperature: </label>
+        <input type="number" min="0" max="30" value="{{ desired_temperature }}" name="desired_temperature" id="desired_temperature"/>
+        <br>
+        <br>
+        <button class="btn" > apply </button>
+        <br>
+    </form>
+</fieldset>

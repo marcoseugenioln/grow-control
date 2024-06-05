@@ -1,11 +1,9 @@
 {
-    "host" : "192.168.1.3",
+    "host" : "192.168.1.4",
     "port" : 3000,
-    "debug"  : true,
-    "schema" : "database/schema.sql",
-    "database" : "database/schema.db",
-    "ventilation_pin" : 14,
+    "debug"  : false,
+    "ventilation_pin" : 19,
     "circulation_pin" : 18,
-    "dht_pin" : 21,
+    "dht_pin" : 1,
     "humidifier_pin" : 20
 }

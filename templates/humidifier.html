@@ -2,31 +2,24 @@
 <fieldset class="card" >
     <legend>Humidity:</legend>
     <form action="{{ url_for('humidifier_cmd') }}" method="post">
-        {% if humidifier_auto == 1 %}
+        {% if auto_mode == 1 %}
             <br>
-            <label>Automatic mode </label>
-            <input type="checkbox" name="auto-mode" id="auto-mode" checked>
-            <br>
-            <br>
-            <label>Manual activation </label>
-            <input type="checkbox" name="manual-activation" id="manual-activation" disabled>
+            <label>Active</label>
+            {% if humidifier_on %}
+                <input type="checkbox" name="active" id="active" checked disabled>
+            {% else %}
+                <input type="checkbox" name="active" id="active" disabled>
+            {% endif %}
             <br>
         {% else %}
             <br>
-            <label>Automatic mode </label>
-            <input type="checkbox" name="auto-mode" id="auto-mode">
-            <br>
+            <label>Active</label>
             {% if humidifier_on %}
-                <br>
-                <label>Active: </label>
                 <input type="checkbox" name="active" id="active" checked>
-                <br>
             {% else %}
-                <br>
-                <label>Active: </label>
                 <input type="checkbox" name="active" id="active">
-                <br>
             {% endif %}
+            <br>
         {% endif %}
         <br>
         <button class="btn" > apply </button>

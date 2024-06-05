@@ -1,5 +1,4 @@
 import time
-import board
 import adafruit_dht
 import threading
 from pubsub import pub
@@ -7,7 +6,7 @@ from adafruit_blinka.microcontroller.bcm283x.pin import Pin
 
 class DHT():
 
-    def __init__(self, interval=1, pin=21):
+    def __init__(self, interval=1, pin=1):
         self.pin = pin
         self.interval = interval
         self.sensor = adafruit_dht.DHT11(Pin(self.pin))
@@ -37,13 +36,18 @@ class DHT():
                 pub.sendMessage('m_dht', temperature=self.temperature, humidity=self.humidity)
 
             except RuntimeError as error:
-                print(error.args[0])
+                print(error)
                 time.sleep(self.interval)
                 continue
 
+            except Exception as error:
+                print(error)
+                self.sensor.exit()
+                raise error
+
 # ------------ register listener ------------------
 
-# def dht_listener(self, temperature, humidity):
+# def dht_listener(temperature, humidity):
 #     print("temperature: " + str(temperature))
 #     print("humidity:    " + str(humidity))
 

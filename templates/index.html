@@ -17,20 +17,27 @@
             <label> Temperature: {{ temperature }}°C</label>
             <br>
             <br>
-            <label> Humidity: {{ humidity }} %</label>
+            <label> Humidity: {{ humidity }}%</label>
             <br>
             <br>
-            <label> Ventilation Capacity: {{ ventilation_capacity }} %</label>
+            <label> Ventilation Capacity: {{ ventilation_capacity }}%</label>
             <br>
             <br>
-            <label> Circulation Capacity: {{ circulation_capacity }} %</label>
+            <label> Circulation Capacity: {{ circulation_capacity }}%</label>
             <br>
             <br>
-            <label> Light capacity: {{ light_capacity }} </label>
+            <label> Light capacity: {{ light_capacity }}</label>
             <br>
-            <br>
-            <label> Umidifier: {{ umidifier_on }} </label>
-            <br>
+
+            {% if humidifier_on %}
+                <br>
+                <label> Umidifier: on</label>
+                <br>
+            {% else %}
+                <br>
+                <label> Umidifier: off</label>
+                <br>
+            {% endif %}
         </div>
     </fieldset>
   
