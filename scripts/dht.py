@@ -33,7 +33,7 @@ class DHT():
                 self.temperature = self.sensor.temperature
                 self.humidity = self.sensor.humidity
 
-                pub.sendMessage('m_dht', temperature=self.temperature, humidity=self.humidity)
+                pub.sendMessage('m_dht_report', temperature=self.temperature, humidity=self.humidity)
 
             except RuntimeError as error:
                 print(error)

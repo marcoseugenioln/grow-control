@@ -14,14 +14,16 @@ class Humidifier():
 
     def is_active(self):
         return self.on
-
-    def m_humidifier_cmd(self, on):
-        if bool(on) and self.on == False:
-            self.on = bool(on)
+    
+    def activate(self):
+        if not self.is_active():
+            self.on = True
             GPIO.output(self.pin, GPIO.HIGH)
             time.sleep(0.5)
             GPIO.output(self.pin, GPIO.LOW)
-        else:
+
+    def deactivate(self):
+        if self.is_active():
             self.on = False
             GPIO.output(self.pin, GPIO.HIGH)
             time.sleep(0.5)
@@ -31,7 +33,6 @@ class Humidifier():
             time.sleep(0.5)
             GPIO.output(self.pin, GPIO.LOW)
 
-
-
+    
 
 

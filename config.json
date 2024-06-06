@@ -2,8 +2,9 @@
     "host" : "192.168.1.4",
     "port" : 3000,
     "debug"  : false,
-    "ventilation_pin" : 19,
-    "circulation_pin" : 18,
-    "dht_pin" : 1,
+
+    "ventilator_pin" : 19,
+    "circulator_pin" : 18,
+    "dht_sensor_pin" : 1,
     "humidifier_pin" : 20
 }
