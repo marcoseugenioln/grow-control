@@ -1,8 +1,7 @@
 import threading
-import socket
+import datetime
 import time
 from scripts.dht import DHT
-# from scripts.wind import Wind
 from scripts.humidifier import Humidifier
 from scripts.fan import Fan
 from pubsub import pub
@@ -10,70 +9,97 @@ import RPi.GPIO
 
 class Grow():
 
-    def __init__(self, ventilation_pin = 19, circulation_pin = 18, dht_sensor_pin = 1, humidifier_pin = 20) -> None:
+    def __init__(self, 
+                 ventilator_pin=19, 
+                 circulator_pin = 18, 
+                 dht_sensor_pin = 1, 
+                 humidifier_pin = 20, 
+                 automatic=False, 
+                 ventilator_capacity=0, 
+                 circulator_capacity=0,
+                 desired_humidity=0,
+                 desired_temperature=0,
+                 humidity_tolerance=0) -> None:
 
         RPi.GPIO.cleanup()
 
-        self.auto_mode = False
+        self.auto_mode = automatic
         self.temperature = 0
         self.humidity = 0
         self.light_act_time = None
         self.light_deact_time = None
-        self.desired_temperature = 0
-        self.desired_humidity = 0
+        self.desired_temperature = desired_temperature
+        self.desired_humidity = desired_humidity
+        self.humidity_tolerance=humidity_tolerance
 
+        # components
         self.dht = DHT(pin=dht_sensor_pin)
-        # self.wind = Wind(ventilation_pin=ventilation_pin, circulation_pin=circulation_pin)
-        self.ventilator = Fan(pin=ventilation_pin)
-        self.circulator = Fan(pin=circulation_pin)
+        self.ventilator = Fan(pin=ventilator_pin)
+        self.circulator = Fan(pin=circulator_pin)
         self.humidifier = Humidifier(pin=humidifier_pin)
+
+        self.ventilator.set_capacity(ventilator_capacity)
+        self.circulator.set_capacity(circulator_capacity)
 
         pub.subscribe(self.m_dht_report, 'm_dht_report')
         pub.subscribe(self.m_grow_settings_cmd, 'm_grow_settings_cmd')
-        pub.subscribe(self.m_wind_config_cmd, "m_wind_config_cmd")
-        pub.subscribe(self.m_humidifier_cmd, 'm_humidifier_cmd')
 
         self.automatic_mode_controller = threading.Thread(target=self.automatic_mode_loop, daemon=True)
 
     def m_dht_report(self, temperature, humidity):
-        self.temperature = int(temperature)
-        self.humidity = int(humidity)
 
-        print(f'temperature: {self.temperature}C, humidity: {self.humidity}%')
+        report_updated = False
 
-    def m_wind_config_cmd(self, ventilation_capacity, circulation_capacity):
-        self.ventilator.set_capacity(ventilation_capacity)
-        self.circulator.set_capacity(circulation_capacity)
+        if int(temperature) != self.temperature:
+            report_updated = True
+            self.temperature = int(temperature)
 
-    def m_grow_settings_cmd(self, auto_mode, desired_humidity, desired_temperature, light_act_time, light_deact_time):
+        if int(humidity) != self.humidity:
+            report_updated = True
+            self.humidity = int(humidity)
+        
+        if report_updated:
+            print(f'temperature: {self.temperature}°C - humidity: {self.humidity}% - time: {datetime.datetime.now()}')
+
+    def m_grow_settings_cmd(self, auto_mode, desired_humidity, desired_temperature, light_act_time, light_deact_time, ventilation_capacity, circulation_capacity, humidifier_on):
         self.auto_mode = auto_mode
         self.desired_humidity = int(desired_humidity)
         self.desired_temperature = int(desired_temperature)
         self.light_act_time = light_act_time
         self.light_deact_time = light_deact_time
-
-    def m_humidifier_cmd(self, on):
-        if bool(on):
-            self.humidifier.activate()
-        else:
-            self.humidifier.deactivate()
+        self.ventilator.set_capacity(ventilation_capacity)
+        self.circulator.set_capacity(circulation_capacity)
+        self.humidifier.activate(humidifier_on)
     
     def automatic_mode_loop(self):
         while True:
             time.sleep(1)
             if self.auto_mode:
-
                 if self.desired_humidity != 0:
-                    
                     if self.humidity < self.desired_humidity and self.humidifier.is_active() == False:
                         print('humidity bellow desired levels, activating humidifier')
-                        self.humidifier.activate()
+                        self.humidifier.activate(True)
+
+                        if self.ventilator.get_capacity() < 40:
+                            self.ventilator.set_capacity(40)
 
                     elif self.humidity >= self.desired_humidity and self.humidifier.is_active():
                         print('humidity above desired levels, deactivating humidifier')
-                        self.humidifier.deactivate()
+                        self.humidifier.activate(False)
+
+                        if self.ventilator.get_capacity() < 80:
+                            self.ventilator.set_capacity(80)
                     else:
                         continue
+
+                    humidity_diference = self.humidity - self.desired_humidity
+
+                    # humidity levels above desired and tolerance
+                    if humidity_diference > 0 and humidity_diference > self.humidity_tolerance:
+                        self.ventilator.set_capacity(100)
+
+                    elif humidity_diference < 0 and (humidity_diference*-1) > self.humidity_tolerance:
+                        self.ventilator.set_capacity(30)
             else:
                 continue
         

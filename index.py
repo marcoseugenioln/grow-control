@@ -14,11 +14,19 @@ site = Blueprint('site', __name__, template_folder='templates')
 with open(str(sys.argv[1])) as config_file:
     app_config = json.load(config_file)
 
-grow = Grow()
+grow = Grow(ventilation_pin=app_config['ventilator_pin'], 
+            circulation_pin=app_config['circulator_pin'], 
+            dht_sensor_pin=app_config['dht_sensor_pin'], 
+            humidifier_pin=app_config['humidifier_pin'],
+            automatic=app_config['automatic'],
+            ventilator_capacity=app_config['ventilator_capacity'],
+            circulator_capacity=app_config['circulator_capacity'],
+            desired_humidity=app_config['desired_humidity'],
+            desired_temperature=app_config['desired_temperature'],
+            humidity_toleration=app_config['humidity_toleration'])
 ##################################################################################################
 @app.route("/")
 def index():
-
     return render_template('index.html', 
                            temperature=grow.temperature,
                            humidity=grow.humidity,
@@ -26,27 +34,7 @@ def index():
                            circulation_capacity=grow.circulator.get_capacity(),
                            humidifier_on = grow.humidifier.is_active())
 
-@app.route("/wind-config-cmd", methods=['GET','POST'])
-def wind_config_cmd():
-    
-    if request.method == 'POST':
-
-        ventilation = 0
-        circulation = 0
-
-        if 'ventilation' in request.form:
-            ventilation = request.form['ventilation']
-
-        if 'circulation' in request.form:
-            circulation = request.form['circulation']
-
-        pub.sendMessage('m_wind_config_cmd', 
-                        ventilation_capacity=ventilation,
-                        circulation_capacity=circulation)
-        
-    return redirect(url_for('config'))
-
-@app.route("/grow-settings-cmd", methods=['GET','POST'])
+@app.route("/settings-cmd", methods=['GET','POST'])
 def grow_settings_cmd():
     
     if request.method == 'POST':
@@ -56,6 +44,9 @@ def grow_settings_cmd():
         desired_temperature = 0
         light_act_time = None
         light_deact_time = None
+        humidifier_on = False
+        ventilation = 0
+        circulation = 0
 
         if 'auto_mode' in request.form:
             auto_mode = request.form['auto_mode'] == 'on'
@@ -72,18 +63,30 @@ def grow_settings_cmd():
         if 'light_deact_time' in request.form:
             light_deact_time = request.form['light_deact_time']
 
+        if 'humidifier_on' in request.form:
+            humidifier_on = request.form['humidifier_on'] == 'on'
+
+        if 'ventilation' in request.form:
+            ventilation = request.form['ventilation']
+
+        if 'circulation' in request.form:
+            circulation = request.form['circulation']
+
         pub.sendMessage('m_grow_settings_cmd', 
                         auto_mode=auto_mode,
                         desired_humidity=desired_humidity,
                         desired_temperature=desired_temperature,
                         light_act_time=light_act_time,
-                        light_deact_time=light_deact_time)
+                        light_deact_time=light_deact_time, 
+                        ventilation_capacity=ventilation, 
+                        circulation_capacity=circulation, 
+                        humidifier_on=humidifier_on)
         
     return redirect(url_for('config'))
 
-@app.route("/config", methods=['GET','POST'])
+@app.route("/settings", methods=['GET','POST'])
 def config():
-    return render_template('/config.html', 
+    return render_template('/settings/index.html', 
                            auto_mode=grow.get_auto_mode(),
                            circulation=grow.circulator.get_capacity(),
                            ventilation=grow.ventilator.get_capacity(),
@@ -91,17 +94,18 @@ def config():
                            desired_humidity=grow.desired_humidity,
                            desired_temperature=grow.desired_temperature)
 
-@app.route("/humidifier-cmd", methods=['GET','POST'])
-def humidifier_cmd():
-
-    manual_activation = False
-
-    if 'active' in request.form:
-        manual_activation = request.form['active'] == 'on'
+##################################################################################################
+# @app.route('/plant', methods=['GET', 'POST'])
+# def plant():
     
-    pub.sendMessage('m_humidifier_cmd', on=manual_activation)
+#     return render_template(
+#         'plant/index.html',
+#         plants=,
+#         photoperiods=,
+#         trainings=,
+#         training_types=,
 
-    return redirect(url_for('config'))
+#     )
 
 ################################################################################################## 
 
