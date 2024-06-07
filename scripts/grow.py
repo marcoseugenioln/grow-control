@@ -2,7 +2,7 @@ import threading
 import socket
 import time
 from scripts.dht import DHT
-from scripts.wind import Wind
+# from scripts.wind import Wind
 from scripts.humidifier import Humidifier
 from scripts.fan import Fan
 from pubsub import pub

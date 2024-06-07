@@ -1,7 +1,6 @@
 from flask import Flask, redirect, url_for, request, render_template, Blueprint, flash, session, abort, jsonify
 from flask import Flask
-from scripts.wind import Wind
-from scripts.database import Database
+# from scripts.database import Database
 from scripts.grow import Grow
 import json
 import sys
@@ -23,8 +22,8 @@ def index():
     return render_template('index.html', 
                            temperature=grow.temperature,
                            humidity=grow.humidity,
-                           ventilation_capacity=grow.wind.get_ventilation_capacity(),
-                           circulation_capacity=grow.wind.get_circulation_capacity(),
+                           ventilation_capacity=grow.ventilator.get_capacity(),
+                           circulation_capacity=grow.circulator.get_capacity(),
                            humidifier_on = grow.humidifier.is_active())
 
 @app.route("/wind-config-cmd", methods=['GET','POST'])
@@ -86,8 +85,8 @@ def grow_settings_cmd():
 def config():
     return render_template('/config.html', 
                            auto_mode=grow.get_auto_mode(),
-                           circulation=grow.wind.get_circulation_capacity(),
-                           ventilation=grow.wind.get_ventilation_capacity(),
+                           circulation=grow.circulator.get_capacity(),
+                           ventilation=grow.ventilator.get_capacity(),
                            humidifier_on=grow.humidifier.is_active(),
                            desired_humidity=grow.desired_humidity,
                            desired_temperature=grow.desired_temperature)

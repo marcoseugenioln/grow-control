@@ -10,8 +10,6 @@ class Humidifier():
         GPIO.setmode(GPIO.BCM)
         GPIO.setup(self.pin, GPIO.OUT)
 
-        pub.subscribe(self.m_humidifier_cmd, 'm_humidifier_cmd')
-
     def is_active(self):
         return self.on
     
