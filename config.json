@@ -10,8 +10,8 @@
 
     "automatic" : true,
     "ventilator_capacity" : 50,
-    "circulator_capacity" : 50,
-    "desire4d_humidity" : 70,
+    "circulator_capacity" : 0,
+    "desired_humidity" : 70,
     "desired_temperature" : 25,
     "humidity_tolerance" : 3
 }

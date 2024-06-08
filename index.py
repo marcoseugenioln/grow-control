@@ -14,8 +14,8 @@ site = Blueprint('site', __name__, template_folder='templates')
 with open(str(sys.argv[1])) as config_file:
     app_config = json.load(config_file)
 
-grow = Grow(ventilation_pin=app_config['ventilator_pin'], 
-            circulation_pin=app_config['circulator_pin'], 
+grow = Grow(ventilator_pin=app_config['ventilator_pin'], 
+            circulator_pin=app_config['circulator_pin'], 
             dht_sensor_pin=app_config['dht_sensor_pin'], 
             humidifier_pin=app_config['humidifier_pin'],
             automatic=app_config['automatic'],
@@ -23,7 +23,7 @@ grow = Grow(ventilation_pin=app_config['ventilator_pin'],
             circulator_capacity=app_config['circulator_capacity'],
             desired_humidity=app_config['desired_humidity'],
             desired_temperature=app_config['desired_temperature'],
-            humidity_toleration=app_config['humidity_toleration'])
+            humidity_tolerance=app_config['humidity_tolerance'])
 ##################################################################################################
 @app.route("/")
 def index():

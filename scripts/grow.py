@@ -86,9 +86,6 @@ class Grow():
                     elif self.humidity >= self.desired_humidity and self.humidifier.is_active():
                         print('humidity above desired levels, deactivating humidifier')
                         self.humidifier.activate(False)
-
-                        if self.ventilator.get_capacity() < 80:
-                            self.ventilator.set_capacity(80)
                     else:
                         continue
 
@@ -97,9 +94,15 @@ class Grow():
                     # humidity levels above desired and tolerance
                     if humidity_diference > 0 and humidity_diference > self.humidity_tolerance:
                         self.ventilator.set_capacity(100)
-
+                    elif humidity_diference > 0 and humidity_diference <= self.humidity_tolerance:
+                        self.ventilator.set_capacity(90)
+                    elif humidity_diference == 0:
+                        self.ventilator.set_capacity(80)
+                    elif humidity_diference < 0 and (humidity_diference*-1) <= self.humidity_tolerance:
+                        self.ventilator.set_capacity(70)
                     elif humidity_diference < 0 and (humidity_diference*-1) > self.humidity_tolerance:
-                        self.ventilator.set_capacity(30)
+                        self.ventilator.set_capacity(50)
+
             else:
                 continue
         

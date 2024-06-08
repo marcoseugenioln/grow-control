@@ -42,9 +42,7 @@
             <label>Desired Temperature: </label>
             <input type="number" min="0" max="30" value="{{ desired_temperature }}" name="desired_temperature" id="desired_temperature"/>
             <br>
-            <br>
-            <button class="btn" > apply </button>
-            <br>
+            
 
             {% if auto_mode %}
                 <br>
@@ -81,7 +79,7 @@
                 <br>
             {% else %}
                 <br>
-                <label>Active</label>
+                <label>Humidifier Active</label>
                 {% if humidifier_on %}
                     <input type="checkbox" name="humidifier_on" id="humidifier_on" checked>
                 {% else %}
@@ -90,8 +88,11 @@
                 <br>
             {% endif %}
 
+            <br>
+            <button class="btn" > apply </button>
+            <br>
+
         </form>
-        {% include 'settings/humidifier.html' %}
     </fieldset>
 </body>
 </html>
