@@ -3,7 +3,7 @@
 
 <head>
     <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='style.css')}}">
-    <title>Dispositivos</title>
+    <title>Feedings</title>
 </head>
  
 <body>
@@ -13,29 +13,22 @@
         <table>
             <tr>
                 <td><label class="text-field">ID</label></td>
-                <td><label class="text-field">Nome</label></td>
-                {% if is_admin %}
-                    <td><label class="text-field">Paciente</label></td>
-                {% endif %}
-                <td><label class="text-field">Evento 1</label></td>
-                <td><label class="text-field">Evento 2</label></td>
-                <td><label class="text-field">Evento 3</label></td>
+                <td><label class="text-field">Date</label></td>
+                <td><label class="text-field">Dosage</label></td>
+                <td><label class="text-field">Nitrogen</label></td>
+                <td><label class="text-field">Phosphorus</label></td>
+                <td><label class="text-field">Potassium</label></td>
+                <td><label class="text-field">Concentration</label></td>
             </tr>
 
-            {% for id, patient_id, name, event_button_1, event_button_2, event_button_3 in devices %}
-                {% include '/device/update.html'%}
+            {% for id, date, dosage, nitrogen, phosphorus, potassium, concentration in feedings %}
+                {% include '/feeding/update.html'%}
             {% endfor %}
-
         </table>
     </div>
 
-    {% if is_admin %}
-        {% include '/device/create.html'%}
-    {% else %}
-        {% if not has_device %}
-            {% include '/device/create.html'%}
-        {% endif %}
-    {% endif %}
+    {% include '/feeding/create.html'%}
+
 </body>
  
 </html>

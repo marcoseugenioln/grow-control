@@ -1,7 +1,7 @@
 from flask import Flask, redirect, url_for, request, render_template, Blueprint, flash, session, abort, jsonify
 from flask import Flask
-# from scripts.database import Database
 from scripts.grow import Grow
+from scripts.database import Database
 import json
 import sys
 from pubsub import pub
@@ -14,6 +14,8 @@ site = Blueprint('site', __name__, template_folder='templates')
 with open(str(sys.argv[1])) as config_file:
     app_config = json.load(config_file)
 
+database = Database(database_path='database/schema.db', schema_file='database/schema.sql')
+
 grow = Grow(ventilator_pin=app_config['ventilator_pin'], 
             circulator_pin=app_config['circulator_pin'], 
             dht_sensor_pin=app_config['dht_sensor_pin'], 
@@ -24,6 +26,7 @@ grow = Grow(ventilator_pin=app_config['ventilator_pin'],
             desired_humidity=app_config['desired_humidity'],
             desired_temperature=app_config['desired_temperature'],
             humidity_tolerance=app_config['humidity_tolerance'])
+
 ##################################################################################################
 @app.route("/")
 def index():
@@ -94,20 +97,175 @@ def config():
                            desired_humidity=grow.desired_humidity,
                            desired_temperature=grow.desired_temperature)
 
-##################################################################################################
-# @app.route('/plant', methods=['GET', 'POST'])
-# def plant():
-    
-#     return render_template(
-#         'plant/index.html',
-#         plants=,
-#         photoperiods=,
-#         trainings=,
-#         training_types=,
 
-#     )
+##################################################################################################
+@app.route('/plant', methods=['GET', 'POST'])
+def plant():
+    
+    return render_template(
+        'plant/index.html',
+        plants=database.get_plants(),
+        photoperiods=database.get_photoperiods(),
+        genders=database.get_genders()
+    )
+
+@app.route('/plant/create/<id>', methods=['GET', 'POST'])
+def create_plant(id):
+    # TODO: create plant
+    return redirect(url_for('plant'))
+
+@app.route('/plant/update/<id>', methods=['GET', 'POST'])
+def update_plant(id):
+    # TODO: update plant
+    return redirect(url_for('plant'))
+
+@app.route('/plant/delete/<id>', methods=['GET', 'POST'])
+def update_plant(id):
+    # TODO: delete plant
+    return redirect(url_for('plant'))
+################################################################################################## 
+@app.route('/watering/<id>', methods=['GET', 'POST'])
+def watering(id):
+    
+    return render_template(
+        'watering/index.html',
+        waterings=database.get_plant_waterings(id)
+    )
+
+@app.route('/watering/create/<id>', methods=['GET', 'POST'])
+def create_watering(id):
+    # TODO: create watering
+    return redirect(url_for('watering', id=id))
+
+@app.route('/watering/update/<id>', methods=['GET', 'POST'])
+def update_watering(id):
+    # TODO: update watering
+    return redirect(url_for('watering', id=id))
+
+@app.route('/watering/delete/<id>', methods=['GET', 'POST'])
+def update_watering(id):
+    # TODO: delete watering
+    return redirect(url_for('watering', id=id))
 
 ################################################################################################## 
+@app.route('/training/<id>', methods=['GET', 'POST'])
+def training(id):
+    
+    return render_template(
+        'training/index.html',
+        trainings=database.get_plant_trainings(id)
+    )
+
+@app.route('/training/create/<id>', methods=['GET', 'POST'])
+def create_watering(id):
+    # TODO: create training
+    return redirect(url_for('training', id=id))
+
+@app.route('/training/update/<id>', methods=['GET', 'POST'])
+def update_training(id):
+    # TODO: update training
+    return redirect(url_for('training', id=id))
+
+@app.route('/training/delete/<id>', methods=['GET', 'POST'])
+def update_training(id):
+    # TODO: delete training
+    return redirect(url_for('training', id=id))
+
+
+################################################################################################## 
+@app.route('/feeding/<id>', methods=['GET', 'POST'])
+def feeding(id):
+    
+    return render_template(
+        'feeding/index.html',
+        feedings=database.get_plant_feedings(id)
+    )
+
+@app.route('/feeding/create/<id>', methods=['GET', 'POST'])
+def create_feeding(id):
+    # TODO: create feeding
+    return redirect(url_for('feeding', id=id))
+
+@app.route('/feeding/update/<id>', methods=['GET', 'POST'])
+def update_feeding(id):
+    # TODO: update feeding
+    return redirect(url_for('feeding', id=id))
+
+@app.route('/feeding/delete/<id>', methods=['GET', 'POST'])
+def update_feeding(id):
+    # TODO: delete feeding
+    return redirect(url_for('feeding', id=id))
+
+################################################################################################## 
+@app.route('/transplanting/<id>', methods=['GET', 'POST'])
+def transplanting(id):
+    
+    return render_template(
+        'transplanting/index.html',
+        transplantings=database.get_plant_transplantings(id)
+    )
+
+@app.route('/transplanting/create/<id>', methods=['GET', 'POST'])
+def create_transplanting(id):
+    # TODO: create transplanting
+    return redirect(url_for('transplanting', id=id))
+
+@app.route('/transplanting/update/<id>', methods=['GET', 'POST'])
+def update_transplanting(id):
+    # TODO: update transplanting
+    return redirect(url_for('transplanting', id=id))
+
+@app.route('/transplanting/delete/<id>', methods=['GET', 'POST'])
+def update_transplanting(id):
+    # TODO: delete transplanting
+    return redirect(url_for('transplanting', id=id))
+
+################################################################################################## 
+@app.route('/damage/<id>', methods=['GET', 'POST'])
+def transplanting(id):
+    
+    return render_template(
+        'damage/index.html',
+        damages=database.get_plant_damages(id)
+    )
+
+@app.route('/damage/create/<id>', methods=['GET', 'POST'])
+def create_damage(id):
+    # TODO: create damage
+    return redirect(url_for('damage', id=id))
+
+@app.route('/damage/update/<id>', methods=['GET', 'POST'])
+def update_damage(id):
+    # TODO: update damage
+    return redirect(url_for('damage', id=id))
+
+@app.route('/damage/delete/<id>', methods=['GET', 'POST'])
+def update_damage(id):
+    # TODO: delete damage
+    return redirect(url_for('damage', id=id))
+################################################################################################## 
+@app.route('/harvest/<id>', methods=['GET', 'POST'])
+def harvest(id):
+    
+    return render_template(
+        'harvest/index.html',
+        harvests=database.get_plant_harvest(id)
+    )
+
+@app.route('/harvest/create/<id>', methods=['GET', 'POST'])
+def create_harvest(id):
+    # TODO: create harvest
+    return redirect(url_for('harvest', id=id))
+
+@app.route('/harvest/update/<id>', methods=['GET', 'POST'])
+def update_harvest(id):
+    # TODO: update harvest
+    return redirect(url_for('harvest', id=id))
+
+@app.route('/harvest/delete/<id>', methods=['GET', 'POST'])
+def update_harvest(id):
+    # TODO: delete harvest
+    return redirect(url_for('harvest', id=id))
 
 if __name__ == '__main__':
     print(app_config)

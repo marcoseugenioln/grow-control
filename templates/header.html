@@ -11,5 +11,11 @@
         </button>
     </form>
 
+    <form method="get" action="{{ url_for('plant') }}">
+        <button class="header-btn" name="plant-button">
+            <img src="{{ url_for('static', filename='image/plant-icon.png')}}" class="header-btn-img">
+        </button>
+    </form>
+
 </div>
 <hr>

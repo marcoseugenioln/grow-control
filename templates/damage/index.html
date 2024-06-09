@@ -3,7 +3,7 @@
 
 <head>
     <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='style.css')}}">
-    <title>Plants</title>
+    <title>Trainings</title>
 </head>
  
 <body>
@@ -15,19 +15,16 @@
                 <td><label class="text-field">ID</label></td>
                 <td><label class="text-field">Name</label></td>
                 <td><label class="text-field">Date</label></td>
-                <td><label class="text-field">Alive</label></td>
-                <td><label class="text-field">Photoperiod</label></td>
-                <td><label class="text-field">Gender</label></td>
-                <td><label class="text-field">Harvested</label></td> 
+                <td><label class="text-field">Type</label></td>
             </tr>
 
-            {% for id, name, date, alive, photoperiod_id, gender_id, harvested in plants %}
-                {% include '/plant/update.html'%}
+            {% for id, name, date, training_type_id in trainings %}
+                {% include '/training/update.html'%}
             {% endfor %}
         </table>
     </div>
 
-    {% include '/plant/create.html'%}
+    {% include '/training/create.html'%}
 </body>
  
 </html>

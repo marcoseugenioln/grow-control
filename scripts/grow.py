@@ -1,6 +1,7 @@
 import threading
 import datetime
 import time
+import math
 from scripts.dht import DHT
 from scripts.humidifier import Humidifier
 from scripts.fan import Fan
@@ -30,7 +31,10 @@ class Grow():
         self.light_deact_time = None
         self.desired_temperature = desired_temperature
         self.desired_humidity = desired_humidity
-        self.humidity_tolerance=humidity_tolerance
+        self.humidity_tolerance = humidity_tolerance
+        self.humidity_above_desired = False
+        self.humidity_bellow_desired = False
+        self.humidity_difference = 0
 
         # components
         self.dht = DHT(pin=dht_sensor_pin)
@@ -70,39 +74,69 @@ class Grow():
         self.ventilator.set_capacity(ventilation_capacity)
         self.circulator.set_capacity(circulation_capacity)
         self.humidifier.activate(humidifier_on)
-    
+
+    def humidifier_automatic_regulation(self):
+        if self.desired_humidity != 0:
+            if self.humidity_bellow_desired and not self.humidifier.is_active():
+                print('humidifier: on')
+                self.humidifier.activate(True)
+
+            elif self.humidity >= self.desired_humidity and self.humidifier.is_active():
+                print('humidifier: off')
+                self.humidifier.activate(False)
+
+    def ventilator_automatic_regulation(self):
+
+        capacity = 0
+
+        if self.humidity_above_desired and self.humidity_diference > self.humidity_tolerance:
+            capacity = 100
+
+        elif self.humidity_above_desired and self.humidity_diference <= self.humidity_tolerance:
+            capacity = 90
+
+        elif not self.humidity_above_desired and not self.humidity_bellow_desired:
+            capacity = 80
+
+        elif self.humidity_bellow_desired and self.humidity_diference <= self.humidity_tolerance:
+            capacity = 70
+
+        elif self.humidity_bellow_desired and self.humidity_diference > self.humidity_tolerance:
+            capacity = 60
+
+        print(f'setting ventilator capacity to: {capacity}%')
+        self.ventilator.set_capacity(capacity)
+
+
     def automatic_mode_loop(self):
         while True:
+
+            previous_temperature = 0
+            previous_humidity = 0
+            previous_desired_temperature = 0
+            previous_desired_humidity = 0
+
             time.sleep(1)
             if self.auto_mode:
-                if self.desired_humidity != 0:
-                    if self.humidity < self.desired_humidity and self.humidifier.is_active() == False:
-                        print('humidity bellow desired levels, activating humidifier')
-                        self.humidifier.activate(True)
 
-                        if self.ventilator.get_capacity() < 40:
-                            self.ventilator.set_capacity(40)
+                temperature_changed = previous_temperature != self.temperature
+                humidity_changed = previous_humidity != self.humidity
+                desired_temperature_changed = previous_desired_temperature != self.desired_temperature
+                desired_humidity_changed = previous_desired_humidity != self.desired_humidity
 
-                    elif self.humidity >= self.desired_humidity and self.humidifier.is_active():
-                        print('humidity above desired levels, deactivating humidifier')
-                        self.humidifier.activate(False)
-                    else:
-                        continue
+                previous_temperature = self.temperature
+                previous_humidity = self.humidity
+                previous_desired_temperature = self.desired_temperature
+                previous_desired_humidity = self.desired_humidity
 
-                    humidity_diference = self.humidity - self.desired_humidity
-
-                    # humidity levels above desired and tolerance
-                    if humidity_diference > 0 and humidity_diference > self.humidity_tolerance:
-                        self.ventilator.set_capacity(100)
-                    elif humidity_diference > 0 and humidity_diference <= self.humidity_tolerance:
-                        self.ventilator.set_capacity(90)
-                    elif humidity_diference == 0:
-                        self.ventilator.set_capacity(80)
-                    elif humidity_diference < 0 and (humidity_diference*-1) <= self.humidity_tolerance:
-                        self.ventilator.set_capacity(70)
-                    elif humidity_diference < 0 and (humidity_diference*-1) > self.humidity_tolerance:
-                        self.ventilator.set_capacity(50)
-
+                if temperature_changed or humidity_changed or desired_temperature_changed or desired_humidity_changed:
+                
+                    self.humidity_above_desired = self.humidity > self.desired_humidity
+                    self.humidity_bellow_desired = self.humidity < self.desired_humidity 
+                    self.humidity_diference = math.sqrt(math.pow(self.humidity - self.desired_humidity, 2))
+                    
+                    self.humidifier_automatic_regulation()
+                    self.ventilator_automatic_regulation()
             else:
                 continue
         

@@ -36,13 +36,22 @@ class Database():
             return retrieved_values
         
     def get_plants(self):
-        return self.execute_query(f"select id, name, date, photoperiod_id from plant;", True)
+        return self.execute_query(f"select id, name, date, alive, harvested, photoperiod_id, gender_id from plant;", True)
     
-    def insert_plant(self, name, planting_date, photoperiod_id):
-        self.execute_query(f"insert into plant (name, date, photoperiod_id) values '{name}', DATE('{planting_date}'), {photoperiod_id};")
+    def insert_plant(self, name, date, alive, harvested, photoperiod_id, gender_id):
+        self.execute_query(f"insert into plant (name, date, alive, harvested, photoperiod_id, gender_id) values '{name}', DATE('{date}'), {alive}, {harvested}, {photoperiod_id}, {gender_id};")
+
+    def update_plant(self, id, name, date, alive, harvested, photoperiod_id, gender_id):
+        self.execute_query(f"update plant set name = {name}, date = DATE('{date}'), alive = {alive}, harvested = {harvested}, photoperiod_id = {photoperiod_id}, gender_id = {gender_id} where id = {id};")
+    
+    def get_plant(self, id):
+        return self.execute_query(f"select id, name, date, alive, harvested, photoperiod_id, gender_id from plant where id = {id};", True)
 
     def get_trainings(self):
         return self.execute_query(f"select id, plant_id, training_type_id, date from training;", True)
+    
+    def get_plant_trainings(self, plant_id):
+        return self.execute_query(f"select id, plant_id, training_type_id, date from training where plant_id = {plant_id};", True)
     
     def insert_training(self, plant_id, training_type_id, date):
         self.execute_query(f"insert into training (plant_id, training_type_id, date) values {plant_id}, {training_type_id}, DATE('{date}');")
@@ -50,20 +59,54 @@ class Database():
     def get_waterings(self):
         return self.execute_query(f"select id, plant_id, date, mililiter from watering;", True)
     
+    def get_plant_waterings(self, plant_id):
+        return self.execute_query(f"select id, date, mililiter from watering where plant_id = {plant_id};", True)
+    
     def insert_watering(self, plant_id, date, mililiter):
         self.execute_query(f"insert into watering (plant_id, date, mililiter) values {plant_id}, DATETIME('{date}'), {mililiter};")
     
     def get_feedings(self):
         return self.execute_query(f"select id, plant_id, date, dose, concentration, nitrogen, phosphorus, potassium from feeding;", True)
     
+    def get_plant_feedings(self, plant_id):
+        return self.execute_query(f"select id, plant_id, date, dose, concentration, nitrogen, phosphorus, potassium from feeding where plant_id = {plant_id};", True)
+    
+    def get_plant_waterings(self, plant_id):
+        return self.execute_query(f"select id, plant_id, date, dose, concentration, nitrogen, phosphorus, potassium from feeding where plant_id = {plant_id};", True)
+
     def insert_feeding(self, plant_id, date, dose, concentration, nitrogen, phosphorus, potassium):
         self.execute_query(f"insert into watering (plant_id, date, dose, concentration, nitrogen, phosphorus, potassium) values {plant_id}, DATE('{date}'), {dose}, {concentration}, {nitrogen}, {phosphorus}, {potassium};")
     
+    def get_transplantings(self):
+        return self.execute_query(f"select id, plant_id, date, dimensions from transplanting;", True)
+    
+    def get_plant_transplantings(self, plant_id):
+        return self.execute_query(f"select id, plant_id, date, dimensions from transplanting where plant_id = {plant_id};", True)
+    
+    def get_harvests(self):
+        return self.execute_query(f"select id, plant_id, date, yield from harvest;", True)
+    
+    def get_plant_harvests(self, plant_id):
+        return self.execute_query(f"select id, plant_id, date, yield from harvest where plant_id = {plant_id};", True)
+
+    def get_damages(self):
+        return self.execute_query(f"select id, plant_id, damage_type_id, date from damage;", True)
+    
+    def get_plant_damages(self, plant_id):
+        return self.execute_query(f"select id, plant_id, damage_type_id, date from damage where plant_id = {plant_id};", True)
+        
     def get_training_types(self):
         return self.execute_query(f"select id, name, description from training_type;", True)
     
     def get_photoperiods(self):
         return self.execute_query(f"select id, name, description from photoperiod;", True)
+    
+    def get_genders(self):
+        return self.execute_query(f"select id, name, description from gender;", True)
+    
+    def get_damage_types(self):
+        return self.execute_query(f"select id, name, description from damage_type;", True)
+
     
     
     

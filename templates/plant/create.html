@@ -1,22 +1,24 @@
 <div class="create-div">
     <table>
         <tr>
-            <h1>Cadastrar Dispositivo</h1>
-            <form action="{{ url_for('create_device') }}" method="post">
+            <h1>Register Plant</h1>
 
-                <td><input type="text" class="text-field" name="name" value="{{ name }}"></td>
+            <form action="{{ url_for('create_plant') }}" method="post">
 
-                {% if is_admin %}
-                    <td><select class="combo-box" name="patient_id">
-                        {% for pid, pname, birth in patients %}
-                            {% if pid == patient_id %}
-                                <option value="{{ pid }}" selected>{{ pname }}</option>
-                            {% else %}
-                                <option value="{{ pid }}">{{ pname }}</option>
-                            {% endif %}
-                        {% endfor %}
-                    </select></td>
-                {% endif %}
+                <td><input type="text" class="text-field" name="name" value="Plant name"></td>
+                <td><input type="date" class="text-field" name="date"></td>
+
+                <td><select class="combo-box" name="photoperiod_id">
+                    {% for pid, pname, pdescription in photoperiods %}
+                        <option value="{{ pid }}">{{ pname }}</option>
+                    {% endfor %}
+                </select></td>
+
+                <td><select id="gender-id-{{ id }}" class="combo-box" name="gender_id">
+                    {% for gid, gname, gdescription in genders %}
+                        <option value="{{ gid }}">{{ gname }}</option>
+                    {% endfor %}
+                </select></td>
 
                 <td>
                     <button class="action-btn">

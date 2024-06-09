@@ -1,15 +1,21 @@
 <div class="create-div">
     <table>
         <tr>
-            <h1>Register Watering</h1>
-            <form action="{{ url_for('create_watering', id=id) }}" method="post">
+            <h1>Register Damage</h1>
+
+            <form action="{{ url_for('create_damage', id=id) }}" method="post">
                 <td><input type="date" class="text-field" name="date"></td>
-                <td><input type="number" min="0" max="10000" class="text-field" name="mililiter"></td>
+                <td><select class="combo-box" name="damage_type_id">
+                    {% for did, dname, ddescription in damage_types %}
+                        <option value="{{ did }}">{{ dname }}</option>
+                    {% endfor %}
+                </select></td>
                 <td>
                     <button class="action-btn">
                         <img src="{{ url_for('static', filename='image/create-icon.png')}}" class="action-btn-img" id="create-btn">
                     </button>
                 </td>
+
             </form>
         </tr>
     </table>

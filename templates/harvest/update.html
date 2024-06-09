@@ -1,18 +1,18 @@
-<div name="watering-{{ id }}">
+<div name="harvest-{{ id }}">
     <tr>
-        <form action="{{ url_for('update_watering', id=id) }}" method="post">
+        <form action="{{ url_for('update_harvest', id=id) }}" method="post">
             <td><label>{{ id }}</label></td>
             <td><input type="date" class="text-field" name="date" value="{{ date }}"></td>
-            <td><input type="number" min="0" max="10000" class="text-field" name="mililiter" value="{{ mililiter }}"></td>
+            <td><input type="number" min="0" max="10000" class="text-field" name="yield" value="{{ yield }}"></td>
             <td>
-                <button class="action-btn" name="update-watering-{{ id }}">
+                <button class="action-btn" name="update-harvest-{{ id }}">
                     <img src="{{ url_for('static', filename='image/edit-icon.png')}}" class="action-btn-img">
                 </button>
             </td>
         </form>
-        <form action="{{ url_for('delete_watering', id=id) }}" method="post">
+        <form action="{{ url_for('delete_harvest', id=id) }}" method="post">
             <td>
-                <button class="action-btn" name="delete-watering-{{ id }}">
+                <button class="action-btn" name="delete-harvest-{{ id }}">
                     <img src="{{ url_for('static', filename='image/trash-icon.png')}}" class="action-btn-img">
                 </button>
             </td>

@@ -3,7 +3,7 @@
 
 <head>
     <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='style.css')}}">
-    <title>Waterings</title>
+    <title>Harvest</title>
 </head>
  
 <body>
@@ -14,16 +14,16 @@
             <tr>
                 <td><label class="text-field">ID</label></td>
                 <td><label class="text-field">Date</label></td>
-                <td><label class="text-field">Mililiter</label></td>
+                <td><label class="text-field">Yield</label></td>
             </tr>
 
-            {% for id, date, mililiter in waterings %}
-                {% include '/watering/update.html'%}
+            {% for id, date, yield in harvest %}
+                {% include '/harvest/update.html'%}
             {% endfor %}
         </table>
     </div>
 
-    {% include '/watering/create.html'%}
+    {% include '/harvest/create.html'%}
 
 </body>
  

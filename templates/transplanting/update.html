@@ -1,75 +1,21 @@
-<div name="device-{{ id }}">
+<div name="transplanting-{{ id }}">
     <tr>
-        <form action="{{ url_for('update_device', id=id) }}" method="post">
+        <form action="{{ url_for('update_transplanting', id=id) }}" method="post">
             <td><label>{{ id }}</label></td>
-    
-            <td><input id="name-{{ id }}" type="text" class="text-field" name="name" value="{{ name }}"></td>
-    
-            {% if is_admin %}
-                <td><select id="patient-id-{{ id }}" class="combo-box" name="patient_id">
-                    {% for pid, pname, birth in patients %}
-                        {% if pid == patient_id %}
-                            <option value="{{ pid }}" selected>{{ pname }}</option>
-                        {% else %}
-                            <option value="{{ pid }}">{{ pname }}</option>
-                        {% endif %}
-                    {% endfor %}
-                </select></td>
-            {% endif %}
-    
-            <td><select id="button-1-{{ id }}" class="combo-box" name="event_button_1">
-                {% for eid, description, is_input in events %}
-                    {% if is_input %}
-                        {% if eid == event_button_1 %}
-                            <option value="{{ eid }}" selected>{{ description }}</option>
-                        {% else %}
-                            <option value="{{ eid }}">{{ description }}</option>
-                        {% endif %}
-                    {% endif %}
-                {% endfor %}
-            </select></td>
-    
-            <td><select id="button-2-{{ id }}" class="combo-box" name="event_button_2">
-                {% for eid, description, is_input in events %}
-                    {% if is_input %}
-                        {% if eid == event_button_2 %}
-                            <option value="{{ eid }}" selected>{{ description }}</option>
-                        {% else %}
-                            <option value="{{ eid }}">{{ description }}</option>
-                        {% endif %}
-                    {% endif %}
-                {% endfor %}
-            </select></td>
-    
-            <td><select id="button-3-{{ id }}" class="combo-box" name="event_button_3">
-                {% for eid, description, is_input in events %}
-                    {% if is_input %}
-                        {% if eid == event_button_3 %}
-                            <option value="{{ eid }}" selected>{{ description }}</option>
-                        {% else %}
-                            <option value="{{ eid }}">{{ description }}</option>
-                        {% endif %}
-                    {% endif %}
-                {% endfor %}
-            </select></td>
-    
+            <td><input type="number" min="0" max="10000" class="text-field" name="{{ width }}"></td>
+            <td><input type="number" min="0" max="10000" class="text-field" name="{{ height }}"></td>
+            <td><input type="number" min="0" max="10000" class="text-field" name="{{ radius }}"></td>
+            <td><input type="number" min="0" max="10000" class="text-field" name="{{ depth }}"></td>
             <td>
-                <button class="action-btn" name="update-device-{{ id }}">
+                <button class="action-btn" name="update-transplanting-{{ id }}">
                     <img src="{{ url_for('static', filename='image/edit-icon.png')}}" class="action-btn-img">
                 </button>
             </td>
         </form>
-        <form action="{{ url_for('delete_device', id=id) }}" method="post">
+        <form action="{{ url_for('delete_transplanting', id=id) }}" method="post">
             <td>
-                <button class="action-btn" name="delete-device-{{ id }}">
+                <button class="action-btn" name="delete-transplanting-{{ id }}">
                     <img src="{{ url_for('static', filename='image/trash-icon.png')}}" class="action-btn-img">
-                </button>
-            </td>
-        </form>
-        <form action="{{ url_for('trigger_alarm_test', device_id=id) }}" method="post">
-            <td>
-                <button class="action-btn">
-                    <img src="{{ url_for('static', filename='image/bell-icon.png')}}" class="action-btn-img">
                 </button>
             </td>
         </form>

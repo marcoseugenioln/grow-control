@@ -3,7 +3,7 @@
 
 <head>
     <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='style.css')}}">
-    <title>Dispositivos</title>
+    <title>Transplantings</title>
 </head>
  
 <body>
@@ -13,29 +13,21 @@
         <table>
             <tr>
                 <td><label class="text-field">ID</label></td>
-                <td><label class="text-field">Nome</label></td>
-                {% if is_admin %}
-                    <td><label class="text-field">Paciente</label></td>
-                {% endif %}
-                <td><label class="text-field">Evento 1</label></td>
-                <td><label class="text-field">Evento 2</label></td>
-                <td><label class="text-field">Evento 3</label></td>
+                <td><label class="text-field">Date</label></td>
+                <td><label class="text-field">Width</label></td>
+                <td><label class="text-field">Height</label></td>
+                <td><label class="text-field">Radius</label></td>
+                <td><label class="text-field">Depth</label></td>
             </tr>
 
-            {% for id, patient_id, name, event_button_1, event_button_2, event_button_3 in devices %}
-                {% include '/device/update.html'%}
+            {% for id, date, width, height, radius, depth in transplantings %}
+                {% include '/transplanting/update.html'%}
             {% endfor %}
-
         </table>
     </div>
 
-    {% if is_admin %}
-        {% include '/device/create.html'%}
-    {% else %}
-        {% if not has_device %}
-            {% include '/device/create.html'%}
-        {% endif %}
-    {% endif %}
+    {% include '/transplanting/create.html'%}
+
 </body>
  
 </html>

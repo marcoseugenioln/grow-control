@@ -1,29 +1,18 @@
 <div class="create-div">
     <table>
         <tr>
-            <h1>Cadastrar Dispositivo</h1>
-            <form action="{{ url_for('create_device') }}" method="post">
-
-                <td><input type="text" class="text-field" name="name" value="{{ name }}"></td>
-
-                {% if is_admin %}
-                    <td><select class="combo-box" name="patient_id">
-                        {% for pid, pname, birth in patients %}
-                            {% if pid == patient_id %}
-                                <option value="{{ pid }}" selected>{{ pname }}</option>
-                            {% else %}
-                                <option value="{{ pid }}">{{ pname }}</option>
-                            {% endif %}
-                        {% endfor %}
-                    </select></td>
-                {% endif %}
-
+            <h1>Register Transplanting</h1>
+            <form action="{{ url_for('create_transplanting', id=id) }}" method="post">
+                <td><input type="date" class="text-field" name="date"></td>
+                <td><input type="number" min="0" max="10000" class="text-field" name="width"></td>
+                <td><input type="number" min="0" max="10000" class="text-field" name="height"></td>
+                <td><input type="number" min="0" max="10000" class="text-field" name="radius"></td>
+                <td><input type="number" min="0" max="10000" class="text-field" name="depth"></td>
                 <td>
                     <button class="action-btn">
                         <img src="{{ url_for('static', filename='image/create-icon.png')}}" class="action-btn-img" id="create-btn">
                     </button>
                 </td>
-
             </form>
         </tr>
     </table>
