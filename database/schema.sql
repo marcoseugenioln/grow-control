@@ -27,10 +27,10 @@ create table if not exists plant(
     id INTEGER PRIMARY KEY AUTOINCREMENT,
     name TEXT(50) UNIQUE NOT NULL,
     date DATE NOT NULL,
-    alive BOOLEAN NOT NULL,
-    harvested BOOLEAN NOT NULL,
+    alive BOOLEAN DEFAULT(1),
+    harvested BOOLEAN DEFAULT(0),
     photoperiod_id INTEGER NOT NULL,
-    gender_id INTEGER,
+    gender_id INTEGER NOT NULL,
     FOREIGN KEY (photoperiod_id) REFERENCES photoperiod(id)
     FOREIGN KEY (gender_id) REFERENCES gender(id)
 );

@@ -1,26 +1,26 @@
-<div name="training-{{ id }}">
+<div name="damage-{{ id }}">
     <tr>
-        <form action="{{ url_for('update_training', id=id) }}" method="post">
+        <form action="{{ url_for('update_damage', id=id) }}" method="post">
             <td><label>{{ id }}</label></td>
             <td><input id="date-{{ id }}" type="text" class="text-field" name="date" value="{{ date }}"></td>
-            <td><select class="combo-box" name="training_type_id">
-                {% for tid, tname, tdescription in training_types %}
-                    {% if tid == training_type_id %}
-                        <option value="{{ tid }}" selected>{{ tname }}</option>
+            <td><select class="combo-box" name="damage_type_id">
+                {% for did, dname, ddescription in damage_types %}
+                    {% if did == damage_type_id %}
+                        <option value="{{ did }}" selected>{{ dname }}</option>
                     {% else %}
-                        <option value="{{ tid }}">{{ tname }}</option>
+                        <option value="{{ did }}">{{ dname }}</option>
                     {% endif %}
                 {% endfor %}
             </select></td>
             <td>
-                <button class="action-btn" name="update-training-{{ id }}">
+                <button class="action-btn" name="update-damage-{{ id }}">
                     <img src="{{ url_for('static', filename='image/edit-icon.png')}}" class="action-btn-img">
                 </button>
             </td>
         </form>
-        <form action="{{ url_for('delete_training', id=id) }}" method="post">
+        <form action="{{ url_for('delete_damage', id=id) }}" method="post">
             <td>
-                <button class="action-btn" name="delete-device-{{ id }}">
+                <button class="action-btn" name="delete-damage-{{ id }}">
                     <img src="{{ url_for('static', filename='image/trash-icon.png')}}" class="action-btn-img">
                 </button>
             </td>

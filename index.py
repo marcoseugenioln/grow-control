@@ -109,9 +109,12 @@ def plant():
         genders=database.get_genders()
     )
 
-@app.route('/plant/create/<id>', methods=['GET', 'POST'])
-def create_plant(id):
+@app.route('/plant/create', methods=['GET', 'POST'])
+def create_plant():
     # TODO: create plant
+    if 'name' in request.form and 'date' in request.form and 'photoperiod_id' in request.form and 'gender_id' in request.form:
+        database.insert_plant(request.form['name'], request.form['date'], request.form['photoperiod_id'], request.form['gender_id'])
+    
     return redirect(url_for('plant'))
 
 @app.route('/plant/update/<id>', methods=['GET', 'POST'])
@@ -120,8 +123,9 @@ def update_plant(id):
     return redirect(url_for('plant'))
 
 @app.route('/plant/delete/<id>', methods=['GET', 'POST'])
-def update_plant(id):
+def delete_plant(id):
     # TODO: delete plant
+    database.delete_plant(id)
     return redirect(url_for('plant'))
 ################################################################################################## 
 @app.route('/watering/<id>', methods=['GET', 'POST'])
@@ -143,7 +147,7 @@ def update_watering(id):
     return redirect(url_for('watering', id=id))
 
 @app.route('/watering/delete/<id>', methods=['GET', 'POST'])
-def update_watering(id):
+def delete_watering(id):
     # TODO: delete watering
     return redirect(url_for('watering', id=id))
 
@@ -153,11 +157,12 @@ def training(id):
     
     return render_template(
         'training/index.html',
-        trainings=database.get_plant_trainings(id)
+        trainings=database.get_plant_trainings(id),
+        training_types=database.get_training_types()
     )
 
 @app.route('/training/create/<id>', methods=['GET', 'POST'])
-def create_watering(id):
+def create_training(id):
     # TODO: create training
     return redirect(url_for('training', id=id))
 
@@ -167,7 +172,7 @@ def update_training(id):
     return redirect(url_for('training', id=id))
 
 @app.route('/training/delete/<id>', methods=['GET', 'POST'])
-def update_training(id):
+def delete_training(id):
     # TODO: delete training
     return redirect(url_for('training', id=id))
 
@@ -192,7 +197,7 @@ def update_feeding(id):
     return redirect(url_for('feeding', id=id))
 
 @app.route('/feeding/delete/<id>', methods=['GET', 'POST'])
-def update_feeding(id):
+def delete_feeding(id):
     # TODO: delete feeding
     return redirect(url_for('feeding', id=id))
 
@@ -216,17 +221,18 @@ def update_transplanting(id):
     return redirect(url_for('transplanting', id=id))
 
 @app.route('/transplanting/delete/<id>', methods=['GET', 'POST'])
-def update_transplanting(id):
+def delete_transplanting(id):
     # TODO: delete transplanting
     return redirect(url_for('transplanting', id=id))
 
 ################################################################################################## 
 @app.route('/damage/<id>', methods=['GET', 'POST'])
-def transplanting(id):
+def damage(id):
     
     return render_template(
         'damage/index.html',
-        damages=database.get_plant_damages(id)
+        damages=database.get_plant_damages(id),
+        damage_types=database.get_damage_types()
     )
 
 @app.route('/damage/create/<id>', methods=['GET', 'POST'])
@@ -240,7 +246,7 @@ def update_damage(id):
     return redirect(url_for('damage', id=id))
 
 @app.route('/damage/delete/<id>', methods=['GET', 'POST'])
-def update_damage(id):
+def delete_damage(id):
     # TODO: delete damage
     return redirect(url_for('damage', id=id))
 ################################################################################################## 
@@ -249,7 +255,7 @@ def harvest(id):
     
     return render_template(
         'harvest/index.html',
-        harvests=database.get_plant_harvest(id)
+        harvests=database.get_plant_harvests(id)
     )
 
 @app.route('/harvest/create/<id>', methods=['GET', 'POST'])
@@ -263,7 +269,7 @@ def update_harvest(id):
     return redirect(url_for('harvest', id=id))
 
 @app.route('/harvest/delete/<id>', methods=['GET', 'POST'])
-def update_harvest(id):
+def delete_harvest(id):
     # TODO: delete harvest
     return redirect(url_for('harvest', id=id))
 

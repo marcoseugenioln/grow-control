@@ -63,7 +63,7 @@ class Grow():
             self.humidity = int(humidity)
         
         if report_updated:
-            print(f'temperature: {self.temperature}°C - humidity: {self.humidity}% - time: {datetime.datetime.now()}')
+            print(f'{datetime.datetime.now()} - temperature: {self.temperature}°C - humidity: {self.humidity}%')
 
     def m_grow_settings_cmd(self, auto_mode, desired_humidity, desired_temperature, light_act_time, light_deact_time, ventilation_capacity, circulation_capacity, humidifier_on):
         self.auto_mode = auto_mode
@@ -78,11 +78,11 @@ class Grow():
     def humidifier_automatic_regulation(self):
         if self.desired_humidity != 0:
             if self.humidity_bellow_desired and not self.humidifier.is_active():
-                print('humidifier: on')
+                print(f'{datetime.datetime.now()} - humidifier: on')
                 self.humidifier.activate(True)
 
             elif self.humidity >= self.desired_humidity and self.humidifier.is_active():
-                print('humidifier: off')
+                print(f'{datetime.datetime.now()} - humidifier: off')
                 self.humidifier.activate(False)
 
     def ventilator_automatic_regulation(self):
@@ -104,39 +104,23 @@ class Grow():
         elif self.humidity_bellow_desired and self.humidity_diference > self.humidity_tolerance:
             capacity = 60
 
-        print(f'setting ventilator capacity to: {capacity}%')
-        self.ventilator.set_capacity(capacity)
+        if self.ventilator.get_capacity() != capacity:
+            print(f'{datetime.datetime.now()} - setting ventilator capacity to: {capacity}%')
+            self.ventilator.set_capacity(capacity)
 
 
     def automatic_mode_loop(self):
         while True:
 
-            previous_temperature = 0
-            previous_humidity = 0
-            previous_desired_temperature = 0
-            previous_desired_humidity = 0
-
             time.sleep(1)
             if self.auto_mode:
 
-                temperature_changed = previous_temperature != self.temperature
-                humidity_changed = previous_humidity != self.humidity
-                desired_temperature_changed = previous_desired_temperature != self.desired_temperature
-                desired_humidity_changed = previous_desired_humidity != self.desired_humidity
-
-                previous_temperature = self.temperature
-                previous_humidity = self.humidity
-                previous_desired_temperature = self.desired_temperature
-                previous_desired_humidity = self.desired_humidity
-
-                if temperature_changed or humidity_changed or desired_temperature_changed or desired_humidity_changed:
+                self.humidity_above_desired = self.humidity > self.desired_humidity
+                self.humidity_bellow_desired = self.humidity < self.desired_humidity 
+                self.humidity_diference = math.sqrt(math.pow(self.humidity - self.desired_humidity, 2))
                 
-                    self.humidity_above_desired = self.humidity > self.desired_humidity
-                    self.humidity_bellow_desired = self.humidity < self.desired_humidity 
-                    self.humidity_diference = math.sqrt(math.pow(self.humidity - self.desired_humidity, 2))
-                    
-                    self.humidifier_automatic_regulation()
-                    self.ventilator_automatic_regulation()
+                self.humidifier_automatic_regulation()
+                self.ventilator_automatic_regulation()
             else:
                 continue
         

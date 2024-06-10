@@ -107,6 +107,13 @@
     padding: 1px;
 }
 
+.checkbox-field{
+    font-size: 14px;
+    min-width: 22px;
+    min-height: 22px;
+    padding: 1px;
+}
+
 .password-field{
     font-size: 14px;
     width: 150px;

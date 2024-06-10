@@ -5,7 +5,7 @@
     
             <td><input id="name-{{ id }}" type="text" class="text-field" name="name" value="{{ name }}"></td>
             <td><input id="date-{{ id }}" type="text" class="text-field" name="date" value="{{ date }}"></td>
-            <td><input id="alive-{{ id }}" type="checkbox" class="text-field" name="alive" value="{{ alive }}"></td>
+            
 
             <td><select id="photoperiod-id-{{ id }}" class="combo-box" name="photoperiod_id">
                 {% for pid, pname, pdescription in photoperiods %}
@@ -27,8 +27,18 @@
                 {% endfor %}
             </select></td>
 
-            <td><input id="harvested-{{ id }}" type="checkbox" class="text-field" name="harvested" value="{{ harvested }}"></td>
-    
+            {% if alive == 1 %}
+                <td><input id="alive-{{ id }}" type="checkbox" class="checkbox-field" name="alive" checked></td>
+            {% else %}
+                <td><input id="alive-{{ id }}" type="checkbox" class="checkbox-field" name="alive"></td>
+            {% endif %}
+
+            {% if harvested == 1 %}
+                <td><input id="harvested-{{ id }}" type="checkbox" class="checkbox-field" name="harvested" checked></td>
+            {% else %}
+                <td><input id="harvested-{{ id }}" type="checkbox" class="checkbox-field" name="harvested"></td>
+            {% endif %}
+
             <td>
                 <button class="action-btn" name="update-plant-{{ id }}">
                     <img src="{{ url_for('static', filename='image/edit-icon.png')}}" class="action-btn-img">

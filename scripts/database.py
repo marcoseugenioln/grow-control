@@ -1,4 +1,5 @@
 import sqlite3
+import datetime
 
 class Database():
 
@@ -18,8 +19,7 @@ class Database():
             self.connection.commit()
 
     def execute_query(self, query, fetch=False):
-
-        print(query)
+        print(f'{datetime.datetime.now()} - {query}')
         self.query.execute(query)
         self.connection.commit()
 
@@ -31,21 +31,24 @@ class Database():
             if retrieved_values:
                 return retrieved_values
             else:
-                return None
+                return []
         else:
             return retrieved_values
         
     def get_plants(self):
         return self.execute_query(f"select id, name, date, alive, harvested, photoperiod_id, gender_id from plant;", True)
     
-    def insert_plant(self, name, date, alive, harvested, photoperiod_id, gender_id):
-        self.execute_query(f"insert into plant (name, date, alive, harvested, photoperiod_id, gender_id) values '{name}', DATE('{date}'), {alive}, {harvested}, {photoperiod_id}, {gender_id};")
+    def insert_plant(self, name, date, photoperiod_id, gender_id):
+        self.execute_query(f"insert into plant (name, date, photoperiod_id, gender_id) values ('{name}', DATE('{date}'), {photoperiod_id}, {gender_id});")
 
     def update_plant(self, id, name, date, alive, harvested, photoperiod_id, gender_id):
         self.execute_query(f"update plant set name = {name}, date = DATE('{date}'), alive = {alive}, harvested = {harvested}, photoperiod_id = {photoperiod_id}, gender_id = {gender_id} where id = {id};")
     
     def get_plant(self, id):
         return self.execute_query(f"select id, name, date, alive, harvested, photoperiod_id, gender_id from plant where id = {id};", True)
+
+    def delete_plant(self, id):
+        return self.execute_query(f"delete from plant where id = {id};", True)
 
     def get_trainings(self):
         return self.execute_query(f"select id, plant_id, training_type_id, date from training;", True)
@@ -66,22 +69,22 @@ class Database():
         self.execute_query(f"insert into watering (plant_id, date, mililiter) values {plant_id}, DATETIME('{date}'), {mililiter};")
     
     def get_feedings(self):
-        return self.execute_query(f"select id, plant_id, date, dose, concentration, nitrogen, phosphorus, potassium from feeding;", True)
+        return self.execute_query(f"select id, plant_id, date, dosage, concentration, nitrogen, phosphorus, potassium from feeding;", True)
     
     def get_plant_feedings(self, plant_id):
-        return self.execute_query(f"select id, plant_id, date, dose, concentration, nitrogen, phosphorus, potassium from feeding where plant_id = {plant_id};", True)
+        return self.execute_query(f"select id, plant_id, date, dosage, concentration, nitrogen, phosphorus, potassium from feeding where plant_id = {plant_id};", True)
     
     def get_plant_waterings(self, plant_id):
-        return self.execute_query(f"select id, plant_id, date, dose, concentration, nitrogen, phosphorus, potassium from feeding where plant_id = {plant_id};", True)
+        return self.execute_query(f"select id, plant_id, date, dosage, concentration, nitrogen, phosphorus, potassium from feeding where plant_id = {plant_id};", True)
 
-    def insert_feeding(self, plant_id, date, dose, concentration, nitrogen, phosphorus, potassium):
-        self.execute_query(f"insert into watering (plant_id, date, dose, concentration, nitrogen, phosphorus, potassium) values {plant_id}, DATE('{date}'), {dose}, {concentration}, {nitrogen}, {phosphorus}, {potassium};")
+    def insert_feeding(self, plant_id, date, dosage, concentration, nitrogen, phosphorus, potassium):
+        self.execute_query(f"insert into watering (plant_id, date, dosage, concentration, nitrogen, phosphorus, potassium) values {plant_id}, DATE('{date}'), {dosage}, {concentration}, {nitrogen}, {phosphorus}, {potassium};")
     
     def get_transplantings(self):
         return self.execute_query(f"select id, plant_id, date, dimensions from transplanting;", True)
     
     def get_plant_transplantings(self, plant_id):
-        return self.execute_query(f"select id, plant_id, date, dimensions from transplanting where plant_id = {plant_id};", True)
+        return self.execute_query(f"select id, date, width, height, radius, depth from transplanting where plant_id = {plant_id};", True)
     
     def get_harvests(self):
         return self.execute_query(f"select id, plant_id, date, yield from harvest;", True)

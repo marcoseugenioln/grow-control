@@ -7,7 +7,7 @@
 </head>
  
 <body>
-    {% include 'header/index.html'%}
+    {% include 'header.html'%}
 
     <div class="index-div">
         <table>
@@ -15,13 +15,13 @@
                 <td><label class="text-field">ID</label></td>
                 <td><label class="text-field">Name</label></td>
                 <td><label class="text-field">Date</label></td>
-                <td><label class="text-field">Alive</label></td>
                 <td><label class="text-field">Photoperiod</label></td>
                 <td><label class="text-field">Gender</label></td>
+                <td><label class="text-field">Alive</label></td>
                 <td><label class="text-field">Harvested</label></td> 
             </tr>
 
-            {% for id, name, date, alive, photoperiod_id, gender_id, harvested in plants %}
+            {% for id, name, date, alive, harvested, photoperiod_id, gender_id in plants %}
                 {% include '/plant/update.html'%}
             {% endfor %}
         </table>

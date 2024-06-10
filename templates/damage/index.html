@@ -7,24 +7,23 @@
 </head>
  
 <body>
-    {% include 'header/index.html'%}
+    {% include 'header.html'%}
 
     <div class="index-div">
         <table>
             <tr>
                 <td><label class="text-field">ID</label></td>
-                <td><label class="text-field">Name</label></td>
                 <td><label class="text-field">Date</label></td>
                 <td><label class="text-field">Type</label></td>
             </tr>
 
-            {% for id, name, date, training_type_id in trainings %}
-                {% include '/training/update.html'%}
+            {% for id, date, damage_type_id in damages %}
+                {% include '/damage/update.html'%}
             {% endfor %}
         </table>
     </div>
 
-    {% include '/training/create.html'%}
+    {% include '/damage/create.html'%}
 </body>
  
 </html>
