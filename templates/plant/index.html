@@ -4,30 +4,33 @@
 <head>
     <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='style.css')}}">
     <title>Plants</title>
+    <script src="{{url_for('static', filename='plant.js')}}"></script>
+
 </head>
- 
-<body>
+<body onload="initGallery()">
+
     {% include 'header.html'%}
 
     <div class="index-div">
         <table>
-            <tr>
-                <td><label class="text-field">ID</label></td>
-                <td><label class="text-field">Name</label></td>
-                <td><label class="text-field">Date</label></td>
-                <td><label class="text-field">Photoperiod</label></td>
-                <td><label class="text-field">Gender</label></td>
-                <td><label class="text-field">Alive</label></td>
-                <td><label class="text-field">Harvested</label></td> 
-            </tr>
+            <button class="action-btn" onclick="previousPlant()">
+                <img src="{{ url_for('static', filename='image/left-arrow-icon.png')}}" class="action-btn-img">
+            </button>
+
+            <label id="selected_plant"> </label>
+
+            <button class="action-btn" onclick="nextPlant()">
+                <img src="{{ url_for('static', filename='image/right-arrow-icon.png')}}" class="action-btn-img">
+            </button>
+            <br>
+            <br>
 
             {% for id, name, date, alive, harvested, photoperiod_id, gender_id in plants %}
                 {% include '/plant/update.html'%}
             {% endfor %}
+            
         </table>
     </div>
-
     {% include '/plant/create.html'%}
 </body>
- 
 </html>

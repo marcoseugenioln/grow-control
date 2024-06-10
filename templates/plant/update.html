@@ -1,13 +1,16 @@
-<div name="plant-{{ id }}">
-    <tr>
+<div name="plant-{{ id }}" class="plant-div" id="plant-{{ id }}">
+    <fieldset class="card" >
+        <legend>{{ name }}</legend>
         <form action="{{ url_for('update_plant', id=id) }}" method="post">
-            <td><label>{{ id }}</label></td>
-    
-            <td><input id="name-{{ id }}" type="text" class="text-field" name="name" value="{{ name }}"></td>
-            <td><input id="date-{{ id }}" type="text" class="text-field" name="date" value="{{ date }}"></td>
-            
-
-            <td><select id="photoperiod-id-{{ id }}" class="combo-box" name="photoperiod_id">
+            <br>
+            <label>Plant name: </label><input id="name-{{ id }}" type="text" class="text-field" name="name" value="{{ name }}">
+            <br>
+            <br>
+            <label>Planting date: </label><input id="date-{{ id }}" type="date" class="text-field" name="date" value="{{ date }}">
+            <br>
+            <br>
+            <label>Photoperiod:</label>
+            <select id="photoperiod-id-{{ id }}" class="combo-box" name="photoperiod_id">
                 {% for pid, pname, pdescription in photoperiods %}
                     {% if pid == photoperiod_id %}
                         <option value="{{ pid }}" selected>{{ pname }}</option>
@@ -15,9 +18,11 @@
                         <option value="{{ pid }}">{{ pname }}</option>
                     {% endif %}
                 {% endfor %}
-            </select></td>
-
-            <td><select id="gender-id-{{ id }}" class="combo-box" name="gender_id">
+            </select>
+            <br>
+            <br>
+            <label>Gender:</label>
+            <select id="gender-id-{{ id }}" class="combo-box" name="gender_id">
                 {% for gid, gname, gdescription in genders %}
                     {% if gid == gender_id %}
                         <option value="{{ gid }}" selected>{{ gname }}</option>
@@ -25,75 +30,43 @@
                         <option value="{{ gid }}">{{ gname }}</option>
                     {% endif %}
                 {% endfor %}
-            </select></td>
-
-            {% if alive == 1 %}
-                <td><input id="alive-{{ id }}" type="checkbox" class="checkbox-field" name="alive" checked></td>
-            {% else %}
-                <td><input id="alive-{{ id }}" type="checkbox" class="checkbox-field" name="alive"></td>
-            {% endif %}
-
-            {% if harvested == 1 %}
-                <td><input id="harvested-{{ id }}" type="checkbox" class="checkbox-field" name="harvested" checked></td>
-            {% else %}
-                <td><input id="harvested-{{ id }}" type="checkbox" class="checkbox-field" name="harvested"></td>
-            {% endif %}
-
-            <td>
-                <button class="action-btn" name="update-plant-{{ id }}">
-                    <img src="{{ url_for('static', filename='image/edit-icon.png')}}" class="action-btn-img">
-                </button>
-            </td>
+            </select>
+            <br>
+            <br>
+            <button class="action-btn" name="update-plant-{{ id }}">
+                <img src="{{ url_for('static', filename='image/edit-icon.png')}}" class="action-btn-img">
+            </button>
         </form>
-        <form action="{{ url_for('delete_plant', id=id) }}" method="post">
-            <td>
-                <button class="action-btn" name="delete-device-{{ id }}">
-                    <img src="{{ url_for('static', filename='image/trash-icon.png')}}" class="action-btn-img">
-                </button>
-            </td>
-        </form>
-        <form action="{{ url_for('watering', id=id) }}" method="post">
-            <td>
-                <button class="action-btn">
-                    <img src="{{ url_for('static', filename='image/watering-icon.png')}}" class="action-btn-img">
-                </button>
-            </td>
-        </form>
-        <form action="{{ url_for('feeding', id=id) }}" method="post">
-            <td>
-                <button class="action-btn">
-                    <img src="{{ url_for('static', filename='image/feeding-icon.png')}}" class="action-btn-img">
-                </button>
-            </td>
-        </form>
-        <form action="{{ url_for('training', id=id) }}" method="post">
-            <td>
-                <button class="action-btn">
-                    <img src="{{ url_for('static', filename='image/training-icon.png')}}" class="action-btn-img">
-                </button>
-            </td>
-        </form>
-        <form action="{{ url_for('transplanting', id=id) }}" method="post">
-            <td>
-                <button class="action-btn">
-                    <img src="{{ url_for('static', filename='image/transplanting-icon.png')}}" class="action-btn-img">
-                </button>
-            </td>
-        </form>
-        <form action="{{ url_for('damage', id=id) }}" method="post">
-            <td>
-                <button class="action-btn">
-                    <img src="{{ url_for('static', filename='image/damage-icon.png')}}" class="action-btn-img">
-                </button>
-            </td>
-        </form>
-        <form action="{{ url_for('harvest', id=id) }}" method="post">
-            <td>
-                <button class="action-btn">
-                    <img src="{{ url_for('static', filename='image/harvest-icon.png')}}" class="action-btn-img">
-                </button>
-            </td>
-        </form>
-        
-    </tr>
+        {% set delete_url = url_for('delete_plant', id=id) %}
+        <button class="action-btn" name="delete-plant-{{ id }}"  onclick="window.location.href = '{{ delete_url }}';">
+            <img src="{{ url_for('static', filename='image/trash-icon.png')}}" class="action-btn-img">
+        </button>
+        <br>
+        <br>
+        {% set watering_url = url_for('watering', id=id) %}
+        <button class="action-btn" onclick="window.location.href = '{{ watering_url }}' ; ">
+            <img src="{{ url_for('static', filename='image/watering-icon.png')}}" class="action-btn-img">
+        </button>
+        {% set feeding_url = url_for('feeding', id=id) %}
+        <button class="action-btn" onclick="window.location.href = '{{ feeding_url }}' ; ">
+                <img src="{{ url_for('static', filename='image/feeding-icon.png')}}" class="action-btn-img">
+        </button>
+        {% set training_url = url_for('training', id=id) %}
+        <button class="action-btn" onclick="window.location.href = '{{ training_url }}' ; ">
+                <img src="{{ url_for('static', filename='image/training-icon.png')}}" class="action-btn-img">
+        </button>
+        {% set transplanting_url = url_for('transplanting', id=id) %}
+        <button class="action-btn" onclick="window.location.href = '{{ transplanting_url }}' ; ">
+                <img src="{{ url_for('static', filename='image/transplanting-icon.png')}}" class="action-btn-img">
+        </button>
+        {% set damage_url = url_for('damage', id=id)  %}
+        <button class="action-btn" onclick="window.location.href = '{{ damage_url }}' ; ">
+                <img src="{{ url_for('static', filename='image/damage-icon.png')}}" class="action-btn-img">
+        </button>
+        {% set harvest_url = url_for('harvest', id=id) %}
+        <button class="action-btn" onclick="window.location.href = '{{ harvest_url }}' ; ">
+            <img src="{{ url_for('static', filename='image/harvest-icon.png')}}" class="action-btn-img">
+        </button>
+    </fieldset>
 </div>
+

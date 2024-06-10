@@ -25,7 +25,7 @@ create table if not exists damage_type(
 
 create table if not exists plant(
     id INTEGER PRIMARY KEY AUTOINCREMENT,
-    name TEXT(50) UNIQUE NOT NULL,
+    name TEXT(50) NOT NULL,
     date DATE NOT NULL,
     alive BOOLEAN DEFAULT(1),
     harvested BOOLEAN DEFAULT(0),
