@@ -38,11 +38,14 @@ class Database():
     def get_plants(self):
         return self.execute_query(f"select id, name, date, alive, harvested, photoperiod_id, gender_id from plant;", True)
     
+    def get_alive_plants(self):
+        return self.execute_query(f"select id, name, date, harvested, photoperiod_id, gender_id from plant where alive = 1;", True)
+    
     def insert_plant(self, name, date, photoperiod_id, gender_id):
         self.execute_query(f"insert into plant (name, date, photoperiod_id, gender_id) values ('{name}', DATE('{date}'), {photoperiod_id}, {gender_id});")
 
-    def update_plant(self, id, name, date, alive, harvested, photoperiod_id, gender_id):
-        self.execute_query(f"update plant set name = {name}, date = DATE('{date}'), alive = {alive}, harvested = {harvested}, photoperiod_id = {photoperiod_id}, gender_id = {gender_id} where id = {id};")
+    def update_plant(self, id, name, date, photoperiod_id, gender_id, alive=1, harvested=0):
+        self.execute_query(f"update plant set name = '{name}', date = DATE('{date}'), alive = {alive}, harvested = {harvested}, photoperiod_id = {photoperiod_id}, gender_id = {gender_id} where id = {id};")
     
     def get_plant(self, id):
         return self.execute_query(f"select id, name, date, alive, harvested, photoperiod_id, gender_id from plant where id = {id};", True)
@@ -93,10 +96,10 @@ class Database():
         return self.execute_query(f"select id, plant_id, date, yield from harvest where plant_id = {plant_id};", True)
 
     def get_damages(self):
-        return self.execute_query(f"select id, plant_id, damage_type_id, date from damage;", True)
+        return self.execute_query(f"select id, plant_id, damage_type_id, date, intensity_id from damage;", True)
     
     def get_plant_damages(self, plant_id):
-        return self.execute_query(f"select id, plant_id, damage_type_id, date from damage where plant_id = {plant_id};", True)
+        return self.execute_query(f"select id, plant_id, damage_type_id, date, intensity_id from damage where plant_id = {plant_id};", True)
         
     def get_training_types(self):
         return self.execute_query(f"select id, name, description from training_type;", True)
@@ -109,6 +112,9 @@ class Database():
     
     def get_damage_types(self):
         return self.execute_query(f"select id, name, description from damage_type;", True)
+    
+    def get_intensities(self):
+        return self.execute_query(f"select id, name, description from intensity;", True)
 
     
     

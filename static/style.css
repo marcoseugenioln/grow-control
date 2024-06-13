@@ -1,17 +1,9 @@
-.error-message{
-    color:red;
-    font-size: 14px;
-}
-
-.success-message{
-    color:green;
-    font-size: 14px;
-}
-
 .header-div{
     display:flex;
     align-items: center;
     flex-direction: row;
+    background-color:rgb(0, 150, 0);
+    height: fit-content;
 }
 
 .header-btn{
@@ -27,8 +19,8 @@
 .header-btn:active {
     background-color: rgb(0, 150, 0);
     transform: translateY(1px);
-    transform: translateX(1px);
-}
+    transform: translateX(1px); 
+} 
 
 .header-btn:hover{
     background-color:rgb(80, 150, 80);
@@ -37,7 +29,7 @@
 .header-btn-img{
     width: 28px; 
     height: 28px;
-    padding: 5px;
+    /* padding: 5px; */
 }
 
 #logout-img{
@@ -45,50 +37,29 @@
     transform: translateX(2px);
 }
 
-.btn{
-    background-color:rgb(0, 150, 0);
-    color:aliceblue;
-    font-size: 14px;
-    width: 150px;
-    height: 28px;
-    border-style: none;
-    border-radius: 5px;
-}
-
-.btn:active {
-    background-color: rgb(0, 150, 0);
-    transform: translateY(1px);
-    transform: translateX(1px);
-}
-
-.btn:hover{
-    background-color:rgb(80, 150, 80);
-}
-
-.action-btn {
+.btn {
     background-color:rgb(0, 150, 0);
     color:aliceblue;
     width:fit-content;
     height:fit-content;
     border-style: none;
-    border-radius: 5px;
+    /* border-radius: 5px; */
 }
 
-.action-btn:active {
+.btn:active {
     background-color: rgb(80, 150, 80);
     transform: translateY(1px);
     transform: translateX(1px);
 }
 
-.action-btn:hover{
-    background-color:rgb(80, 150, 80);
+.btn:hover{
+    background-color:rgb(185, 235, 185);
 }
 
-.action-btn-img{
+.btn-img{
     width: 28px; 
     height: 28px;
 }
-
 
 #create-btn{
     transform: translateY(1.5px);
@@ -114,25 +85,12 @@
     padding: 1px;
 }
 
-.password-field{
-    font-size: 14px;
-    width: 150px;
-    height: 22px;
-    padding: 1px;
-}
 
 .centralized-div{
     display: flex;
     flex-direction:column;
     align-items: center;
     justify-content: center;
-}
-
-.text-warning{
-    font-size: 14px;
-    width: 150px;
-    height: 22px;
-    padding: 1px;
 }
 
 .number-field{
@@ -142,34 +100,8 @@
     padding: 1px;
 }
 
-.menu-btn{
-    background-color:rgb(0, 255, 0);
-    color:aliceblue;
-    width:fit-content;
-    height:fit-content;
-    margin:10px;
-    border-style: none;
-    border-radius: 5px;
-}
-
-.menu-btn:active {
-    background-color: rgb(0, 255, 0);
-    transform: translateY(1px);
-    transform: translateX(1px);
-}
-
-.menu-btn:hover{
-    background-color:rgb(180, 255, 180);
-}
-
-.menu-btn-img{
-    width: 28px; 
-    height: 28px;
-    padding: 5px;
-}
-
 .card{
-    width:500px;
+    width:fit-content;
     border-radius: 15px;
     border-style: solid;
     /* display: flex;
@@ -182,3 +114,46 @@
     display: none;
 }
 
+.menu-div{
+    display: none;
+    position: relative;
+    width: fit-content;
+    height: fit-content;
+    /* justify-content: center;
+    align-items: center;
+    text-align: center; */
+}
+
+#close-btn
+{
+    margin-left: 100%; 
+    margin-right: 0;
+}
+
+.overlay {
+    position: fixed; /* Sit on top of the page content */
+    display: none; /* Hidden by default */
+    width: 100%; /* Full width (cover the whole page) */
+    height: 100%; /* Full height (cover the whole page) */
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: rgba(0,0,0,0.5); /* Black background with opacity */
+    z-index: 2; /* Specify a stack order in case you're using a different order for other elements */
+    cursor: pointer; /* Add a pointer on hover */
+    align-self: center;
+}
+
+/* Position the content inside the overlay */
+.menu {
+    margin-left: 50%;
+    margin-top: 50%;
+}
+
+fieldset {
+    align-items: center;
+    width: fit-content;
+    height: fit-content;
+    background-color: white;
+}

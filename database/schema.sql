@@ -11,6 +11,12 @@ create table if not exists gender(
     description TEXT(500) NOT NULL
 );
 
+create table if not exists intensity(
+    id INTEGER PRIMARY KEY,
+    name text(50) UNIQUE,
+    description TEXT(500) NOT NULL
+);
+
 create table if not exists training_type(
     id INTEGER PRIMARY KEY AUTOINCREMENT,
     name text(50) UNIQUE,
@@ -80,7 +86,9 @@ create table if not exists damage(
     plant_id INTEGER NOT NULL,
     date DATE NOT NULL,
     damage_type_id INTEGER NOT NULL,
+    intensity_id INTEGER NOT NULL,
     FOREIGN KEY (damage_type_id) REFERENCES damage_type(id),
+    FOREIGN KEY (intensity_id) REFERENCES intensity(id),
     FOREIGN KEY (plant_id) REFERENCES plant(id)
 );
 
@@ -122,3 +130,11 @@ INSERT OR IGNORE INTO damage_type (name, description) VALUES
 ('Low Light', ''),
 ('Mold', ''),
 ('Parasites', '');
+
+INSERT OR IGNORE INTO intensity (name, description) VALUES
+('Very Low', ''),
+('Low', ''),
+('Medium', ''),
+('High', ''),
+('Very High', '');
+

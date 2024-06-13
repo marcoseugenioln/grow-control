@@ -9,15 +9,15 @@
             <td><input type="number" min="0" max="10000" class="text-field" name="potassium" value="{{ potassium }}"></td>
             <td><input type="number" min="0" max="10000" class="text-field" name="concentration" value="{{ concentration }}"></td>
             <td>
-                <button class="action-btn" name="update-feeding-{{ id }}">
-                    <img src="{{ url_for('static', filename='image/edit-icon.png')}}" class="action-btn-img">
+                <button class="btn" name="update-feeding-{{ id }}">
+                    <img src="{{ url_for('static', filename='image/edit-icon.png')}}" class="btn-img">
                 </button>
             </td>
         </form>
         <form action="{{ url_for('delete_feeding', id=id) }}" method="post">
             <td>
-                <button class="action-btn" name="delete-feeding-{{ id }}">
-                    <img src="{{ url_for('static', filename='image/trash-icon.png')}}" class="action-btn-img">
+                <button class="btn" name="delete-feeding-{{ id }}">
+                    <img src="{{ url_for('static', filename='image/trash-icon.png')}}" class="btn-img">
                 </button>
             </td>
         </form>

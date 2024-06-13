@@ -33,40 +33,40 @@
             </select>
             <br>
             <br>
-            <button class="action-btn" name="update-plant-{{ id }}">
-                <img src="{{ url_for('static', filename='image/edit-icon.png')}}" class="action-btn-img">
+            <button class="btn" name="update-plant-{{ id }}">
+                <img src="{{ url_for('static', filename='image/edit-icon.png')}}" class="btn-img">
             </button>
         </form>
+
+        
         {% set delete_url = url_for('delete_plant', id=id) %}
-        <button class="action-btn" name="delete-plant-{{ id }}"  onclick="window.location.href = '{{ delete_url }}';">
-            <img src="{{ url_for('static', filename='image/trash-icon.png')}}" class="action-btn-img">
+        <button class="btn" name="delete-plant-{{ id }}"  onclick="window.location.href = '{{ delete_url }}';">
+            <img src="{{ url_for('static', filename='image/trash-icon.png')}}" class="btn-img">
         </button>
-        <br>
-        <br>
         {% set watering_url = url_for('watering', id=id) %}
-        <button class="action-btn" onclick="window.location.href = '{{ watering_url }}' ; ">
-            <img src="{{ url_for('static', filename='image/watering-icon.png')}}" class="action-btn-img">
+        <button class="btn" onclick="window.location.href = '{{ watering_url }}' ; ">
+            <img src="{{ url_for('static', filename='image/watering-icon.png')}}" class="btn-img">
         </button>
         {% set feeding_url = url_for('feeding', id=id) %}
-        <button class="action-btn" onclick="window.location.href = '{{ feeding_url }}' ; ">
-                <img src="{{ url_for('static', filename='image/feeding-icon.png')}}" class="action-btn-img">
+        <button class="btn" onclick="window.location.href = '{{ feeding_url }}' ; ">
+                <img src="{{ url_for('static', filename='image/feeding-icon.png')}}" class="btn-img">
         </button>
         {% set training_url = url_for('training', id=id) %}
-        <button class="action-btn" onclick="window.location.href = '{{ training_url }}' ; ">
-                <img src="{{ url_for('static', filename='image/training-icon.png')}}" class="action-btn-img">
+        <button class="btn" onclick="window.location.href = '{{ training_url }}' ; ">
+                <img src="{{ url_for('static', filename='image/training-icon.png')}}" class="btn-img">
         </button>
         {% set transplanting_url = url_for('transplanting', id=id) %}
-        <button class="action-btn" onclick="window.location.href = '{{ transplanting_url }}' ; ">
-                <img src="{{ url_for('static', filename='image/transplanting-icon.png')}}" class="action-btn-img">
+        <button class="btn" onclick="window.location.href = '{{ transplanting_url }}' ; ">
+                <img src="{{ url_for('static', filename='image/transplanting-icon.png')}}" class="btn-img">
         </button>
         {% set damage_url = url_for('damage', id=id)  %}
-        <button class="action-btn" onclick="window.location.href = '{{ damage_url }}' ; ">
-                <img src="{{ url_for('static', filename='image/damage-icon.png')}}" class="action-btn-img">
+        <button class="btn" onclick="window.location.href = '{{ damage_url }}' ; ">
+                <img src="{{ url_for('static', filename='image/damage-icon.png')}}" class="btn-img">
         </button>
         {% set harvest_url = url_for('harvest', id=id) %}
-        <button class="action-btn" onclick="window.location.href = '{{ harvest_url }}' ; ">
-            <img src="{{ url_for('static', filename='image/harvest-icon.png')}}" class="action-btn-img">
+        <button class="btn" onclick="window.location.href = '{{ harvest_url }}' ; ">
+            <img src="{{ url_for('static', filename='image/harvest-icon.png')}}" class="btn-img">
         </button>
-    </fieldset>
+    <!-- </fieldset> -->
 </div>
 

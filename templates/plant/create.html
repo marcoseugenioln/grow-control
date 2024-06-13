@@ -1,32 +1,32 @@
-<div class="create-div">
-    <table>
-        <tr>
-            <h2>Register Plant</h2>
+<div class="overlay" id="create-plant-div">
+    
+    <fieldset class="menu">
+        <button class="btn" id="close-btn" onclick="closeMenu('create-plant-div')">
+            x
+        </button>
+        <legend>Register Plant</legend>
+        <form action="{{ url_for('create_plant') }}" method="post">
+            <input type="text" class="text-field" name="name" placeholder="Plant name">
+            <br><br>
+            <input type="date" class="text-field" name="date">
+            <br><br>
+            <select class="combo-box" name="photoperiod_id">
+                {% for pid, pname, pdescription in photoperiods %}
+                    <option value="{{ pid }}">{{ pname }}</option>
+                {% endfor %}
+            </select>
+            <br><br>
+            <select id="gender-id-{{ id }}" class="combo-box" name="gender_id">
+                {% for gid, gname, gdescription in genders %}
+                    <option value="{{ gid }}">{{ gname }}</option>
+                {% endfor %}
+            </select>
+            <br><br>
+            <button class="btn">
+                <img src="{{ url_for('static', filename='image/confirm-icon.png')}}" class="btn-img" id="create-btn">
+            </button>
+        </form>
+        
+    </fieldset>
 
-            <form action="{{ url_for('create_plant') }}" method="post">
-
-                <td><input type="text" class="text-field" name="name" placeholder="Plant name"></td>
-                <td><input type="date" class="text-field" name="date"></td>
-
-                <td><select class="combo-box" name="photoperiod_id">
-                    {% for pid, pname, pdescription in photoperiods %}
-                        <option value="{{ pid }}">{{ pname }}</option>
-                    {% endfor %}
-                </select></td>
-
-                <td><select id="gender-id-{{ id }}" class="combo-box" name="gender_id">
-                    {% for gid, gname, gdescription in genders %}
-                        <option value="{{ gid }}">{{ gname }}</option>
-                    {% endfor %}
-                </select></td>
-
-                <td>
-                    <button class="action-btn">
-                        <img src="{{ url_for('static', filename='image/create-icon.png')}}" class="action-btn-img" id="create-btn">
-                    </button>
-                </td>
-
-            </form>
-        </tr>
-    </table>
 </div>

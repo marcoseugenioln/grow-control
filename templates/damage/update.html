@@ -12,6 +12,15 @@
                     {% endif %}
                 {% endfor %}
             </select></td>
+            <td><select class="combo-box" name="intensity__id">
+                {% for iid, iname, idescription in intensities %}
+                    {% if iid == intensity_id %}
+                        <option value="{{ iid }}" selected>{{ iname }}</option>
+                    {% else %}
+                        <option value="{{ iid }}">{{ iname }}</option>
+                    {% endif %}
+                {% endfor %}
+            </select></td>
             <td>
                 <button class="action-btn" name="update-damage-{{ id }}">
                     <img src="{{ url_for('static', filename='image/edit-icon.png')}}" class="action-btn-img">

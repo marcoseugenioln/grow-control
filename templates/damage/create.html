@@ -1,8 +1,7 @@
 <div class="create-div">
     <table>
         <tr>
-            <h1>Register Damage</h1>
-
+            <h2>Register Damage</h2>
             <form action="{{ url_for('create_damage', id=id) }}" method="post">
                 <td><input type="date" class="text-field" name="date"></td>
                 <td><select class="combo-box" name="damage_type_id">
@@ -10,12 +9,16 @@
                         <option value="{{ did }}">{{ dname }}</option>
                     {% endfor %}
                 </select></td>
+                <td><select class="combo-box" name="intensity_id">
+                    {% for iid, iname, idescription in intensities %}
+                        <option value="{{ iid }}">{{ iname }}</option>
+                    {% endfor %}
+                </select></td>
                 <td>
-                    <button class="action-btn">
-                        <img src="{{ url_for('static', filename='image/create-icon.png')}}" class="action-btn-img" id="create-btn">
+                    <button class="btn">
+                        <img src="{{ url_for('static', filename='image/create-icon.png')}}" class="btn-img" id="create-btn">
                     </button>
                 </td>
-
             </form>
         </tr>
     </table>

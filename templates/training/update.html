@@ -14,15 +14,15 @@
 
             </select></td>
             <td>
-                <button class="action-btn" name="update-training-{{ id }}">
-                    <img src="{{ url_for('static', filename='image/edit-icon.png')}}" class="action-btn-img">
+                <button class="btn" name="update-training-{{ id }}">
+                    <img src="{{ url_for('static', filename='image/edit-icon.png')}}" class="btn-img">
                 </button>
             </td>
         </form>
         <form action="{{ url_for('delete_training', id=id) }}" method="post">
             <td>
-                <button class="action-btn" name="delete-device-{{ id }}">
-                    <img src="{{ url_for('static', filename='image/trash-icon.png')}}" class="action-btn-img">
+                <button class="btn" name="delete-device-{{ id }}">
+                    <img src="{{ url_for('static', filename='image/trash-icon.png')}}" class="btn-img">
                 </button>
             </td>
         </form>

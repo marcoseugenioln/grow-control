@@ -13,14 +13,19 @@
 
     <div class="index-div">
         <table>
-            <button class="action-btn" onclick="previousPlant()">
-                <img src="{{ url_for('static', filename='image/left-arrow-icon.png')}}" class="action-btn-img">
+            <button class="btn" onclick="previousPlant()">
+                <img src="{{ url_for('static', filename='image/left-arrow-icon.png')}}" class="btn-img">
             </button>
 
             <label id="selected_plant"> </label>
 
-            <button class="action-btn" onclick="nextPlant()">
-                <img src="{{ url_for('static', filename='image/right-arrow-icon.png')}}" class="action-btn-img">
+            <button class="btn" onclick="nextPlant()">
+                <img src="{{ url_for('static', filename='image/right-arrow-icon.png')}}" class="btn-img">
+            </button>
+            <br>
+            <br>
+            <button class="btn" onclick="openMenu('create-plant-div')">
+                <img src="{{ url_for('static', filename='image/create-icon.png')}}" class="btn-img" id="create-btn">
             </button>
             <br>
             <br>

@@ -101,13 +101,18 @@ function previousPlant()
       }
     }
   }
-
   selected_plant_label.innerHTML = text
 }
 
-function showTab(tab) 
+function openMenu(div_id)
 {
-
+  console.log(div_id)
+  document.getElementById(div_id).style.display = "block";
 }
 
+function closeMenu(div_id)
+{
+  console.log(div_id)
+  document.getElementById(div_id).style.display = "none";
+}
 

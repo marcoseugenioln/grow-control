@@ -17,7 +17,7 @@
                 <td><label class="text-field">Type</label></td>
             </tr>
 
-            {% for id, date, damage_type_id in damages %}
+            {% for id, date, damage_type_id, intensity_id in damages %}
                 {% include '/damage/update.html'%}
             {% endfor %}
         </table>
