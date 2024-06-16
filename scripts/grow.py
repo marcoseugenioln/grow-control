@@ -4,6 +4,7 @@ import time
 import math
 from scripts.dht import DHT
 from scripts.humidifier import Humidifier
+from scripts.heater import Heater
 from scripts.fan import Fan
 from pubsub import pub
 import RPi.GPIO
@@ -15,6 +16,7 @@ class Grow():
                  circulator_pin = 18, 
                  dht_sensor_pin = 1, 
                  humidifier_pin = 20, 
+                 heater_pin = 15,
                  automatic=False, 
                  ventilator_capacity=0, 
                  circulator_capacity=0,
@@ -41,6 +43,7 @@ class Grow():
         self.ventilator = Fan(pin=ventilator_pin)
         self.circulator = Fan(pin=circulator_pin)
         self.humidifier = Humidifier(pin=humidifier_pin)
+        self.heater = Heater(pin=heater_pin)
 
         self.ventilator.set_capacity(ventilator_capacity)
         self.circulator.set_capacity(circulator_capacity)
@@ -65,7 +68,7 @@ class Grow():
         if report_updated:
             print(f'{datetime.datetime.now()} - temperature: {self.temperature}°C - humidity: {self.humidity}%')
 
-    def m_grow_settings_cmd(self, auto_mode, desired_humidity, desired_temperature, light_act_time, light_deact_time, ventilation_capacity, circulation_capacity, humidifier_on):
+    def m_grow_settings_cmd(self, auto_mode, desired_humidity, desired_temperature, light_act_time, light_deact_time, ventilation_capacity, circulation_capacity, humidifier_on, heater_on):
         self.auto_mode = auto_mode
         self.desired_humidity = int(desired_humidity)
         self.desired_temperature = int(desired_temperature)
@@ -74,6 +77,7 @@ class Grow():
         self.ventilator.set_capacity(ventilation_capacity)
         self.circulator.set_capacity(circulation_capacity)
         self.humidifier.activate(humidifier_on)
+        self.heater.activate(heater_on)
 
     def humidifier_automatic_regulation(self):
         if self.desired_humidity != 0:
@@ -93,16 +97,16 @@ class Grow():
             capacity = 100
 
         elif self.humidity_above_desired and self.humidity_diference <= self.humidity_tolerance:
-            capacity = 90
+            capacity = 95
 
         elif not self.humidity_above_desired and not self.humidity_bellow_desired:
-            capacity = 80
+            capacity = 90
 
         elif self.humidity_bellow_desired and self.humidity_diference <= self.humidity_tolerance:
-            capacity = 70
+            capacity = 85
 
         elif self.humidity_bellow_desired and self.humidity_diference > self.humidity_tolerance:
-            capacity = 60
+            capacity = 80
 
         if self.ventilator.get_capacity() != capacity:
             print(f'{datetime.datetime.now()} - setting ventilator capacity to: {capacity}%')

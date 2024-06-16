@@ -88,8 +88,30 @@
                 <br>
             {% endif %}
 
+            {% if auto_mode %}
+                <br>
+                <label>Heater Active</label>
+                {% if heater_on %}
+                    <input type="checkbox" name="heater_on" id="heater_on" checked disabled>
+                {% else %}
+                    <input type="checkbox" name="heater_on" id="heater_on" disabled>
+                {% endif %}
+                <br>
+            {% else %}
+                <br>
+                <label>Heater Active</label>
+                {% if heater_on %}
+                    <input type="checkbox" name="heater_on" id="heater_on" checked>
+                {% else %}
+                    <input type="checkbox" name="heater_on" id="heater_on">
+                {% endif %}
+                <br>
+            {% endif %}
+
             <br>
-            <button class="btn" > apply </button>
+            <button class="btn" > 
+                <img src="{{ url_for('static', filename='image/confirm-icon.png')}}" class="btn-img" id="create-btn">
+            </button>
             <br>
 
         </form>

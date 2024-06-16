@@ -20,6 +20,7 @@ grow = Grow(ventilator_pin=app_config['ventilator_pin'],
             circulator_pin=app_config['circulator_pin'], 
             dht_sensor_pin=app_config['dht_sensor_pin'], 
             humidifier_pin=app_config['humidifier_pin'],
+            heater_pin=app_config['heater_pin'],
             automatic=app_config['automatic'],
             ventilator_capacity=app_config['ventilator_capacity'],
             circulator_capacity=app_config['circulator_capacity'],
@@ -48,6 +49,7 @@ def grow_settings_cmd():
         light_act_time = None
         light_deact_time = None
         humidifier_on = False
+        heater_on = False
         ventilation = 0
         circulation = 0
 
@@ -69,6 +71,9 @@ def grow_settings_cmd():
         if 'humidifier_on' in request.form:
             humidifier_on = request.form['humidifier_on'] == 'on'
 
+        if 'heater_on' in request.form:
+            heater_on = request.form['heater_on'] == 'on'
+
         if 'ventilation' in request.form:
             ventilation = request.form['ventilation']
 
@@ -83,7 +88,8 @@ def grow_settings_cmd():
                         light_deact_time=light_deact_time, 
                         ventilation_capacity=ventilation, 
                         circulation_capacity=circulation, 
-                        humidifier_on=humidifier_on)
+                        humidifier_on=humidifier_on,
+                        heater_on=heater_on)
         
     return redirect(url_for('config'))
 
@@ -94,19 +100,21 @@ def config():
                            circulation=grow.circulator.get_capacity(),
                            ventilation=grow.ventilator.get_capacity(),
                            humidifier_on=grow.humidifier.is_active(),
+                           heater_on=grow.heater.is_active(),
                            desired_humidity=grow.desired_humidity,
                            desired_temperature=grow.desired_temperature)
 
 
 ##################################################################################################
 @app.route('/plant', methods=['GET', 'POST'])
-def plant():
+def plants():
     
     return render_template(
         'plant/index.html',
         plants=database.get_plants(),
         photoperiods=database.get_photoperiods(),
-        genders=database.get_genders()
+        genders=database.get_genders(),
+        intensities=database.get_intensities()
     )
 
 @app.route('/plant/create', methods=['GET', 'POST'])
@@ -115,7 +123,7 @@ def create_plant():
     if 'name' in request.form and 'date' in request.form and 'photoperiod_id' in request.form and 'gender_id' in request.form:
         database.insert_plant(request.form['name'], request.form['date'], request.form['photoperiod_id'], request.form['gender_id'])
     
-    return redirect(url_for('plant'))
+    return redirect(url_for('plants'))
 
 @app.route('/plant/update/<id>', methods=['GET', 'POST'])
 def update_plant(id):
@@ -126,7 +134,7 @@ def update_plant(id):
 def delete_plant(id):
     # TODO: delete plant
     database.delete_plant(id)
-    return redirect(url_for('plant'))
+    return redirect(url_for('plants'))
 ################################################################################################## 
 @app.route('/watering/<id>', methods=['GET', 'POST'])
 def watering(id):
@@ -232,7 +240,8 @@ def damage(id):
     return render_template(
         'damage/index.html',
         damages=database.get_plant_damages(id),
-        damage_types=database.get_damage_types()
+        damage_types=database.get_damage_types(),
+        intensities=database.get_intensities()
     )
 
 @app.route('/damage/create/<id>', methods=['GET', 'POST'])

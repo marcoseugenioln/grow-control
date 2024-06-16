@@ -145,10 +145,10 @@
     align-self: center;
 }
 
-/* Position the content inside the overlay */
+/* Position the content inside the overlay  */
 .menu {
     margin-left: 50%;
-    margin-top: 50%;
+    margin-top: 5%
 }
 
 fieldset {

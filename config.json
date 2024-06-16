@@ -5,11 +5,12 @@
 
     "ventilator_pin" : 19,
     "circulator_pin" : 18,
-    "dht_sensor_pin" : 1,
+    "dht_sensor_pin" : 16,
     "humidifier_pin" : 20,
+    "heater_pin" : 26, 
 
-    "automatic" : true,
-    "ventilator_capacity" : 50,
+    "automatic" : false,
+    "ventilator_capacity" : 0,
     "circulator_capacity" : 0,
     "desired_humidity" : 70,
     "desired_temperature" : 25,

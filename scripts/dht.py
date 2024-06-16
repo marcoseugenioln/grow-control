@@ -6,10 +6,10 @@ from adafruit_blinka.microcontroller.bcm283x.pin import Pin
 
 class DHT():
 
-    def __init__(self, interval=1, pin=1):
+    def __init__(self, interval=1, pin=16):
         self.pin = pin
         self.interval = interval
-        self.sensor = adafruit_dht.DHT11(Pin(self.pin))
+        self.sensor = adafruit_dht.DHT22(Pin(self.pin), False)
 
         self.temperature = 0
         self.humidity = 0
@@ -43,6 +43,8 @@ class DHT():
             except Exception as error:
                 print(error)
                 self.sensor.exit()
+                time.sleep(self.interval)
+                self.sensor = adafruit_dht.DHT22(Pin(self.pin))
                 raise error
 
 # ------------ register listener ------------------
@@ -51,7 +53,7 @@ class DHT():
 #     print("temperature: " + str(temperature))
 #     print("humidity:    " + str(humidity))
 
-# pub.subscribe(dht_listener, 'm_dht')
+# pub.subscribe(dht_listener, 'm_dht_report')
 
 # dht = DHT()
 
