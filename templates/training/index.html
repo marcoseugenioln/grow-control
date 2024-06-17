@@ -11,12 +11,7 @@
 
     <div class="index-div">
         <table>
-            <tr>
-                <td><label class="text-field">ID</label></td>
-                <td><label class="text-field">Name</label></td>
-                <td><label class="text-field">Date</label></td>
-                <td><label class="text-field">Type</label></td>
-            </tr>
+            
 
             {% for id, name, date, training_type_id in trainings %}
                 {% include '/training/update.html'%}

@@ -79,6 +79,16 @@ class Grow():
         self.humidifier.activate(humidifier_on)
         self.heater.activate(heater_on)
 
+        print(f'{datetime.datetime.now()} - m_grow_settings_cmd:')
+        print(f'auto_mode[{self.auto_mode}]')
+        print(f'desired_humidity[{self.desired_humidity}]')
+        print(f'desired_temperature[{self.desired_temperature}]')
+        print(f'light_act_time[{self.light_act_time}]')
+        print(f'light_deact_time[{self.light_deact_time}]')
+        print(f'ventilator_capacity[{ventilation_capacity}]')
+        print(f'circulator_capacity[{circulation_capacity}]')
+        print(f'humidifier_on[{humidifier_on}]')
+
     def humidifier_automatic_regulation(self):
         if self.desired_humidity != 0:
             if self.humidity_bellow_desired and not self.humidifier.is_active():

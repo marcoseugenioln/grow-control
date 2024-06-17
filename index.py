@@ -119,7 +119,6 @@ def plants():
 
 @app.route('/plant/create', methods=['GET', 'POST'])
 def create_plant():
-    # TODO: create plant
     if 'name' in request.form and 'date' in request.form and 'photoperiod_id' in request.form and 'gender_id' in request.form:
         database.insert_plant(request.form['name'], request.form['date'], request.form['photoperiod_id'], request.form['gender_id'])
     
@@ -128,6 +127,8 @@ def create_plant():
 @app.route('/plant/update/<id>', methods=['GET', 'POST'])
 def update_plant(id):
     # TODO: update plant
+    if 'name' in request.form and 'date' in request.form and 'photoperiod_id' in request.form and 'gender_id' in request.form:
+        database.update_plant(id, request.form['name'], request.form['date'], request.form['photoperiod_id'], request.form['gender_id'])
     return redirect(url_for('plant'))
 
 @app.route('/plant/delete/<id>', methods=['GET', 'POST'])

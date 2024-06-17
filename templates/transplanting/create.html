@@ -1,6 +1,13 @@
 <div class="create-div">
     <table>
         <tr>
+            <td><label class="text-field">Date</label></td>
+            <td><label class="text-field">Width</label></td>
+            <td><label class="text-field">Height</label></td>
+            <td><label class="text-field">Radius</label></td>
+            <td><label class="text-field">Depth</label></td>
+        </tr>
+        <tr>
             <h1>Register Transplanting</h1>
             <form action="{{ url_for('create_transplanting', id=id) }}" method="post">
                 <td><input type="date" class="text-field" name="date"></td>

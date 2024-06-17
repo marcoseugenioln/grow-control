@@ -1,6 +1,14 @@
 <div class="create-div">
     <table>
         <tr>
+            <td><label class="text-field">Date</label></td>
+            <td><label class="text-field">Dosage</label></td>
+            <td><label class="text-field">Nitrogen</label></td>
+            <td><label class="text-field">Phosphorus</label></td>
+            <td><label class="text-field">Potassium</label></td>
+            <td><label class="text-field">Concentration</label></td>
+        </tr>
+        <tr>
             <h1>Register Transplanting</h1>
             <form action="{{ url_for('create_feeding', id=id) }}" method="post">
                 <td><input type="date" class="text-field" name="date" value="{{ date }}"></td>
