@@ -39,7 +39,7 @@ class Grow():
         self.humidity_difference = 0
 
         # components
-        self.dht = DHT(pin=dht_sensor_pin)
+        self.dht = DHT(input_pin=dht_sensor_pin)
         self.ventilator = Fan(pin=ventilator_pin)
         self.circulator = Fan(pin=circulator_pin)
         self.humidifier = Humidifier(pin=humidifier_pin)

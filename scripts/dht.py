@@ -3,6 +3,7 @@ import datetime
 import adafruit_dht
 import threading
 from pubsub import pub
+import RPi.GPIO as GPIO
 from adafruit_blinka.microcontroller.bcm283x.pin import Pin
 
 class DHT():
@@ -13,6 +14,7 @@ class DHT():
         self.interval = interval
         self.sensor = adafruit_dht.DHT22(Pin(self.input_pin), False)
         self.max_error_count = max_error_count
+        self.on = False
 
         GPIO.setmode(GPIO.BCM)
         GPIO.setup(self.power_pin, GPIO.OUT)
@@ -51,7 +53,7 @@ class DHT():
             try:
                 self.temperature = self.sensor.temperature
                 self.humidity = self.sensor.humidity
-
+                print(f'{datetime.datetime.now()} - dht report: [{self.temperature}, {self.humidity}]')
                 pub.sendMessage('m_dht_report', temperature=self.temperature, humidity=self.humidity)
 
             except RuntimeError as error:
