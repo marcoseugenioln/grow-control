@@ -8,7 +8,7 @@ from adafruit_blinka.microcontroller.bcm283x.pin import Pin
 
 class DHT():
 
-    def __init__(self, interval=6, input_pin=16, power_pin=1, max_error_count = 10):
+    def __init__(self, interval=10, input_pin=16, power_pin=1, max_error_count = 10):
         self.input_pin = input_pin
         self.power_pin = power_pin
         self.interval = interval
@@ -58,7 +58,7 @@ class DHT():
 
             except RuntimeError as error:
                 print(error)
-                if error == 'DHT not found, check wiring':
+                if str(error) == 'DHT sensor not found, check wiring':
                     self.error_count += 1
                     print(f'errors: {self.error_count}')
                     
@@ -67,7 +67,12 @@ class DHT():
                     print(f'{datetime.datetime.now()} - DHT Sensor not responding, cycling power.')
                     self.activate(False)
                     time.sleep(self.interval)
+                    self.sensor.exit()
+                    time.sleep(self.interval)
+                    self.sensor = adafruit_dht.DHT22(Pin(self.input_pin))
+
                     self.activate(False)
+                    self.error_count = 0
 
                 time.sleep(self.interval)
                 continue

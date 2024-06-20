@@ -9,7 +9,7 @@
     "humidifier_pin" : 20,
     "heater_pin" : 26, 
 
-    "automatic" : false,
+    "automatic" : true,
     "ventilator_capacity" : 0,
     "circulator_capacity" : 0,
     "desired_humidity" : 70,

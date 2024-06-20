@@ -74,6 +74,7 @@ class Grow():
         self.desired_temperature = int(desired_temperature)
         self.light_act_time = light_act_time
         self.light_deact_time = light_deact_time
+        
         self.ventilator.set_capacity(ventilation_capacity)
         self.circulator.set_capacity(circulation_capacity)
         self.humidifier.activate(humidifier_on)
