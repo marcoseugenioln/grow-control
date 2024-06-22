@@ -1,14 +1,11 @@
 <!DOCTYPE html>
 <html>
-
 <head>
     <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='style.css')}}">
     <title>Waterings</title>
 </head>
- 
 <body>
     {% include 'header.html'%}
-
     <div class="index-div">
         <table>
             <tr>
@@ -16,15 +13,11 @@
                 <td><label class="text-field">Date</label></td>
                 <td><label class="text-field">Mililiter</label></td>
             </tr>
-
             {% for id, date, mililiter in waterings %}
                 {% include '/watering/update.html'%}
             {% endfor %}
+            {% include '/watering/create.html'%}
         </table>
     </div>
-
-    {% include '/watering/create.html'%}
-
 </body>
- 
 </html>

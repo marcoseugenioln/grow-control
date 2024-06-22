@@ -51,7 +51,7 @@ class Database():
         return self.execute_query(f"select id, name, date, alive, harvested, photoperiod_id, gender_id from plant where id = {id};", True)
 
     def delete_plant(self, id):
-        return self.execute_query(f"delete from plant where id = {id};", True)
+        return self.execute_query(f"delete from plant where id = {id};")
 
     def get_trainings(self):
         return self.execute_query(f"select id, plant_id, training_type_id, date from training;", True)
@@ -69,15 +69,18 @@ class Database():
         return self.execute_query(f"select id, date, mililiter from watering where plant_id = {plant_id};", True)
     
     def insert_watering(self, plant_id, date, mililiter):
-        self.execute_query(f"insert into watering (plant_id, date, mililiter) values {plant_id}, DATETIME('{date}'), {mililiter};")
+        self.execute_query(f"insert into watering (plant_id, date, mililiter) values ({plant_id}, DATE('{date}'), {mililiter});")
     
+    def delete_watering(self, watering_id):
+        return self.execute_query(f"delete from watering where id = {watering_id};")
+
     def get_feedings(self):
         return self.execute_query(f"select id, plant_id, date, dosage, concentration, nitrogen, phosphorus, potassium from feeding;", True)
     
     def get_plant_feedings(self, plant_id):
         return self.execute_query(f"select id, plant_id, date, dosage, concentration, nitrogen, phosphorus, potassium from feeding where plant_id = {plant_id};", True)
     
-    def get_plant_waterings(self, plant_id):
+    def get_plant_feedings(self, plant_id):
         return self.execute_query(f"select id, plant_id, date, dosage, concentration, nitrogen, phosphorus, potassium from feeding where plant_id = {plant_id};", True)
 
     def insert_feeding(self, plant_id, date, dosage, concentration, nitrogen, phosphorus, potassium):
