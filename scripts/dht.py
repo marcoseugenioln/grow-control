@@ -26,19 +26,23 @@ class DHT():
 
         self.dht_thread=threading.Thread(target=self.loop, daemon=True)
 
-    
 
     def is_active(self):
         return self.on
 
     def activate(self, on):
+
+        # turn power supply on if not active
         if not self.is_active() and on:
             self.on = True
             GPIO.output(self.power_pin, GPIO.HIGH)
+            print(f'{datetime.datetime.now()} - dht power supply: on')
 
+        # turn power supply down if active
         elif self.is_active() and not on:
             self.on = False
             GPIO.output(self.power_pin, GPIO.LOW)
+            print(f'{datetime.datetime.now()} - dht power supply: off')
 
     def get_temperature(self):
         return self.temperature
@@ -57,32 +61,39 @@ class DHT():
                 pub.sendMessage('m_dht_report', temperature=self.temperature, humidity=self.humidity)
 
             except RuntimeError as error:
-                print(error)
+                print(f'{datetime.datetime.now()} - dht report: {error}' )
                 if str(error) == 'DHT sensor not found, check wiring':
                     self.error_count += 1
-                    print(f'errors: {self.error_count}')
-                    
 
-                if self.error_count > self.max_error_count:
-                    print(f'{datetime.datetime.now()} - DHT Sensor not responding, cycling power.')
-                    self.activate(False)
-                    time.sleep(self.interval)
-                    self.sensor.exit()
-                    time.sleep(self.interval)
-                    self.sensor = adafruit_dht.DHT22(Pin(self.input_pin))
-
-                    self.activate(False)
+                if self.error_count >= self.max_error_count:
+                    print(f'{datetime.datetime.now()} - DHT Sensor not responding, resetting sensor.')
+                    self.reset_sensor()
                     self.error_count = 0
 
                 time.sleep(self.interval)
                 continue
 
             except Exception as error:
-                self.sensor.exit()
-                time.sleep(self.interval)
-                self.sensor = adafruit_dht.DHT22(Pin(self.pin))
-                raise error
-            
+                self.reset_sensor()
+                continue
+    
+    def reset_sensor(self):
+
+        # deactivate sensor power supply
+        self.activate(False)
+
+        # call class destructor
+        self.sensor.exit()
+
+        # wait interval time
+        time.sleep(self.interval)
+
+        # reactivate power supply
+        self.activate(True)
+
+        # create sensor instance again
+        self.sensor = adafruit_dht.DHT22(Pin(self.input_pin), False)
+
     def start(self):
         self.dht_thread.start()
         time.sleep(self.interval)

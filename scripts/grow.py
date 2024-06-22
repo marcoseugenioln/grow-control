@@ -63,7 +63,7 @@ class Grow():
 
         if int(humidity) != self.humidity:
             report_updated = True
-            self.humidity = int(humidity)
+            self.humidity = int(humidity) 
         
         if report_updated:
             print(f'{datetime.datetime.now()} - temperature: {self.temperature}°C - humidity: {self.humidity}%')
