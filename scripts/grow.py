@@ -1,52 +1,41 @@
 import threading
 import datetime
 import time
-import math
 from scripts.dht import DHT
-from scripts.humidifier import Humidifier
-from scripts.heater import Heater
-from scripts.fan import Fan
+from scripts.pwm_device import PWMDevice
+from scripts.state_device import StateDevice
 from pubsub import pub
-import RPi.GPIO
+# import RPi.GPIO
 
 class Grow():
 
     def __init__(self, 
-                 ventilator_pin=19, 
                  circulator_pin = 18, 
-                 dht_sensor_pin = 1, 
+                 dht_power_pin = 1, 
+                 dht_data_pin=2,
                  humidifier_pin = 20, 
-                 heater_pin = 15,
-                 automatic=False, 
-                 ventilator_capacity=0, 
-                 circulator_capacity=0,
-                 desired_humidity=0,
-                 desired_temperature=0,
-                 humidity_tolerance=0) -> None:
+                 lights_pin = 99,
+                 auto_mode=False, 
+                 min_humidity=0,
+                 max_humidity=0,
+                 lights_on_time="06:00",
+                 lights_off_time="22:00") -> None:
 
-        RPi.GPIO.cleanup()
+        # RPi.GPIO.cleanup()
 
-        self.auto_mode = automatic
+        self.auto_mode = auto_mode
         self.temperature = 0
         self.humidity = 0
-        self.light_act_time = None
-        self.light_deact_time = None
-        self.desired_temperature = desired_temperature
-        self.desired_humidity = desired_humidity
-        self.humidity_tolerance = humidity_tolerance
-        self.humidity_above_desired = False
-        self.humidity_bellow_desired = False
-        self.humidity_difference = 0
+        self.lights_on_time = datetime.datetime.strptime(lights_on_time, '%H:%M').time()
+        self.lights_off_time = datetime.datetime.strptime(lights_off_time, '%H:%M').time()
+        self.min_humidity = min_humidity
+        self.max_humidity = max_humidity
 
         # components
-        self.dht = DHT(input_pin=dht_sensor_pin)
-        self.ventilator = Fan(pin=ventilator_pin)
-        self.circulator = Fan(pin=circulator_pin)
-        self.humidifier = Humidifier(pin=humidifier_pin)
-        self.heater = Heater(pin=heater_pin)
-
-        self.ventilator.set_capacity(ventilator_capacity)
-        self.circulator.set_capacity(circulator_capacity)
+        self.dht = DHT(data_pin=dht_data_pin, power_pin=dht_power_pin)
+        self.air_circulator = PWMDevice(pin=circulator_pin)
+        self.lights = StateDevice(pin=lights_pin)
+        self.humidifier = StateDevice(pin=humidifier_pin)
 
         pub.subscribe(self.m_dht_report, 'm_dht_report')
         pub.subscribe(self.m_grow_settings_cmd, 'm_grow_settings_cmd')
@@ -54,88 +43,57 @@ class Grow():
         self.automatic_mode_controller = threading.Thread(target=self.automatic_mode_loop, daemon=True)
 
     def m_dht_report(self, temperature, humidity):
-
         report_updated = False
-
         if int(temperature) != self.temperature:
             report_updated = True
             self.temperature = int(temperature)
-
         if int(humidity) != self.humidity:
             report_updated = True
             self.humidity = int(humidity) 
-        
         if report_updated:
             print(f'{datetime.datetime.now()} - temperature: {self.temperature}°C - humidity: {self.humidity}%')
 
-    def m_grow_settings_cmd(self, auto_mode, desired_humidity, desired_temperature, light_act_time, light_deact_time, ventilation_capacity, circulation_capacity, humidifier_on, heater_on):
+    def m_grow_settings_cmd(self, auto_mode, humidifier_on, min_humidity, max_humidity, lights_on, lights_on_time, lights_off_time, air_circulation_capacity):
         self.auto_mode = auto_mode
-        self.desired_humidity = int(desired_humidity)
-        self.desired_temperature = int(desired_temperature)
-        self.light_act_time = light_act_time
-        self.light_deact_time = light_deact_time
-        
-        self.ventilator.set_capacity(ventilation_capacity)
-        self.circulator.set_capacity(circulation_capacity)
-        self.humidifier.activate(humidifier_on)
-        self.heater.activate(heater_on)
-
-        print(f'{datetime.datetime.now()} - m_grow_settings_cmd:')
-        print(f'auto_mode[{self.auto_mode}]')
-        print(f'desired_humidity[{self.desired_humidity}]')
-        print(f'desired_temperature[{self.desired_temperature}]')
-        print(f'light_act_time[{self.light_act_time}]')
-        print(f'light_deact_time[{self.light_deact_time}]')
-        print(f'ventilator_capacity[{ventilation_capacity}]')
-        print(f'circulator_capacity[{circulation_capacity}]')
-        print(f'humidifier_on[{humidifier_on}]')
+        self.humidifier.power_on(humidifier_on)
+        self.min_humidity = int(min_humidity)
+        self.max_humidity = int(max_humidity)
+        self.lights.power_on(lights_on)
+        self.lights_on_time = datetime.datetime.strptime(str(lights_on_time[0:5]), '%H:%M').time()
+        self.lights_off_time = datetime.datetime.strptime(str(lights_off_time[0:5]), '%H:%M').time()
+        self.air_circulator.set_capacity(air_circulation_capacity)
+        print(f'{datetime.datetime.now()} - m_grow_settings_cmd: auto_mode[{self.auto_mode}] humidifier_on[{self.humidifier.on}] min_humidity[{self.min_humidity}] max_humidity[{self.max_humidity}] humidifier_on[{self.lights.on}] lights_on_time[{self.lights_on_time}] lights_off_time[{self.lights_off_time}] air_circulation_capacity[{air_circulation_capacity}]')
 
     def humidifier_automatic_regulation(self):
-        if self.desired_humidity != 0:
-            if self.humidity_bellow_desired and not self.humidifier.is_active():
-                print(f'{datetime.datetime.now()} - humidifier: on')
-                self.humidifier.activate(True)
+        humidifier_on = False
+        if self.humidity > self.max_humidity:
+            humidifier_on = False
+        elif self.humidity < self.min_humidity:
+            humidifier_on = True
+        self.humidifier.power_on(humidifier_on)
+        
 
-            elif self.humidity >= self.desired_humidity and self.humidifier.is_active():
-                print(f'{datetime.datetime.now()} - humidifier: off')
-                self.humidifier.activate(False)
-
-    def ventilator_automatic_regulation(self):
-
+    def air_circulation_automatic_regulation(self):
         capacity = 0
-
-        if self.humidity_above_desired and self.humidity_diference > self.humidity_tolerance:
+        if self.humidity > self.max_humidity:
             capacity = 100
-
-        elif self.humidity_above_desired and self.humidity_diference <= self.humidity_tolerance:
-            capacity = 95
-
-        elif not self.humidity_above_desired and not self.humidity_bellow_desired:
+        elif self.humidity < self.max_humidity and self.humidity > self.min_humidity:
             capacity = 90
-
-        elif self.humidity_bellow_desired and self.humidity_diference <= self.humidity_tolerance:
-            capacity = 85
-
-        elif self.humidity_bellow_desired and self.humidity_diference > self.humidity_tolerance:
+        elif self.humidity < self.min_humidity:
             capacity = 80
+        self.air_circulator.set_capacity(capacity)
 
-        if self.ventilator.get_capacity() != capacity:
-            print(f'{datetime.datetime.now()} - setting ventilator capacity to: {capacity}%')
-            self.ventilator.set_capacity(capacity)
-
+    def lights_automatic_regulation(self):
+        lights_on = datetime.datetime.now().time() <=  self.lights_off_time and datetime.datetime.now().time() >= self.lights_on_time
+        self.lights.power_on(lights_on)
 
     def automatic_mode_loop(self):
         while True:
-
             time.sleep(1)
             if self.auto_mode:
-
-                self.humidity_above_desired = self.humidity > self.desired_humidity
-                self.humidity_bellow_desired = self.humidity < self.desired_humidity 
-                self.humidity_diference = math.sqrt(math.pow(self.humidity - self.desired_humidity, 2))
-                
                 self.humidifier_automatic_regulation()
-                self.ventilator_automatic_regulation()
+                self.air_circulation_automatic_regulation()
+                self.lights_automatic_regulation()
             else:
                 continue
         
@@ -148,9 +106,3 @@ class Grow():
     
     def set_auto_mode(self, auto_mode):
         self.auto_mode = auto_mode
-
-
-        
-
-    
-

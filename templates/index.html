@@ -11,35 +11,129 @@
     {% include 'header.html'%}
 
     <fieldset class="card" >
-        <legend>Environment:</legend>
+        <legend>Control and Status</legend>
         <div>
-            <br>
-            <label> Temperature: {{ temperature }}°C</label>
-            <br>
-            <br>
-            <label> Humidity: {{ humidity }}%</label>
-            <br>
-            <br>
-            <label> Ventilation Capacity: {{ ventilation_capacity }}%</label>
-            <br>
-            <br>
-            <label> Circulation Capacity: {{ circulation_capacity }}%</label>
-            <br>
-            <br>
-            <label> Light capacity: {{ light_capacity }}</label>
-            <br>
+            <form action="{{ url_for('grow_settings_cmd') }}" method="post">
+                <table>
+                    <tr>
+                        <td>
+                            <label>Auto Mode</label>
+                        </td>
+                        <td>
+                            {% if auto_mode %}
+                                <input type="checkbox" name="auto_mode" id="auto_mode" checked>
+                            {% else %}
+                                <input type="checkbox" name="auto_mode" id="auto_mode">
+                            {% endif %}
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>
+                            <label> Temperature: </label>
+                        </td>
+                        <td>
+                            <label>{{ temperature }}°C</label>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>
+                            <label> Humidity: </label>
+                        </td>
+                        <td>
+                            <label>{{ humidity }}%</label>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>
+                            <label> Humidifier: </label>
+                        </td>
+                        <td>
+                            {% if auto_mode %}
+                                {% if humidifier_on %}
+                                    <input type="checkbox" name="humidifier_on" id="humidifier_on" checked disabled>
+                                {% else %}
+                                    <input type="checkbox" name="humidifier_on" id="humidifier_on" disabled>
+                                {% endif %}
+                            {% else %}
+                                {% if humidifier_on %}
+                                    <input type="checkbox" name="humidifier_on" id="humidifier_on" checked>
+                                {% else %}
+                                    <input type="checkbox" name="humidifier_on" id="humidifier_on">
+                                {% endif %}
+                            {% endif %}
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>
+                            <label>Minimum Humidity: </label>
+                        </td>
+                        <td>
+                            <input type="number" min="0" max="100" value="{{ min_humidity }}" name="min_humidity" id="ideal_humidity"/>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>
+                            <label>Maximum Humidity: </label>
+                        </td>
+                        <td>
+                            <input type="number" min="0" max="100" value="{{ max_humidity }}" name="max_humidity" id="ideal_humidity"/>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>
+                            <label>Lights</label>
+                        </td>
+                        <td>
+                            {% if auto_mode %}
+                                {% if lights_on %}
+                                    <input type="checkbox" name="lights_on" id="lights_on" checked disabled>
+                                {% else %}
+                                    <input type="checkbox" name="lights_on" id="lights_on" disabled>
+                                {% endif %}
+                            {% else %}
+                                {% if lights_on %}
+                                    <input type="checkbox" name="lights_on" id="lights_on" checked>
+                                {% else %}
+                                    <input type="checkbox" name="lights_on" id="lights_on">
+                                {% endif %}
+                            {% endif %}
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>
+                            <label>Lights On: </label>
+                        </td>
+                        <td>
+                            <input type="time" class="text-field" name="lights_on_time" value="{{ lights_on_time }}" id="lights_on_time">
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>
+                            <label>Lights Off: </label>
+                        </td>
+                        <td>
+                            <input type="time" class="text-field" name="lights_off_time" value="{{ lights_off_time }}" id="lights_off_time"/>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>
+                            <label>Air Circulation: </label>
+                        </td>
+                        <td>
+                            {% if auto_mode %}
+                                <input type="number" min="0" max="100" value="{{ air_circulation_capacity }}" name="air_circulation_capacity" disabled/>
+                            {% else %}
+                                <input type="number" min="0" max="100" value="{{ air_circulation_capacity }}" name="air_circulation_capacity"/>
+                            {% endif %}
+                        </td>
+                    </tr>
+                </table>
 
-            {% if humidifier_on %}
-                <br>
-                <label> Umidifier: on</label>
-                <br>
-            {% else %}
-                <br>
-                <label> Umidifier: off</label>
-                <br>
-            {% endif %}
+                <button class="btn" > 
+                    <img src="{{ url_for('static', filename='image/confirm-icon.png')}}" class="btn-img" id="create-btn">
+                </button>
+            </form>
         </div>
     </fieldset>
-  
 </body>
 </html>

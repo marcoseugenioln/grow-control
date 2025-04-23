@@ -16,27 +16,31 @@ with open(str(sys.argv[1])) as config_file:
 
 database = Database(database_path='database/schema.db', schema_file='database/schema.sql')
 
-grow = Grow(ventilator_pin=app_config['ventilator_pin'], 
-            circulator_pin=app_config['circulator_pin'], 
-            dht_sensor_pin=app_config['dht_sensor_pin'], 
+grow = Grow(circulator_pin=app_config['circulator_pin'], 
+            dht_data_pin=app_config['dht_data_pin'], 
+            dht_power_pin=app_config['dht_power_pin'], 
             humidifier_pin=app_config['humidifier_pin'],
-            heater_pin=app_config['heater_pin'],
-            automatic=app_config['automatic'],
-            ventilator_capacity=app_config['ventilator_capacity'],
-            circulator_capacity=app_config['circulator_capacity'],
-            desired_humidity=app_config['desired_humidity'],
-            desired_temperature=app_config['desired_temperature'],
-            humidity_tolerance=app_config['humidity_tolerance'])
+            lights_pin=app_config['lights_pin'],
+            auto_mode=app_config['auto_mode'],
+            min_humidity=app_config['min_humidity'],
+            max_humidity=app_config['max_humidity'],
+            lights_on_time=app_config['lights_on_time'],
+            lights_off_time=app_config['lights_off_time'])
 
 ##################################################################################################
 @app.route("/")
 def index():
-    return render_template('index.html', 
-                           temperature=grow.temperature,
-                           humidity=grow.humidity,
-                           ventilation_capacity=grow.ventilator.get_capacity(),
-                           circulation_capacity=grow.circulator.get_capacity(),
-                           humidifier_on = grow.humidifier.is_active())
+    return render_template('index.html',
+                            temperature=grow.temperature,
+                            humidity=grow.humidity,
+                            auto_mode=grow.auto_mode,
+                            humidifier_on=grow.humidifier.on,
+                            min_humidity=grow.min_humidity,
+                            max_humidity=grow.max_humidity,
+                            lights_on=grow.lights.on,
+                            lights_on_time=grow.lights_on_time,
+                            lights_off_time=grow.lights_off_time, 
+                            air_circulation_capacity=grow.air_circulator.capacity)
 
 @app.route("/settings-cmd", methods=['GET','POST'])
 def grow_settings_cmd():
@@ -44,66 +48,49 @@ def grow_settings_cmd():
     if request.method == 'POST':
 
         auto_mode = False
-        desired_humidity = 0
-        desired_temperature = 0
-        light_act_time = None
-        light_deact_time = None
+        lights_on_time = None
+        lights_off_time = None
         humidifier_on = False
-        heater_on = False
-        ventilation = 0
-        circulation = 0
+        min_humidity = 0
+        max_humidity = 0
+        lights_on = False
+        air_circulation_capacity = 0
 
         if 'auto_mode' in request.form:
             auto_mode = request.form['auto_mode'] == 'on'
 
-        if 'desired_humidity' in request.form:
-            desired_humidity = request.form['desired_humidity']
-
-        if 'desired_temperature' in request.form:
-            desired_temperature = request.form['desired_temperature']
-
-        if 'light_act_time' in request.form:
-            light_act_time = request.form['light_act_time']
-
-        if 'light_deact_time' in request.form:
-            light_deact_time = request.form['light_deact_time']
-
         if 'humidifier_on' in request.form:
             humidifier_on = request.form['humidifier_on'] == 'on'
 
-        if 'heater_on' in request.form:
-            heater_on = request.form['heater_on'] == 'on'
+        if 'min_humidity' in request.form:
+            min_humidity = request.form['min_humidity']
 
-        if 'ventilation' in request.form:
-            ventilation = request.form['ventilation']
+        if 'max_humidity' in request.form:
+            max_humidity = request.form['max_humidity']
+        
+        if 'lights_on' in request.form:
+            lights_on = request.form['lights_on'] == 'on'
 
-        if 'circulation' in request.form:
-            circulation = request.form['circulation']
+        if 'lights_on_time' in request.form:
+            lights_on_time = request.form['lights_on_time']
+
+        if 'lights_off_time' in request.form:
+            lights_off_time = request.form['lights_off_time']
+
+        if 'air_circulation_capacity' in request.form:
+            air_circulation_capacity = request.form['air_circulation_capacity']
 
         pub.sendMessage('m_grow_settings_cmd', 
                         auto_mode=auto_mode,
-                        desired_humidity=desired_humidity,
-                        desired_temperature=desired_temperature,
-                        light_act_time=light_act_time,
-                        light_deact_time=light_deact_time, 
-                        ventilation_capacity=ventilation, 
-                        circulation_capacity=circulation, 
                         humidifier_on=humidifier_on,
-                        heater_on=heater_on)
+                        min_humidity=min_humidity,
+                        max_humidity=max_humidity,
+                        lights_on=lights_on,
+                        lights_on_time=lights_on_time,
+                        lights_off_time=lights_off_time, 
+                        air_circulation_capacity=air_circulation_capacity)
         
-    return redirect(url_for('config'))
-
-@app.route("/settings", methods=['GET','POST'])
-def config():
-    return render_template('/settings/index.html', 
-                           auto_mode=grow.get_auto_mode(),
-                           circulation=grow.circulator.get_capacity(),
-                           ventilation=grow.ventilator.get_capacity(),
-                           humidifier_on=grow.humidifier.is_active(),
-                           heater_on=grow.heater.is_active(),
-                           desired_humidity=grow.desired_humidity,
-                           desired_temperature=grow.desired_temperature)
-
+    return redirect(url_for('index'))
 
 ##################################################################################################
 @app.route('/plant', methods=['GET', 'POST'])

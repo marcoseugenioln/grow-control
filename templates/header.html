@@ -6,12 +6,6 @@
         </button>
     </form>
 
-    <form method="get" action="{{ url_for('config') }}">
-        <button title="settings" class="header-btn" name="config-button">
-            <img src="{{ url_for('static', filename='image/config-icon.png')}}" class="header-btn-img">
-        </button>
-    </form>
-
     <form method="get" action="{{ url_for('plants') }}">
         <button title="plants" class="header-btn" name="plant-button">
             <img src="{{ url_for('static', filename='image/plant-icon.png')}}" class="header-btn-img">

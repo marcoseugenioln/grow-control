@@ -1,20 +1,19 @@
 {
-    "host" : "192.168.1.4",
+    "host" : "localhost",
     "port" : 3000,
     "debug"  : false,
 
-    "ventilator_pin" : 19,
     "circulator_pin" : 18,
-    "dht_sensor_pin" : 16,
+    "dht_power_pin" : 16,
+    "dht_data_pin" : 16,
     "humidifier_pin" : 20,
+    "lights_pin" : 20,
 
+    "auto_mode" : true,
+
+    "lights_on_time" : "06:00",
+    "lights_off_time" : "22:00",
     
-    "heater_pin" : 26, 
-
-    "automatic" : true,
-    "ventilator_capacity" : 0,
-    "circulator_capacity" : 0,
-    "desired_humidity" : 70,
-    "desired_temperature" : 25,
-    "humidity_tolerance" : 3
+    "min_humidity" : 70,
+    "max_humidity" : 75
 }

@@ -8,11 +8,11 @@ from adafruit_blinka.microcontroller.bcm283x.pin import Pin
 
 class DHT():
 
-    def __init__(self, interval=10, input_pin=16, power_pin=1, max_error_count = 10):
-        self.input_pin = input_pin
+    def __init__(self, interval=10, power_pin=1,  data_pin=16, max_error_count = 10):
+        self.data_pin = data_pin
         self.power_pin = power_pin
         self.interval = interval
-        self.sensor = adafruit_dht.DHT22(Pin(self.input_pin), False)
+        self.sensor = adafruit_dht.DHT22(Pin(self.data_pin), False)
         self.max_error_count = max_error_count
         self.on = False
 
@@ -21,9 +21,7 @@ class DHT():
 
         self.temperature = 0
         self.humidity = 0
-
         self.error_count = 0
-
         self.dht_thread=threading.Thread(target=self.loop, daemon=True)
 
 
@@ -92,7 +90,7 @@ class DHT():
         self.activate(True)
 
         # create sensor instance again
-        self.sensor = adafruit_dht.DHT22(Pin(self.input_pin), False)
+        self.sensor = adafruit_dht.DHT22(Pin(self.data_pin), False)
 
     def start(self):
         self.dht_thread.start()
