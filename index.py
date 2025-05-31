@@ -16,8 +16,7 @@ with open(str(sys.argv[1])) as config_file:
 
 database = Database(database_path='database/schema.db', schema_file='database/schema.sql')
 
-grow = Grow(circulator_pin=app_config['circulator_pin'], 
-            dht_data_pin=app_config['dht_data_pin'], 
+grow = Grow(dht_data_pin=app_config['dht_data_pin'], 
             dht_power_pin=app_config['dht_power_pin'], 
             humidifier_pin=app_config['humidifier_pin'],
             lights_pin=app_config['lights_pin'],
@@ -39,8 +38,7 @@ def index():
                             max_humidity=grow.max_humidity,
                             lights_on=grow.lights.on,
                             lights_on_time=grow.lights_on_time,
-                            lights_off_time=grow.lights_off_time, 
-                            air_circulation_capacity=grow.air_circulator.capacity)
+                            lights_off_time=grow.lights_off_time)
 
 @app.route("/settings-cmd", methods=['GET','POST'])
 def grow_settings_cmd():

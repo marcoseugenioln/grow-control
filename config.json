@@ -3,10 +3,9 @@
     "port" : 3000,
     "debug"  : false,
 
-    "circulator_pin" : 18,
-    "dht_power_pin" : 16,
+    "dht_power_pin" : 1,
     "dht_data_pin" : 16,
-    "humidifier_pin" : 20,
+    "humidifier_pin" : 14,
     "lights_pin" : 20,
 
     "auto_mode" : true,
