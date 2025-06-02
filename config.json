@@ -3,10 +3,7 @@
     "port" : 3000,
     "debug"  : false,
 
-    "circulator_pin" : 18,
-    "dht_power_pin" : 16,
-    "dht_data_pin" : 16,
-    "humidifier_pin" : 20,
+    "humidifier_pin" : 16,
     "lights_pin" : 20,
 
     "auto_mode" : true,
@@ -14,6 +11,6 @@
     "lights_on_time" : "06:00",
     "lights_off_time" : "22:00",
     
-    "min_humidity" : 70,
-    "max_humidity" : 75
+    "min_humidity" : 60,
+    "max_humidity" : 70
 }

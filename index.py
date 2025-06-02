@@ -16,10 +16,7 @@ with open(str(sys.argv[1])) as config_file:
 
 database = Database(database_path='database/schema.db', schema_file='database/schema.sql')
 
-grow = Grow(circulator_pin=app_config['circulator_pin'], 
-            dht_data_pin=app_config['dht_data_pin'], 
-            dht_power_pin=app_config['dht_power_pin'], 
-            humidifier_pin=app_config['humidifier_pin'],
+grow = Grow(humidifier_pin=app_config['humidifier_pin'],
             lights_pin=app_config['lights_pin'],
             auto_mode=app_config['auto_mode'],
             min_humidity=app_config['min_humidity'],
@@ -39,10 +36,9 @@ def index():
                             max_humidity=grow.max_humidity,
                             lights_on=grow.lights.on,
                             lights_on_time=grow.lights_on_time,
-                            lights_off_time=grow.lights_off_time, 
-                            air_circulation_capacity=grow.air_circulator.capacity)
+                            lights_off_time=grow.lights_off_time)
 
-@app.route("/settings-cmd", methods=['GET','POST'])
+@app.route("/m_grow_settings_cmd", methods=['GET','POST'])
 def grow_settings_cmd():
     
     if request.method == 'POST':
@@ -91,6 +87,10 @@ def grow_settings_cmd():
                         air_circulation_capacity=air_circulation_capacity)
         
     return redirect(url_for('index'))
+
+@app.route('/m_dht_report/<temperature>/<humidity>', methods=['POST'])
+def sensor(temperature, humidity):
+    pub.sendMessage('m_dht_report', temperature=temperature, humidity=humidity)
 
 ##################################################################################################
 @app.route('/plant', methods=['GET', 'POST'])
@@ -270,9 +270,10 @@ def delete_harvest(plant_id):
     # TODO: delete harvest
     return redirect(url_for('harvest', plant_id=plant_id))
 
+
+    
 if __name__ == '__main__':
     print(app_config)
-    grow.start()
     app.run(host=app_config["host"], 
             port=app_config["port"], 
             debug=app_config["debug"])

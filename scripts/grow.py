@@ -9,10 +9,7 @@ from pubsub import pub
 
 class Grow():
 
-    def __init__(self, 
-                 circulator_pin = 18, 
-                 dht_power_pin = 1, 
-                 dht_data_pin=2,
+    def __init__(self,
                  humidifier_pin = 20, 
                  lights_pin = 99,
                  auto_mode=False, 
@@ -21,7 +18,7 @@ class Grow():
                  lights_on_time="06:00",
                  lights_off_time="22:00") -> None:
 
-        # RPi.GPIO.cleanup()
+        RPi.GPIO.cleanup()
 
         self.auto_mode = auto_mode
         self.temperature = 0
@@ -32,15 +29,11 @@ class Grow():
         self.max_humidity = max_humidity
 
         # components
-        self.dht = DHT(data_pin=dht_data_pin, power_pin=dht_power_pin)
-        self.air_circulator = PWMDevice(pin=circulator_pin)
         self.lights = StateDevice(pin=lights_pin)
         self.humidifier = StateDevice(pin=humidifier_pin)
 
         pub.subscribe(self.m_dht_report, 'm_dht_report')
         pub.subscribe(self.m_grow_settings_cmd, 'm_grow_settings_cmd')
-
-        self.automatic_mode_controller = threading.Thread(target=self.automatic_mode_loop, daemon=True)
 
     def m_dht_report(self, temperature, humidity):
         report_updated = False
@@ -51,9 +44,12 @@ class Grow():
             report_updated = True
             self.humidity = int(humidity) 
         if report_updated:
-            print(f'{datetime.datetime.now()} - temperature: {self.temperature}°C - humidity: {self.humidity}%')
+            print(f'{datetime.datetime.now()} - m_dht_report: temperature[{self.temperature}°C] humidity[{self.humidity}%]')
 
-    def m_grow_settings_cmd(self, auto_mode, humidifier_on, min_humidity, max_humidity, lights_on, lights_on_time, lights_off_time, air_circulation_capacity):
+        self.automatic_mode_routine()
+
+    def m_grow_settings_cmd(self, auto_mode, humidifier_on, min_humidity, max_humidity, lights_on, lights_on_time, lights_off_time):
+        print(f'{datetime.datetime.now()} - m_grow_settings_cmd: auto_mode[{auto_mode}] humidifier_on[{humidifier_on}] min_humidity[{min_humidity}] max_humidity[{max_humidity}] humidifier_on[{lights_on}] lights_on_time[{lights_on_time}] lights_off_time[{lights_off_time}]')
         self.auto_mode = auto_mode
         self.humidifier.power_on(humidifier_on)
         self.min_humidity = int(min_humidity)
@@ -61,8 +57,9 @@ class Grow():
         self.lights.power_on(lights_on)
         self.lights_on_time = datetime.datetime.strptime(str(lights_on_time[0:5]), '%H:%M').time()
         self.lights_off_time = datetime.datetime.strptime(str(lights_off_time[0:5]), '%H:%M').time()
-        self.air_circulator.set_capacity(air_circulation_capacity)
-        print(f'{datetime.datetime.now()} - m_grow_settings_cmd: auto_mode[{self.auto_mode}] humidifier_on[{self.humidifier.on}] min_humidity[{self.min_humidity}] max_humidity[{self.max_humidity}] humidifier_on[{self.lights.on}] lights_on_time[{self.lights_on_time}] lights_off_time[{self.lights_off_time}] air_circulation_capacity[{air_circulation_capacity}]')
+        print(f'{datetime.datetime.now()} - m_grow_settings_cmd: auto_mode[{self.auto_mode}] humidifier_on[{self.humidifier.on}] min_humidity[{self.min_humidity}] max_humidity[{self.max_humidity}] humidifier_on[{self.lights.on}] lights_on_time[{self.lights_on_time}] lights_off_time[{self.lights_off_time}]')
+
+        self.automatic_mode_routine()
 
     def humidifier_automatic_regulation(self):
         humidifier_on = False
@@ -71,38 +68,12 @@ class Grow():
         elif self.humidity < self.min_humidity:
             humidifier_on = True
         self.humidifier.power_on(humidifier_on)
-        
-
-    def air_circulation_automatic_regulation(self):
-        capacity = 0
-        if self.humidity > self.max_humidity:
-            capacity = 100
-        elif self.humidity < self.max_humidity and self.humidity > self.min_humidity:
-            capacity = 90
-        elif self.humidity < self.min_humidity:
-            capacity = 80
-        self.air_circulator.set_capacity(capacity)
 
     def lights_automatic_regulation(self):
         lights_on = datetime.datetime.now().time() <=  self.lights_off_time and datetime.datetime.now().time() >= self.lights_on_time
         self.lights.power_on(lights_on)
 
-    def automatic_mode_loop(self):
-        while True:
-            time.sleep(1)
-            if self.auto_mode:
-                self.humidifier_automatic_regulation()
-                self.air_circulation_automatic_regulation()
-                self.lights_automatic_regulation()
-            else:
-                continue
-        
-    def start(self):
-        self.dht.start()
-        self.automatic_mode_controller.start()
-    
-    def get_auto_mode(self):
-        return self.auto_mode
-    
-    def set_auto_mode(self, auto_mode):
-        self.auto_mode = auto_mode
+    def automatic_mode_routine(self):
+        if self.auto_mode:
+            self.humidifier_automatic_regulation()
+            self.lights_automatic_regulation()

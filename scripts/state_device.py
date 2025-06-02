@@ -1,4 +1,4 @@
-# import RPi.GPIO as GPIO
+import RPi.GPIO as GPIO
 import time
 from pubsub import pub
 
@@ -12,8 +12,8 @@ class StateDevice():
         GPIO.setup(self.pin, GPIO.OUT)
     
     def power_on(self, on):
-        if not self.power_on and on:
-            self.power_on = True
+        if not self.on and on:
+            self.on = True
             GPIO.output(self.pin, GPIO.HIGH)
         elif self.on and not on:
             self.on = False
