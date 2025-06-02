@@ -5,7 +5,7 @@ from scripts.dht import DHT
 from scripts.pwm_device import PWMDevice
 from scripts.state_device import StateDevice
 from pubsub import pub
-# import RPi.GPIO
+import RPi.GPIO
 
 class Grow():
 

@@ -73,9 +73,6 @@ def grow_settings_cmd():
         if 'lights_off_time' in request.form:
             lights_off_time = request.form['lights_off_time']
 
-        if 'air_circulation_capacity' in request.form:
-            air_circulation_capacity = request.form['air_circulation_capacity']
-
         pub.sendMessage('m_grow_settings_cmd', 
                         auto_mode=auto_mode,
                         humidifier_on=humidifier_on,
@@ -83,14 +80,14 @@ def grow_settings_cmd():
                         max_humidity=max_humidity,
                         lights_on=lights_on,
                         lights_on_time=lights_on_time,
-                        lights_off_time=lights_off_time, 
-                        air_circulation_capacity=air_circulation_capacity)
+                        lights_off_time=lights_off_time)
         
     return redirect(url_for('index'))
 
-@app.route('/m_dht_report/<temperature>/<humidity>', methods=['POST'])
+@app.route('/m_dht_report/<temperature>/<humidity>', methods=['GET', 'POST'])
 def sensor(temperature, humidity):
     pub.sendMessage('m_dht_report', temperature=temperature, humidity=humidity)
+    return f'temperature={str(temperature)} humidity={str(humidity)}'
 
 ##################################################################################################
 @app.route('/plant', methods=['GET', 'POST'])
