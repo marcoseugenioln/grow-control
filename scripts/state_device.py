@@ -17,6 +17,6 @@ class StateDevice():
             GPIO.output(self.pin, GPIO.HIGH)
         elif self.on and not on:
             self.on = False
-            GPIO.output(self.pin, GPIO.HIGH)
+            GPIO.output(self.pin, GPIO.LOW)
 
 

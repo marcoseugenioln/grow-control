@@ -11,7 +11,7 @@ class Grow():
 
     def __init__(self,
                  humidifier_pin = 20, 
-                 lights_pin = 99,
+                 lights_pin = 14,
                  auto_mode=False, 
                  min_humidity=0,
                  max_humidity=0,
