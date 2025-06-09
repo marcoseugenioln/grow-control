@@ -4,7 +4,6 @@ from scripts.grow import Grow
 from scripts.database import Database
 import json
 import sys
-from pubsub import pub
 
 app = Flask(__name__)
 app.secret_key = '1234'
@@ -31,10 +30,10 @@ def index():
                             temperature=grow.temperature,
                             humidity=grow.humidity,
                             auto_mode=grow.auto_mode,
-                            humidifier_on=grow.humidifier.on,
+                            humidifier_on=grow.humidifier_on,
                             min_humidity=grow.min_humidity,
                             max_humidity=grow.max_humidity,
-                            lights_on=grow.lights.on,
+                            lights_on=grow.lights_on,
                             lights_on_time=grow.lights_on_time,
                             lights_off_time=grow.lights_off_time)
 
@@ -73,7 +72,7 @@ def grow_settings_cmd():
         if 'lights_off_time' in request.form:
             lights_off_time = request.form['lights_off_time']
 
-        pub.sendMessage('m_grow_settings_cmd', 
+        grow.set_grow_settings('m_grow_settings_cmd', 
                         auto_mode=auto_mode,
                         humidifier_on=humidifier_on,
                         min_humidity=min_humidity,
@@ -86,8 +85,16 @@ def grow_settings_cmd():
 
 @app.route('/m_dht_report/<temperature>/<humidity>', methods=['GET', 'POST'])
 def sensor(temperature, humidity):
-    pub.sendMessage('m_dht_report', temperature=temperature, humidity=humidity)
+    grow.report_sensor_status('m_dht_report', temperature=temperature, humidity=humidity)
     return f'temperature={str(temperature)} humidity={str(humidity)}'
+
+@app.route('/m_humidifier_status', methods=['GET'])
+def humidifier_status():
+    return "1" if grow.humidifier_on else "0"
+
+@app.route('/m_lights_status', methods=['GET'])
+def lights_status():
+    return "1" if grow.lights_on else "0"
 
 ##################################################################################################
 @app.route('/plant', methods=['GET', 'POST'])

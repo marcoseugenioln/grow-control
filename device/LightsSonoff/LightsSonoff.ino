@@ -1,73 +1,88 @@
+/*
+  Rui Santos
+  Complete project details at Complete project details at https://RandomNerdTutorials.com/esp8266-nodemcu-http-get-post-arduino/
+
+  Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation files.
+  The above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software.
+  
+  Code compatible with ESP8266 Boards Version 3.0.0 or above 
+  (see in Tools > Boards > Boards Manager > ESP8266)
+*/
+
 #include <ESP8266WiFi.h>
-#include <PubSubClient.h>
- 
-// Connect to the WiFi
-const char* ssid = "MARCOS_E_NICOLE*";                 //add your wifi Name
-const char* password = "Dv010400";             //Add your wifi password here
-const char* mqtt_server = "192.168.1.8"; //add the ip address of your raspberry pi you can get the ip address of your Pi by typing ifconfig in terminal
- 
-WiFiClient espClient;
-PubSubClient client(espClient);
- 
+#include <ESP8266HTTPClient.h>
+#include <WiFiClient.h>
+
+const char* ssid = "NICOLE_E_MARCOS";
+const char* password = "Dv010400";
+
+String URL   = "http://192.168.1.8:3000/m_lights_status/";
+
+// the following variables are unsigned longs because the time, measured in
+// milliseconds, will quickly become a bigger number than can be stored in an int.
+unsigned long lastTime = 0;
+// Timer set to 10 minutes (600000)
+//unsigned long timerDelay = 600000;
+// Set timer to 5 seconds (5000)
+unsigned long timerDelay = 1000;
+
 const byte relay=12; 
 const byte led_pin=13;
- 
-void callback(char* topic, byte* payload, unsigned int length) {
-  Serial.print("Message arrived [");
-  Serial.print(topic);
-  Serial.print("] ");
-  
-  for (int i=0;i<length;i++) {
-    char receivedChar = (char)payload[i];
-    Serial.print(receivedChar);
-    
-    if (receivedChar == '1'){
-      digitalWrite(relay, HIGH);
-    }
-    else if (receivedChar == '0'){
-      digitalWrite(relay, LOW);
-    }
+
+void setup() {
+  Serial.begin(115200); 
+
+  WiFi.begin(ssid, password);
+  Serial.println("Connecting");
+  while(WiFi.status() != WL_CONNECTED) {
+    delay(500);
+    Serial.print(".");
   }
-  Serial.println();
+  Serial.println("");
+  Serial.print("Connected to WiFi network with IP Address: ");
+  Serial.println(WiFi.localIP());
 }
- 
- 
-void reconnect() {
-  // Loop until we're reconnected
-  while (!client.connected()) {
-    Serial.print("Attempting MQTT connection...");
-    // Attempt to connect
-    if (client.connect("Client")) {
-      Serial.println("connected");
-      // ... and subscribe to topic
-      client.subscribe("m_lights_cmd");             // led is the topic which we are going to add in rapberry pi
-    } else {
-      Serial.print("failed, rc=");
-      Serial.print(client.state());
-      Serial.println(" try again in 5 seconds");
-      // Wait 5 seconds before retrying
-      delay(5000);
+
+void loop() {
+  // Send an HTTP POST request depending on timerDelay
+  if ((millis() - lastTime) > timerDelay) {
+
+    //Check WiFi connection status
+    if(WiFi.status()== WL_CONNECTED){
+      WiFiClient client;
+      HTTPClient http;
+
+      // Your Domain name with URL path or IP address with path
+      http.begin(client, URL.c_str());
+
+      // Send HTTP GET request
+      int httpResponseCode = http.GET();
+      
+      if (httpResponseCode > 0) {
+        Serial.print("HTTP Response code: ");
+        Serial.println(httpResponseCode);
+        String payload = http.getString();
+        Serial.println(payload);
+
+        if (payload == "1"){
+          digitalWrite(relay, HIGH);
+          digitalWrite(led, HIGH)
+        }
+        else if (payload == "0"){
+          digitalWrite(relay, LOW);
+          digitalWrite(led, LOW)
+        }
+      }
+      else {
+        Serial.print("Error code: ");
+        Serial.println(httpResponseCode);
+      }
+      // Free resources
+      http.end();
     }
+    else {
+      Serial.println("WiFi Disconnected");
+    }
+    lastTime = millis();
   }
-}
- 
-void setup()
-{
-  Serial.begin(9600);
-  
-  client.setServer(mqtt_server, 1883);
-  client.setCallback(callback);
- 
-  pinMode(led_pin, OUTPUT);
-  pinMode(relay,OUTPUT);
-  digitalWrite(led_pin, LOW);
-  digitalWrite(relay, LOW);
-}
- 
-void loop()
-{
-  if (!client.connected()) {
-    reconnect();
-  }
-  client.loop();
 }
