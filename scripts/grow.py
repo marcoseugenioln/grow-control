@@ -3,8 +3,6 @@ import datetime
 class Grow():
 
     def __init__(self,
-                 humidifier_pin = 20, 
-                 lights_pin = 14,
                  auto_mode=False, 
                  min_humidity=0,
                  max_humidity=0,
@@ -52,7 +50,7 @@ class Grow():
             self.lights_on = lights_on
             self.humidifier_on = humidifier_on
 
-        print(f'{datetime.datetime.now()} - m_grow_settings_cmd: auto_mode[{self.auto_mode}] humidifier_on[{self.humidifier.on}] min_humidity[{self.min_humidity}] max_humidity[{self.max_humidity}] humidifier_on[{self.lights.on}] lights_on_time[{self.lights_on_time}] lights_off_time[{self.lights_off_time}]')
+        print(f'{datetime.datetime.now()} - m_grow_settings_cmd: auto_mode[{self.auto_mode}] humidifier_on[{self.humidifier_on}] min_humidity[{self.min_humidity}] max_humidity[{self.max_humidity}] humidifier_on[{self.lights_on}] lights_on_time[{self.lights_on_time}] lights_off_time[{self.lights_off_time}]')
         
 
     def automatic_mode_routine(self):

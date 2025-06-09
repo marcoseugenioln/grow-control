@@ -26,11 +26,14 @@ unsigned long lastTime = 0;
 // Set timer to 5 seconds (5000)
 unsigned long timerDelay = 1000;
 
-const byte relay=12; 
+const byte relay_pin=12; 
 const byte led_pin=13;
 
 void setup() {
   Serial.begin(115200); 
+
+  pinMode(relay_pin, OUTPUT);  // Set the relay pin as an output
+  pinMode(led_pin, OUTPUT);  // Set the led pin as an output
 
   WiFi.begin(ssid, password);
   Serial.println("Connecting");
@@ -61,15 +64,20 @@ void loop() {
       if (httpResponseCode > 0) {
         Serial.print("HTTP Response code: ");
         Serial.println(httpResponseCode);
+        
         String payload = http.getString();
-        Serial.println(payload);
+        Serial.println("response: " + payload);
 
-        if (payload == "1"){
-          digitalWrite(relay, HIGH);
+        const bool turn_device_on = payload.toInt() == 1;
+
+        if (turn_device_on){
+          Serial.println("turning device ON");
+          digitalWrite(relay_pin, HIGH);
           digitalWrite(led_pin, HIGH);
         }
-        else if (payload == "0"){
-          digitalWrite(relay, LOW);
+        else {
+          Serial.println("turning device OFF");
+          digitalWrite(relay_pin, LOW);
           digitalWrite(led_pin, LOW);
         }
       }

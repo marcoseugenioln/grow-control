@@ -4,20 +4,22 @@ from scripts.grow import Grow
 from scripts.database import Database
 import json
 import sys
+import logging
 
 app = Flask(__name__)
 app.secret_key = '1234'
 
 site = Blueprint('site', __name__, template_folder='templates')
 
+log = logging.getLogger('werkzeug')
+log.setLevel(logging.ERROR)
+
 with open(str(sys.argv[1])) as config_file:
     app_config = json.load(config_file)
 
 database = Database(database_path='database/schema.db', schema_file='database/schema.sql')
 
-grow = Grow(humidifier_pin=app_config['humidifier_pin'],
-            lights_pin=app_config['lights_pin'],
-            auto_mode=app_config['auto_mode'],
+grow = Grow(auto_mode=app_config['auto_mode'],
             min_humidity=app_config['min_humidity'],
             max_humidity=app_config['max_humidity'],
             lights_on_time=app_config['lights_on_time'],
@@ -72,29 +74,28 @@ def grow_settings_cmd():
         if 'lights_off_time' in request.form:
             lights_off_time = request.form['lights_off_time']
 
-        grow.set_grow_settings('m_grow_settings_cmd', 
-                        auto_mode=auto_mode,
-                        humidifier_on=humidifier_on,
-                        min_humidity=min_humidity,
-                        max_humidity=max_humidity,
-                        lights_on=lights_on,
-                        lights_on_time=lights_on_time,
-                        lights_off_time=lights_off_time)
+        grow.set_grow_settings(auto_mode=auto_mode,
+                            humidifier_on=humidifier_on,
+                            min_humidity=min_humidity,
+                            max_humidity=max_humidity,
+                            lights_on=lights_on,
+                            lights_on_time=lights_on_time,
+                            lights_off_time=lights_off_time)
         
     return redirect(url_for('index'))
 
 @app.route('/m_dht_report/<temperature>/<humidity>', methods=['GET', 'POST'])
 def sensor(temperature, humidity):
-    grow.report_sensor_status('m_dht_report', temperature=temperature, humidity=humidity)
+    grow.report_sensor_status(temperature=temperature, humidity=humidity)
     return f'temperature={str(temperature)} humidity={str(humidity)}'
 
-@app.route('/m_humidifier_status', methods=['GET'])
+@app.route('/m_humidifier_status/', methods=['GET'])
 def humidifier_status():
-    return "1" if grow.humidifier_on else "0"
+    return str(int(grow.humidifier_on))
 
-@app.route('/m_lights_status', methods=['GET'])
+@app.route('/m_lights_status/', methods=['GET'])
 def lights_status():
-    return "1" if grow.lights_on else "0"
+    return str(int(grow.lights_on))
 
 ##################################################################################################
 @app.route('/plant', methods=['GET', 'POST'])

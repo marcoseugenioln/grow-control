@@ -20,7 +20,7 @@ DHT dht(15, DHT22);
 void setup() {
   Serial.begin(9600);
 
-  WiFi.begin(ssid, password);
+  WiFi.begin(WIFI_SSID, WIFI_PASSWORD);
   Serial.println("Connecting");
   while(WiFi.status() != WL_CONNECTED) {
     delay(500);
@@ -49,25 +49,22 @@ void loop() {
     //Check WiFi connection status
     if(WiFi.status()== WL_CONNECTED){
       HTTPClient http;
-      String query = HOST_NAME + PATH_NAME + String(t) + "/" + String(h);
+      String client = URL + String(t) + "/" + String(h);
       
-      http.begin(query); //HTTP
-
-      // Your Domain name with URL path or IP address with path
-      http.begin(client, URL.c_str());
+      http.begin(client); //HTTP
 
       // Send HTTP GET request
       int httpResponseCode = http.GET();
       
       // httpCode will be negative on error
-      if (httpCode > 0) {
+      if (httpResponseCode > 0) {
         // file found at server
-        if (httpCode == HTTP_CODE_OK) {
+        if (httpResponseCode == HTTP_CODE_OK) {
           String payload = http.getString();
           Serial.println(payload);
         } else {
           // HTTP header has been send and Server response header has been handled
-          Serial.printf("[HTTP] GET... code: %d\n", httpCode);
+          Serial.printf("[HTTP] GET... code: %d\n", httpResponseCode);
         }
       } else {
         Serial.print("Error code: ");
