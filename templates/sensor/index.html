@@ -1,0 +1,13 @@
+
+<div class="plant-container">
+    <fieldset>
+        <legend>{{ name }}</legend>
+        {% include 'device/update.html'%}
+        <table>
+            <tr><td>ID</td><td>{{ id }}</td></tr>
+            <tr><td>Name</td><td>{{ name }}</td></tr>
+            <tr><td>Device Type</td><td>{{ device_types[device_type_id - 1][1] }}</td></tr>
+            <tr><td>Power ON</td><td>{{ power_on }}</td></tr>
+        </table>
+    </fieldset>
+</div>

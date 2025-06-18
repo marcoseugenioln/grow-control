@@ -1,14 +1,27 @@
-<div class="create-div">
-    <tr>
-        <form action="{{ url_for('create_watering', plant_id=plant_id) }}" method="post">
-            <td></td>
-            <td><input type="date" class="text-field" name="date"></td>
-            <td><input type="number" min="0" max="10000" class="text-field" name="mililiter"></td>
-            <td>
-                <button title="create" class="btn">
-                    <img src="{{ url_for('static', filename='image/create-icon.png')}}" class="btn-img" id="create-btn">
+<div class="btn-container">
+    <button class="btn" onclick="togglePopupMenu('watering-create-panel')">
+        <img src="{{ url_for('static', filename='image/create-icon.png')}}" class="btn-img" id="create-btn">
+    </button>
+</div>
+<div class="overlay" id="watering-create-panel">
+    <div class="centralized-div">
+        <form action="{{ url_for('create_watering', grow_id=grow_id, plant_id=plant_id) }}" method="post">
+            <fieldset>
+                <legend>Date</legend>
+                <input type="date" class="text-field" name="date">
+            </fieldset>
+            <fieldset>
+                <legend>Mililiter</legend>
+                <input type="number" min="0" max="10000" class="text-field" name="mililiter">
+            </fieldset>
+            <div class="btn-container">
+                <button class="btn" type="submit">
+                    <img src="{{ url_for('static', filename='image/confirm-icon.png')}}" class="btn-img" id="create-btn">
                 </button>
-            </td>
+                <button type="button" class="btn" onclick="togglePopupMenu('watering-create-panel')">
+                    <img src="{{ url_for('static', filename='image/cancel-icon.png')}}" class="btn-img" id="cancel-btn">
+                </button>
+            </div>
         </form>
-    </tr>
+    </div>
 </div>

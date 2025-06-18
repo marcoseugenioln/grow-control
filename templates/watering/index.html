@@ -1,23 +1,16 @@
-<!DOCTYPE html>
-<html>
-<head>
-    <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='style.css')}}">
-    <title>Waterings</title>
-</head>
-<body>
-    {% include 'header.html'%}
-    <div class="index-div">
-        <table>
-            <tr>
-                <td><label class="text-field">ID</label></td>
-                <td><label class="text-field">Date</label></td>
-                <td><label class="text-field">Mililiter</label></td>
-            </tr>
-            {% for id, date, mililiter in waterings %}
-                {% include '/watering/update.html'%}
-            {% endfor %}
-            {% include '/watering/create.html'%}
-        </table>
-    </div>
-</body>
-</html>
+<table class="content-table">
+    <tr>
+        <td><label class="text-field">ID</label></td>
+        <td><label class="text-field">Date</label></td>
+        <td><label class="text-field">Mililiter</label></td>
+        <td>Delete</td>
+    </tr>
+    {% for id, date, mililiter in waterings %}
+        <tr>
+            <td><label class="text-field">{{ id }}</label></td>
+            <td><label class="text-field">{{ date }}</label></td>
+            <td><label class="text-field">{{ mililiter }}</label></td>
+            <td>{% include 'watering/update.html'%}</td>
+        </tr>
+    {% endfor %}
+</table>

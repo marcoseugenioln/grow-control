@@ -43,7 +43,8 @@
     width:fit-content;
     height:fit-content;
     border-style: none;
-    /* border-radius: 5px; */
+    border-radius: 5px;
+    cursor: pointer;
 }
 
 .btn:active {
@@ -85,12 +86,19 @@
     padding: 1px;
 }
 
-
 .centralized-div{
     display: flex;
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
     flex-direction:column;
     align-items: center;
     justify-content: center;
+    background-color: white;
+    width: auto; /* Full width (cover the whole page) */
+    height: auto; /* Full height (cover the whole page) */
+    padding: 2%;
 }
 
 .number-field{
@@ -104,10 +112,6 @@
     width:fit-content;
     border-radius: 15px;
     border-style: solid;
-    /* display: flex;
-    flex-direction: row;
-    justify-content: center;
-    align-items: center; */
 }
 
 .plant-div{
@@ -119,9 +123,9 @@
     position: relative;
     width: fit-content;
     height: fit-content;
-    /* justify-content: center;
+    justify-content: center;
     align-items: center;
-    text-align: center; */
+    text-align: center;
 }
 
 #close-btn
@@ -141,14 +145,35 @@
     bottom: 0;
     background-color: rgba(0,0,0,0.5); /* Black background with opacity */
     z-index: 2; /* Specify a stack order in case you're using a different order for other elements */
-    cursor: pointer; /* Add a pointer on hover */
+    /* cursor: pointer; Add a pointer on hover */
     align-self: center;
 }
 
-/* Position the content inside the overlay  */
-.menu {
-    margin-left: 50%;
-    margin-top: 5%
+.content-table{
+    border-collapse: collapse;
+}
+
+.plant-container{
+    display: flex;
+    justify-content: space-evenly;
+    max-width: 1180px;
+    min-width: 1180px;
+}
+
+.table-container {
+    max-height: 150px; /* Set the height of the scrollable area */
+    min-height: 150px;
+    min-width: fit-content;
+    overflow-y: auto; /* Enable vertical scrolling */
+    border: 1px solid #ccc;
+}
+
+.grow-plants-container {
+    max-height: 500px; /* Set the height of the scrollable area */
+    min-height: 500px;
+    min-width: fit-content;
+    overflow-y: auto; /* Enable vertical scrolling */
+    border: 1px solid #ccc;
 }
 
 fieldset {
@@ -156,4 +181,10 @@ fieldset {
     width: fit-content;
     height: fit-content;
     background-color: white;
+}
+
+.btn-container {
+    display: flex;
+    justify-content: center; /* Horizontally center */
+    align-items: center;    /* Vertically center */
 }

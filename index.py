@@ -1,10 +1,10 @@
 from flask import Flask, redirect, url_for, request, render_template, Blueprint, flash, session, abort, jsonify
 from flask import Flask
-from scripts.grow import Grow
 from scripts.database import Database
 import json
 import sys
 import logging
+import datetime
 
 app = Flask(__name__)
 app.secret_key = '1234'
@@ -19,264 +19,303 @@ with open(str(sys.argv[1])) as config_file:
 
 database = Database(database_path='database/schema.db', schema_file='database/schema.sql')
 
-grow = Grow(auto_mode=app_config['auto_mode'],
-            min_humidity=app_config['min_humidity'],
-            max_humidity=app_config['max_humidity'],
-            lights_on_time=app_config['lights_on_time'],
-            lights_off_time=app_config['lights_off_time'])
-
-##################################################################################################
 @app.route("/")
 def index():
-    return render_template('index.html',
-                            temperature=grow.temperature,
-                            humidity=grow.humidity,
-                            auto_mode=grow.auto_mode,
-                            humidifier_on=grow.humidifier_on,
-                            min_humidity=grow.min_humidity,
-                            max_humidity=grow.max_humidity,
-                            lights_on=grow.lights_on,
-                            lights_on_time=grow.lights_on_time,
-                            lights_off_time=grow.lights_off_time)
-
-@app.route("/m_grow_settings_cmd", methods=['GET','POST'])
-def grow_settings_cmd():
+    if 'logged_in' in session:
+        if session['logged_in'] != True:
+            return redirect(url_for('login'))
+    else:
+        return redirect(url_for('login'))
     
-    if request.method == 'POST':
+    grows = database.get_user_grows(session['user_id'])
 
-        auto_mode = False
-        lights_on_time = None
-        lights_off_time = None
-        humidifier_on = False
-        min_humidity = 0
-        max_humidity = 0
-        lights_on = False
-        air_circulation_capacity = 0
+    return render_template('index.html', user_grows=grows)
 
-        if 'auto_mode' in request.form:
-            auto_mode = request.form['auto_mode'] == 'on'
+@app.route('/login', methods=['GET', 'POST'])
+def login():
 
-        if 'humidifier_on' in request.form:
-            humidifier_on = request.form['humidifier_on'] == 'on'
+    is_login_valid = True
 
-        if 'min_humidity' in request.form:
-            min_humidity = request.form['min_humidity']
-
-        if 'max_humidity' in request.form:
-            max_humidity = request.form['max_humidity']
+    if request.method == 'POST' and 'email' in request.form and 'password' in request.form:
         
-        if 'lights_on' in request.form:
-            lights_on = request.form['lights_on'] == 'on'
+        email = request.form['email']
+        password = request.form['password']
 
-        if 'lights_on_time' in request.form:
-            lights_on_time = request.form['lights_on_time']
+        if database.user_exists(email, password):
 
-        if 'lights_off_time' in request.form:
-            lights_off_time = request.form['lights_off_time']
+            user_id = database.get_user_id(email, password)
 
-        grow.set_grow_settings(auto_mode=auto_mode,
-                            humidifier_on=humidifier_on,
-                            min_humidity=min_humidity,
-                            max_humidity=max_humidity,
-                            lights_on=lights_on,
-                            lights_on_time=lights_on_time,
-                            lights_off_time=lights_off_time)
+            session['logged_in'] = True
+            session['user_id'] = user_id
+            session['is_admin'] = database.get_admin(user_id)
+
+            return redirect(url_for(f'index'))
+        else:
+            is_login_valid = False
+    
+    return render_template('auth/login.html', is_login_valid = is_login_valid)
+
+@app.route('/logout', methods=['GET', 'POST'])
+def logout():
+    if 'logged_in' in session:
+        session.pop('logged_in')
+
+    if 'user_id' in session:    
+        session.pop('user_id')
+    
+    if 'is_admin' in session:
+        session.pop('is_admin')
+
+    return redirect(url_for(f'login'))
+    
+@app.route("/register", methods=['GET','POST'])
+def register():
+
+    is_logged = False
+
+    if (request.method == 'POST' and 'email' in request.form and 'password' in request.form and 'password_c' in request.form):
         
-    return redirect(url_for('index'))
+        email = request.form['email']
+        password = request.form['password']
+        password_c = request.form['password_c']
 
-@app.route('/m_dht_report/<temperature>/<humidity>', methods=['GET', 'POST'])
-def sensor(temperature, humidity):
-    grow.report_sensor_status(temperature=temperature, humidity=humidity)
-    return f'temperature={str(temperature)} humidity={str(humidity)}'
+        if database.insert_user(email, password, password_c):
+            return redirect(url_for('login'))   
 
-@app.route('/m_humidifier_status/', methods=['GET'])
-def humidifier_status():
-    return str(int(grow.humidifier_on))
-
-@app.route('/m_lights_status/', methods=['GET'])
-def lights_status():
-    return str(int(grow.lights_on))
+        if 'logged_in' in session:
+            if session['logged_in'] == True:
+                is_logged = True                 
+    
+    return render_template('auth/register.html', logged_in = is_logged)
 
 ##################################################################################################
-@app.route('/plant', methods=['GET', 'POST'])
-def plants():
+
+@app.route('/user', methods=['GET', 'POST'])
+def user():
     
     return render_template(
+        'user/index.html', 
+        get_admin=database.get_admin, 
+        users = database.get_users(), 
+        current_user_id = session['user_id'],
+        current_user_email = database.get_user_email(session['user_id']),
+        current_user_password = database.get_user_password(session['user_id']),
+        is_admin = session['is_admin']
+        )
+
+@app.route('/user/create', methods=['GET', 'POST'])
+def create_user():
+    
+    if (request.method == 'POST' and 'email' in request.form and 'new_password' in request.form ):
+        
+        email = request.form['email']
+        new_password = request.form['new_password']
+
+        if('is_admin' in request.form):
+            is_admin = request.form['is_admin']
+        else:
+            is_admin = "0"
+
+        if database.insert_user(email, new_password, is_admin):
+            if 'user_id' in session:
+                return redirect(url_for('user'))
+
+        return redirect('/login')
+    
+    return redirect('/login')
+
+@app.route('/user/update/<id>', methods=['GET', 'POST'])
+def update_user(id):
+    if (request.method == 'POST' and 'email' in request.form and 'new_password' in request.form and 'is_admin' in request.form):
+        
+        email = request.form['email']
+        new_password = request.form['new_password']
+        is_admin = request.form['is_admin']
+
+        database.update_user(id, email, new_password, is_admin)
+        return redirect(url_for('user'))  
+        
+    return redirect(url_for('user'))
+
+@app.route('/user/delete/<id>', methods=['GET', 'POST'])
+def delete_user(id):
+    database.delete_user(id)
+    return redirect(url_for('user'))
+
+@app.route('/measurement/<device_id>/<measurement_type_id>/<value>', methods=['POST'])
+def measurement(device_id, measurement_type_id, value):
+
+    if 'device_id' in request.form and 'measurement_id' in request.form and 'value' in request.form:
+        # insert measurement into database
+        database.insert_measurement(device_id, measurement_type_id, value)
+
+    return '1'
+
+@app.route('/device/power_on/<device_id>', methods=['GET'])
+def device_power_on(device_id):
+
+    if 'device_id' in request.form:
+        # get device configuration
+        is_scheduled = database.get_device_scheduled(device_id)
+        is_bounded = database.get_device_bounded(device_id)
+        is_normal_on = database.get_device_normal_on(device_id)
+
+        if is_scheduled:
+            on_time = database.get_device_on_time(device_id)
+            off_time = database.get_device_off_time(device_id)
+            power_on = datetime.datetime.now().time() <= on_time and datetime.datetime.now().time() >= off_time
+            if is_normal_on:
+                power_on = not power_on
+            database.set_device_power_on(device_id, )
+        
+        elif is_bounded:
+            bounded_device_id = database.get_device_bounded_device_id(device_id)
+            bounded_measurement_type_id = database.get_device_bounded_measurement_type(device_id)
+            threshold = database.get_device_threshold(device_id)
+            power_on = database.get_last_measurement_value(bounded_device_id, bounded_measurement_type_id) > threshold
+            if is_normal_on:
+                power_on = not power_on
+            database.set_device_power_on(device_id, power_on)
+        else:
+            database.set_device_power_on(device_id, is_normal_on)
+    
+    return str(database.get_power_on(device_id))
+##################################################################################################
+@app.route('/plant/<grow_id>/<plant_id>', methods=['GET', 'POST'])
+def plant_index(grow_id, plant_id):
+
+    plant = database.get_plant(plant_id)
+    if len(plant) == 0:
+        plant = [ None ]
+    else:
+        plant = plant[0]
+
+    return render_template(
         'plant/index.html',
-        plants=database.get_plants(),
+        grow_id=grow_id,
+        plant=plant,
+        waterings=database.get_plant_waterings(plant_id),
+        damages=database.get_plant_damages(plant_id),
+        trainings=database.get_plant_trainings(plant_id),
+        transplantings=database.get_plant_transplantings(plant_id),
+        feedings=database.get_plant_feedings(plant_id),
         photoperiods=database.get_photoperiods(),
         genders=database.get_genders(),
         intensities=database.get_intensities()
     )
 
-@app.route('/plant/create', methods=['GET', 'POST'])
-def create_plant():
+@app.route('/plant/create/<grow_id>', methods=['GET', 'POST'])
+def create_plant(grow_id):
     if 'name' in request.form and 'date' in request.form and 'photoperiod_id' in request.form and 'gender_id' in request.form:
-        database.insert_plant(request.form['name'], request.form['date'], request.form['photoperiod_id'], request.form['gender_id'])
-    return redirect(url_for('plants'))
+        database.insert_plant(grow_id, request.form['name'], request.form['date'], request.form['photoperiod_id'], request.form['gender_id'])
+    return redirect(url_for('grow_index', grow_id=grow_id))
 
-@app.route('/plant/update/<plant_id>', methods=['GET', 'POST'])
-def update_plant(plant_id):
+@app.route('/plant/update/<grow_id>/<plant_id>', methods=['GET', 'POST'])
+def update_plant(grow_id, plant_id):
     if 'name' in request.form and 'date' in request.form and 'photoperiod_id' in request.form and 'gender_id' in request.form:
         database.update_plant(plant_id, request.form['name'], request.form['date'], request.form['photoperiod_id'], request.form['gender_id'])
-    return redirect(url_for('plants'))
+    return redirect(url_for('plant_index', grow_id=grow_id, plant_id=plant_id))
 
-@app.route('/plant/delete/<plant_id>', methods=['GET', 'POST'])
-def delete_plant(plant_id):
+@app.route('/plant/delete/<grow_id>/<plant_id>', methods=['GET', 'POST'])
+def delete_plant(grow_id, plant_id):
     database.delete_plant(plant_id)
-    return redirect(url_for('plants'))
+    return redirect(url_for('grow_index', grow_id=grow_id))
 ################################################################################################## 
-@app.route('/watering/<plant_id>', methods=['GET', 'POST'])
-def watering(plant_id):
-    
-    return render_template(
-        'watering/index.html',
-        plant_id=plant_id,
-        waterings=database.get_plant_waterings(plant_id)
-    )
-
-@app.route('/watering/create/<plant_id>', methods=['GET', 'POST'])
-def create_watering(plant_id):
+@app.route('/watering/create/<grow_id>/<plant_id>', methods=['GET', 'POST'])
+def create_watering(grow_id, plant_id):
     if 'date' in request.form and 'mililiter' in request.form:
         database.insert_watering(plant_id, request.form['date'], request.form['mililiter'])
+    return redirect(url_for('plant_index', grow_id=grow_id, plant_id=plant_id))
 
-    return redirect(url_for('watering', plant_id=plant_id))
-
-@app.route('/watering/update/<plant_id>/<watering_id>', methods=['GET', 'POST'])
-def update_watering(plant_id):
-    # TODO: update watering
-    return redirect(url_for('watering', plant_id=plant_id))
-
-@app.route('/watering/delete/<plant_id>/<watering_id>', methods=['GET', 'POST'])
-def delete_watering(plant_id, watering_id):
+@app.route('/watering/delete/<grow_id>/<plant_id>/<watering_id>', methods=['GET', 'POST'])
+def delete_watering(grow_id, plant_id, watering_id):
     database.delete_watering(watering_id)
-    return redirect(url_for('watering', plant_id=plant_id))
-
+    return redirect(url_for('plant_index', grow_id=grow_id, plant_id=plant_id))
 ################################################################################################## 
-@app.route('/training/<plant_id>', methods=['GET', 'POST'])
-def training(plant_id):
-    
-    return render_template(
-        'training/index.html',
-        trainings=database.get_plant_trainings(plant_id),
-        training_types=database.get_training_types()
-    )
-
-@app.route('/training/create/<plant_id>', methods=['GET', 'POST'])
-def create_training(plant_id):
+@app.route('/training/create/<grow_id>/<plant_id>', methods=['GET', 'POST'])
+def create_training(grow_id, plant_id):
     # TODO: create training
-    return redirect(url_for('training', plant_id=plant_id))
+    return redirect(url_for('plant_index', grow_id=grow_id, plant_id=plant_id))
 
-@app.route('/training/update/<plant_id>', methods=['GET', 'POST'])
-def update_training(plant_id):
-    # TODO: update training
-    return redirect(url_for('training', plant_id=plant_id))
-
-@app.route('/training/delete/<plant_id>', methods=['GET', 'POST'])
-def delete_training(plant_id):
+@app.route('/training/delete/<grow_id>/<plant_id>', methods=['GET', 'POST'])
+def delete_training(grow_id, plant_id):
     # TODO: delete training
-    return redirect(url_for('training', plant_id=plant_id))
-
-
+    return redirect(url_for('plant_index', grow_id=grow_id, plant_id=plant_id))
 ################################################################################################## 
-@app.route('/feeding/<plant_id>', methods=['GET', 'POST'])
-def feeding(plant_id):
-    
-    return render_template(
-        'feeding/index.html',
-        feedings=database.get_plant_feedings(plant_id)
-    )
-
 @app.route('/feeding/create/<plant_id>', methods=['GET', 'POST'])
-def create_feeding(plant_id):
+def create_feeding(grow_id, plant_id):
     # TODO: create feeding
-    return redirect(url_for('feeding', plant_id=plant_id))
+    return redirect(url_for('plant_index', grow_id=grow_id, plant_id=plant_id))
 
-@app.route('/feeding/update/<plant_id>', methods=['GET', 'POST'])
-def update_feeding(plant_id):
-    # TODO: update feeding
-    return redirect(url_for('feeding', plant_id=plant_id))
-
-@app.route('/feeding/delete/<plant_id>', methods=['GET', 'POST'])
-def delete_feeding(plant_id):
+@app.route('/feeding/delete/<grow_id>/<plant_id>', methods=['GET', 'POST'])
+def delete_feeding(grow_id, plant_id):
     # TODO: delete feeding
-    return redirect(url_for('feeding', plant_id=plant_id))
-
+    return redirect(url_for('plant_index', grow_id=grow_id, plant_id=plant_id))
 ################################################################################################## 
-@app.route('/transplanting/<plant_id>', methods=['GET', 'POST'])
-def transplanting(plant_id):
-    
-    return render_template(
-        'transplanting/index.html',
-        transplantings=database.get_plant_transplantings(plant_id)
-    )
-
-@app.route('/transplanting/create/<plant_id>', methods=['GET', 'POST'])
-def create_transplanting(plant_id):
+@app.route('/transplanting/create/<grow_id>/<plant_id>', methods=['GET', 'POST'])
+def create_transplanting(grow_id, plant_id):
     # TODO: create transplanting
-    return redirect(url_for('transplanting', plant_id=plant_id))
+    return redirect(url_for('plant_index', grow_id=grow_id, plant_id=plant_id))
 
-@app.route('/transplanting/update/<plant_id>', methods=['GET', 'POST'])
-def update_transplanting(plant_id):
-    # TODO: update transplanting
-    return redirect(url_for('transplanting', plant_id=plant_id))
-
-@app.route('/transplanting/delete/<plant_id>', methods=['GET', 'POST'])
-def delete_transplanting(plant_id):
+@app.route('/transplanting/delete/<grow_id>/<plant_id>', methods=['GET', 'POST'])
+def delete_transplanting(grow_id, plant_id):
     # TODO: delete transplanting
-    return redirect(url_for('transplanting', plant_id=plant_id))
-
+    return redirect(url_for('plant_index', grow_id=grow_id, plant_id=plant_id))
 ################################################################################################## 
-@app.route('/damage/<plant_id>', methods=['GET', 'POST'])
-def damage(plant_id):
-    
-    return render_template(
-        'damage/index.html',
-        damages=database.get_plant_damages(plant_id),
-        damage_types=database.get_damage_types(),
-        intensities=database.get_intensities()
-    )
-
-@app.route('/damage/create/<plant_id>', methods=['GET', 'POST'])
-def create_damage(plant_id):
+@app.route('/damage/create/<grow_id>/<plant_id>', methods=['GET', 'POST'])
+def create_damage(grow_id, plant_id):
     # TODO: create damage
-    return redirect(url_for('damage', plant_id=plant_id))
+    return redirect(url_for('plant_index', grow_id=grow_id, plant_id=plant_id))
 
-@app.route('/damage/update/<plant_id>', methods=['GET', 'POST'])
-def update_damage(plant_id):
-    # TODO: update damage
-    return redirect(url_for('damage', plant_id=plant_id))
-
-@app.route('/damage/delete/<plant_id>', methods=['GET', 'POST'])
-def delete_damage(plant_id):
+@app.route('/damage/delete/<grow_id>/<plant_id>', methods=['GET', 'POST'])
+def delete_damage(grow_id, plant_id):
     # TODO: delete damage
-    return redirect(url_for('damage', plant_id=plant_id))
+    return redirect(url_for('plant_index', grow_id=grow_id, plant_id=plant_id))
 ################################################################################################## 
-@app.route('/harvest/<plant_id>', methods=['GET', 'POST'])
-def harvest(plant_id):
-    
-    return render_template(
-        'harvest/index.html',
-        harvests=database.get_plant_harvests(plant_id)
-    )
+@app.route('/grow/create', methods=['GET', 'POST'])
+def create_grow():
+    if 'name' in request.form and 'lenght' in request.form and 'width' in request.form and 'height' in request.form:
+        database.insert_grow(session['user_id'], request.form['name'],  request.form['lenght'], request.form['width'], request.form['height'])
+        
+    return redirect(url_for('index'))
 
-@app.route('/harvest/create/<plant_id>', methods=['GET', 'POST'])
-def create_harvest(plant_id):
-    # TODO: create harvest
-    return redirect(url_for('harvest', plant_id=plant_id))
+@app.route('/grow/update/<grow_id>', methods=['GET', 'POST'])
+def update_grow(grow_id):
+    if 'name' in request.form and 'lenght' in request.form and 'width' in request.form and 'height' in request.form:
+        database.update_grow(grow_id, request.form['name'],  request.form['lenght'], request.form['width'], request.form['height'])
+    return redirect(url_for('grow_index', grow_id=grow_id))
 
-@app.route('/harvest/update/<plant_id>', methods=['GET', 'POST'])
-def update_harvest(plant_id):
-    # TODO: update harvest
-    return redirect(url_for('harvest', plant_id=plant_id))
+@app.route('/grow/delete/<grow_id>', methods=['GET', 'POST'])
+def delete_grow(grow_id):
+    database.delete_grow(grow_id)
+    return redirect(url_for('index'))
 
-@app.route('/harvest/delete/<id>', methods=['GET', 'POST'])
-def delete_harvest(plant_id):
-    # TODO: delete harvest
-    return redirect(url_for('harvest', plant_id=plant_id))
+@app.route('/grow/<grow_id>', methods=['GET', 'POST'])
+def grow_index(grow_id):
 
+    grow = database.get_grow(grow_id)
+    if len(grow) == 0:
+        grow = [ None ]
+    else:
+        grow = grow[0]
 
-    
+    return render_template('grow/index.html', 
+                           grow_id=grow_id,
+                           grow=grow, 
+                           devices=database.get_grow_devices(grow_id), 
+                           sensor_types=database.get_sensor_types(),
+                           effector_types=database.get_effector_types(),
+                           plants=database.get_grow_plants(grow_id), 
+                           photoperiods=database.get_photoperiods(),
+                           genders=database.get_genders(),
+                           intensities=database.get_intensities())
+################################################################################################## 
+@app.route('/device/create/<grow_id>', methods=['GET', 'POST'])
+def create_device(grow_id):
+    if 'name' in request.form and 'device_type_id' in request.form:
+        database.insert_device(grow_id, request.form['device_type_id'], request.form['name'])
+    return redirect(url_for('grow_index', grow_id=grow_id))
+
 if __name__ == '__main__':
     print(app_config)
     app.run(host=app_config["host"], 

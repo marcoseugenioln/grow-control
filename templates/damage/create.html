@@ -1,29 +1,39 @@
-<div class="create-div">
-    <table>
-        <tr>
-            <td><label class="text-field">Date</label></td>
-            <td><label class="text-field">Type</label></td>
-        </tr>
-        <tr>
-            <h2>Register Damage</h2>
-            <form action="{{ url_for('create_damage', id=id) }}" method="post">
-                <td><input type="date" class="text-field" name="date"></td>
-                <td><select class="combo-box" name="damage_type_id">
+<div class="btn-container">
+    <button class="btn" onclick="togglePopupMenu('damage-create-panel')">
+        <img src="{{ url_for('static', filename='image/create-icon.png')}}" class="btn-img" id="create-btn">
+    </button>
+</div>
+<div class="overlay" id="damage-create-panel">
+    <div class="centralized-div">
+        <form action="{{ url_for('create_damage', grow_id=grow_id, plant_id=id) }}" method="post">
+            <fieldset>
+                <legend>Date</legend>
+                <input type="date" class="text-field" name="date">
+            </fieldset>
+            <fieldset>
+                <legend>Type</legend>
+                <select class="combo-box" name="damage_type_id">
                     {% for did, dname, ddescription in damage_types %}
                         <option value="{{ did }}">{{ dname }}</option>
                     {% endfor %}
-                </select></td>
-                <td><select class="combo-box" name="intensity_id">
+                </select>
+            </fieldset>
+            <fieldset>
+                <legend>Intensity</legend>
+                <select class="combo-box" name="intensity_id">
                     {% for iid, iname, idescription in intensities %}
                         <option value="{{ iid }}">{{ iname }}</option>
                     {% endfor %}
-                </select></td>
-                <td>
-                    <button class="btn">
-                        <img src="{{ url_for('static', filename='image/create-icon.png')}}" class="btn-img" id="create-btn">
-                    </button>
-                </td>
-            </form>
-        </tr>
-    </table>
+                </select>
+            </fieldset>
+            <div class="btn-container">
+                <button class="btn" type="submit">
+                    <img src="{{ url_for('static', filename='image/confirm-icon.png')}}" class="btn-img" id="create-btn">
+                </button>
+                <button type="button" class="btn" onclick="togglePopupMenu('damage-create-panel')">
+                    <img src="{{ url_for('static', filename='image/cancel-icon.png')}}" class="btn-img" id="cancel-btn">
+                </button>
+            </div>
+        </form>
+    </div>
 </div>

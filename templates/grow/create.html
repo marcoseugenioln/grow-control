@@ -1,37 +1,34 @@
+
 <div class="btn-container">
-    <button class="btn" onclick="togglePopupMenu('transplanting-create-panel')">
+    <button class="btn" onclick="togglePopupMenu('grow-create-panel')">
         <img src="{{ url_for('static', filename='image/create-icon.png')}}" class="btn-img" id="create-btn">
     </button>
 </div>
 
-<div class="overlay" id="transplanting-create-panel">
+<div class="overlay" id="grow-create-panel">
     <div class="centralized-div">
-        <form action="{{ url_for('create_transplanting', grow_id=grow_id, plant_id=id) }}" method="post">
+        <form action="{{ url_for('create_grow') }}" method="post">
             <fieldset>
-                <legend>Date</legend>
-                <input type="date" class="text-field" name="date">
+                <legend>Name</legend>
+                <input type="text" class="text-field" name="name" placeholder="Grow name">
             </fieldset>
             <fieldset>
                 <legend>Lenght</legend>
-                <input type="number" min="0" max="10000" class="text-field" name="lenght">
+                <input type="number" class="text-field" name="lenght">
             </fieldset>
             <fieldset>
                 <legend>Width</legend>
-                <input type="number" min="0" max="10000" class="text-field" name="width">
+                <input type="number" class="text-field" name="width">
             </fieldset>
             <fieldset>
                 <legend>Height</legend>
-                <input type="number" min="0" max="10000" class="text-field" name="height">
-            </fieldset>
-            <fieldset>
-                <legend>Radius</legend>
-                <input type="number" min="0" max="10000" class="text-field" name="radius">
+                <input type="number" class="text-field" name="height">
             </fieldset>
             <div class="btn-container">
                 <button class="btn" type="submit">
                     <img src="{{ url_for('static', filename='image/confirm-icon.png')}}" class="btn-img" id="create-btn">
                 </button>
-                <button type="button" class="btn" onclick="togglePopupMenu('transplanting-create-panel')">
+                <button type="button" class="btn" onclick="togglePopupMenu('grow-create-panel')">
                     <img src="{{ url_for('static', filename='image/cancel-icon.png')}}" class="btn-img" id="cancel-btn">
                 </button>
             </div>

@@ -1,24 +1,18 @@
-<div name="watering-{{ id }}">
-    <tr>
-        <form action="{{ url_for('update_watering', plant_id=plant_id,  watering_id=id) }}" method="post">
-            <td><label>{{ id }}</label></td>
-
-            <td><input type="date" class="text-field" name="date" value="{{ date }}"></td>
-
-            <td><input type="number" min="0" max="10000" class="text-field" name="mililiter" value="{{ mililiter }}"></td>
-
-            <td>
-                <button title="update" class="btn" name="update-watering-{{ id }}">
-                    <img src="{{ url_for('static', filename='image/edit-icon.png')}}" class="btn-img">
+<button class="btn" onclick="togglePopupMenu('watering-delete-panel')">
+    <img src="{{ url_for('static', filename='image/trash-icon.png')}}" class="btn-img" id="create-btn">
+</button>
+<div class="overlay" id="watering-delete-panel">
+    <div class="centralized-div">
+        <p>Are you sure you want to delete watering ID {{ id }}?</p>
+        <div class="btn-container">
+            <form action="{{ url_for('delete_watering', grow_id=grow_id, plant_id=plant_id, watering_id=id) }}" method="post">
+                <button type="submit" class="btn">
+                    <img src="{{ url_for('static', filename='image/confirm-icon.png')}}" class="btn-img" id="create-btn">
                 </button>
-            </td>
-        </form>
-        <form action="{{ url_for('delete_watering', plant_id=plant_id, watering_id=id) }}" method="post">
-            <td>
-                <button title="delete" class="btn" name="delete-watering-{{ id }}">
-                    <img src="{{ url_for('static', filename='image/trash-icon.png')}}" class="btn-img">
+                <button type="button" class="btn" id="cancel-btn" onclick="togglePopupMenu('watering-delete-panel')">
+                    <img src="{{ url_for('static', filename='image/cancel-icon.png')}}" class="btn-img" id="cancel-btn">
                 </button>
-            </td>
-        </form>
-    </tr>
+            </form>
+        </div>
+    </div>
 </div>

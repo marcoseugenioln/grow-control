@@ -1,28 +1,44 @@
-<div class="create-div">
-    <table>
-        <tr>
-            <td><label class="text-field">Date</label></td>
-            <td><label class="text-field">Dosage</label></td>
-            <td><label class="text-field">Nitrogen</label></td>
-            <td><label class="text-field">Phosphorus</label></td>
-            <td><label class="text-field">Potassium</label></td>
-            <td><label class="text-field">Concentration</label></td>
-        </tr>
-        <tr>
-            <h1>Register Transplanting</h1>
-            <form action="{{ url_for('create_feeding', id=id) }}" method="post">
-                <td><input type="date" class="text-field" name="date" value="{{ date }}"></td>
-                <td><input type="number" min="0" max="10000" class="text-field" name="dosage"></td>
-                <td><input type="number" min="0" max="10000" class="text-field" name="nitrogen"></td>
-                <td><input type="number" min="0" max="10000" class="text-field" name="phosphorus"></td>
-                <td><input type="number" min="0" max="10000" class="text-field" name="potassium"></td>
-                <td><input type="number" min="0" max="10000" class="text-field" name="concentration"></td>
-                <td>
-                    <button class="btn">
-                        <img src="{{ url_for('static', filename='image/create-icon.png')}}" class="btn-img" id="create-btn">
-                    </button>
-                </td>
-            </form>
-        </tr>
-    </table>
+
+<div class="btn-container">
+    <button class="btn" onclick="togglePopupMenu('feeding-create-panel')">
+        <img src="{{ url_for('static', filename='image/create-icon.png')}}" class="btn-img" id="create-btn">
+    </button>
+</div>
+<div class="overlay" id="feeding-create-panel">
+    <div class="centralized-div">
+        <form action="{{ url_for('create_feeding', grow_id=grow_id, plant_id=id) }}" method="post">
+            <fieldset>
+                <legend>Date</legend>
+                <input type="date" class="text-field" name="date" value="{{ date }}">
+            </fieldset>
+            <fieldset>
+                <legend>Dosage</legend>
+                <input type="number" min="0" max="10000" class="text-field" name="dosage">
+            </fieldset>
+            <fieldset>
+                <legend>Nitrogen</legend>
+                <input type="number" min="0" max="10000" class="text-field" name="nitrogen">
+            </fieldset>
+            <fieldset>
+                <legend>Phosphorus</legend>
+                <input type="number" min="0" max="10000" class="text-field" name="phosphorus">
+            </fieldset>
+            <fieldset>
+                <legend>Potassium</legend>
+                <input type="number" min="0" max="10000" class="text-field" name="potassium">
+            </fieldset>
+            <fieldset>
+                <legend>Concentration</legend>
+                <input type="number" min="0" max="10000" class="text-field" name="concentration">
+            </fieldset>
+            <div class="btn-container">
+                <button class="btn" type="submit">
+                    <img src="{{ url_for('static', filename='image/confirm-icon.png')}}" class="btn-img" id="create-btn">
+                </button>
+                <button type="button" class="btn" onclick="togglePopupMenu('feeding-create-panel')">
+                    <img src="{{ url_for('static', filename='image/cancel-icon.png')}}" class="btn-img" id="cancel-btn">
+                </button>
+            </div>
+        </form>
+    </div>
 </div>

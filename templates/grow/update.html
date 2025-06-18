@@ -1,0 +1,60 @@
+<button class="btn" onclick="togglePopupMenu('grow-edit-panel')">
+    <img src="{{ url_for('static', filename='image/edit-icon.png')}}" class="btn-img" id="create-btn">
+</button>
+
+<button class="btn" onclick="togglePopupMenu('grow-delete-panel')">
+    <img src="{{ url_for('static', filename='image/trash-icon.png')}}" class="btn-img" id="create-btn">
+</button>
+<div class="overlay" id="grow-delete-panel">
+    <div class="centralized-div">
+        <p>Are you sure you want to delete grow {{ grow[2] }}?</p>
+        <table>
+            <tr>
+                <td>
+                    <form method="get" action="{{ url_for('delete_grow', grow_id=grow[0]) }}">
+                        <button class="btn">
+                            <img src="{{ url_for('static', filename='image/confirm-icon.png')}}" class="btn-img" id="create-btn">
+                        </button>
+                    </form>
+                </td>
+                <td>
+                    <button class="btn" id="cancel-btn" onclick="togglePopupMenu('grow-delete-panel')">
+                        <img src="{{ url_for('static', filename='image/cancel-icon.png')}}" class="btn-img" id="create-btn">
+                    </button>
+                </td>
+            </tr>
+        </table>
+    </div>
+</div>
+
+<div class="overlay" id="grow-edit-panel">
+    <div class="centralized-div">
+        <form action="{{ url_for('update_grow', grow_id=grow[0]) }}" method="post">
+            <fieldset>
+                <legend>Name</legend>
+                <input type="text" class="text-field" name="name" value="{{ grow[2] }}">
+            </fieldset>
+            <fieldset>
+                <legend>Lenght</legend>
+                <input type="number" class="text-field" name="lenght" value="{{ grow[3] }}">
+            </fieldset>
+            <fieldset>
+                <legend>Width</legend>
+                <input type="number" class="text-field" name="width" value="{{ grow[4] }}">
+            </fieldset>
+            <fieldset>
+                <legend>Height</legend>
+                <input type="number" class="text-field" name="height" value="{{ grow[5] }}">
+            </fieldset>
+
+            <div class="btn-container">
+                <button class="btn" type="submit">
+                <img src="{{ url_for('static', filename='image/confirm-icon.png')}}" class="btn-img" id="create-btn">
+                </button>
+                <button type="button" class="btn" onclick="togglePopupMenu('grow-edit-panel')">
+                    <img src="{{ url_for('static', filename='image/cancel-icon.png')}}" class="btn-img" id="cancel-btn">
+                </button>
+            </div>
+        </form>
+    </div>
+</div>

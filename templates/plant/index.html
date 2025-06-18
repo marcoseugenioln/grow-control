@@ -1,40 +1,55 @@
-<!DOCTYPE html>
-<html>
 
-<head>
-    <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='style.css')}}">
-    <title>Plants</title>
-    <script src="{{url_for('static', filename='plant.js')}}"></script>
+{% set plant_id = id %}
 
-</head>
-<body onload="initGallery()">
-
-    {% include 'header.html'%}
-
-    <div class="index-div">
+<div class="plant-container">
+    <fieldset>
+        <legend>{{ name }}</legend>
+        {% include 'plant/update.html'%}
         <table>
-            <button title="previous plant" class="btn" onclick="previousPlant()">
-                <img src="{{ url_for('static', filename='image/left-arrow-icon.png')}}" class="btn-img">
-            </button>
-            <label>  </label>
-            <label id="selected_plant"> </label>
-            <label>  </label>
-
-            <button title="next plant" class="btn" onclick="nextPlant()">
-                <img src="{{ url_for('static', filename='image/right-arrow-icon.png')}}" class="btn-img">
-            </button>
-            <label> </label>
-            <button title="create" class="btn" onclick="openMenu('create-plant-div')">
-                <img src="{{ url_for('static', filename='image/create-icon.png')}}" class="btn-img" id="create-btn">
-            </button>
-            <br>
-            <br>
-            
-            {% for id, name, date, alive, harvested, photoperiod_id, gender_id in plants %}
-                {% include '/plant/update.html'%}
-            {% endfor %}
+            <tr><td>ID</td><td>{{ id }}</td></tr>
+            <tr><td>Name</td><td>{{ name }}</td></tr>
+            <tr><td>Photoperiod</td><td>{{ photoperiods[photoperiod_id - 1][1] }}</td></tr>
+            <tr><td>Gender</td><td>{{ genders[gender_id - 1][1] }}</td></tr>
+            <tr><td>Start Date</td><td>{{ start_date }}</td></tr>
+            <tr><td>End Date</td><td>{{ end_date }}</td></tr>
+            <tr><td>Harvested</td><td>{{ harvested }}</td></tr>
+            <tr><td>Yield</td><td>{{ yield }}</td></tr>
         </table>
-    </div>
-    {% include '/plant/create.html'%}
-</body>
-</html>
+
+        <fieldset style="display: inline-block;">
+            <legend>Waterings</legend>
+            <div class="table-container">
+                {% include 'watering/index.html'%}
+            </div>
+            {% include 'watering/create.html'%}
+        </fieldset>
+        <fieldset style="display: inline-block;">
+            <legend>Feedings</legend>
+            <div class="table-container">
+                {% include 'feeding/index.html'%}
+            </div>
+            {% include 'feeding/create.html'%}
+        </fieldset>
+        <fieldset style="display: inline-block;">
+            <legend>Trainings</legend>
+            <div class="table-container">
+                {% include 'training/index.html'%}
+            </div>
+            {% include 'training/create.html'%}
+        </fieldset>
+        <fieldset style="display: inline-block;">
+            <legend>Damages</legend>
+            <div class="table-container">
+                {% include 'damage/index.html'%}
+            </div>
+            {% include 'damage/create.html'%}
+        </fieldset>
+        <fieldset style="display: inline-block;">
+            <legend>Transplantings</legend>
+            <div class="table-container">
+                {% include 'transplanting/index.html'%}
+            </div>
+            {% include 'transplanting/create.html'%}
+        </fieldset>
+    </fieldset>
+</div>

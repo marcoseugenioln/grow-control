@@ -2,42 +2,113 @@
 create table if not exists photoperiod(
     id INTEGER PRIMARY KEY,
     name text(50) UNIQUE,
-    description TEXT(500) NOT NULL
+    description TEXT(500)
 );
 
 create table if not exists gender(
     id INTEGER PRIMARY KEY,
     name text(50) UNIQUE,
-    description TEXT(500) NOT NULL
+    description TEXT(500)
 );
 
 create table if not exists intensity(
     id INTEGER PRIMARY KEY,
     name text(50) UNIQUE,
-    description TEXT(500) NOT NULL
+    description TEXT(500)
 );
 
 create table if not exists training_type(
     id INTEGER PRIMARY KEY AUTOINCREMENT,
     name text(50) UNIQUE,
-    description TEXT(500) NOT NULL
+    description TEXT(500)
 );
 
 create table if not exists damage_type(
     id INTEGER PRIMARY KEY AUTOINCREMENT,
     name text(50) UNIQUE,
-    description TEXT(500) NOT NULL
+    description TEXT(500)
+);
+
+create table if not exists sensor_type(
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    name text(50) UNIQUE,
+    description TEXT(500)
+);
+
+create table if not exists effector_type(
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    name text(50) UNIQUE,
+    description TEXT(500)
+);
+
+create table if not exists user(
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+	email TEXT(300) UNIQUE,
+	password TEXT(64),
+	is_admin BOOLEAN DEFAULT (0)
+);
+
+create table if not exists grow(
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    user_id INTEGER NOT NULL,
+    name TEXT(50) NOT NULL,
+    lenght FLOAT,
+    width FLOAT,
+    height FLOAT,
+    FOREIGN KEY (user_id) REFERENCES user(id) ON DELETE CASCADE
+);
+
+create table if not exists effector(
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    grow_id INTEGER NOT NULL,
+    effector_type_id INTEGER NOT NULL,
+    name TEXT(50) NOT NULL,
+    ip TEXT(20),
+    normal_on BOOLEAN DEFAULT(0),
+    power_on BOOLEAN DEFAULT(0),
+    scheduled BOOLEAN DEFAULT(0),
+    on_time TIME,
+    off_time TIME,
+    bounded BOOLEAN DEFAULT(0),
+    bounded_sensor_id INTEGER,
+    threshold FLOAT,
+    ip TEXT(20),
+    FOREIGN KEY (bounded_sensor_id) REFERENCES sensor(id),
+    FOREIGN KEY (grow_id) REFERENCES grow(id) ON DELETE CASCADE
+);
+
+create table if not exists sensor(
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    grow_id INTEGER NOT NULL,
+    ip TEXT(20),
+    name TEXT(50) NOT NULL,
+    sensor_type_id INTEGER NOT NULL,
+    last_value FLOAT,
+    FOREIGN KEY (grow_id) REFERENCES grow(id) ON DELETE CASCADE,
+    FOREIGN KEY (sensor_type_id) REFERENCES sensor_type(id)
+);
+
+create table if not exists measurement(
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    device_id INTEGER NOT NULL,
+    sensor_type_id INTEGER NOT NULL,
+    value FLOAT NOT NULL,
+    FOREIGN KEY (device_id) REFERENCES device(id),
+    FOREIGN KEY (sensor_type_id) REFERENCES sensor_type(id)
 );
 
 create table if not exists plant(
     id INTEGER PRIMARY KEY AUTOINCREMENT,
+    grow_id INTEGER NOT NULL,
     name TEXT(50) NOT NULL,
-    date DATE NOT NULL,
-    alive BOOLEAN DEFAULT(1),
-    harvested BOOLEAN DEFAULT(0),
+    start_date DATE NOT NULL,
+    end_date DATE,
     photoperiod_id INTEGER NOT NULL,
     gender_id INTEGER NOT NULL,
-    FOREIGN KEY (photoperiod_id) REFERENCES photoperiod(id)
+    harvested BOOLEAN DEFAULT(0),
+    yield FLOAT DEFAULT(0),
+    FOREIGN KEY (grow_id) REFERENCES grow(id) ON DELETE CASCADE,
+    FOREIGN KEY (photoperiod_id) REFERENCES photoperiod(id),
     FOREIGN KEY (gender_id) REFERENCES gender(id)
 );
 
@@ -74,10 +145,10 @@ create table if not exists transplanting(
     id INTEGER PRIMARY KEY AUTOINCREMENT,
     plant_id INTEGER NOT NULL,
     date DATE NOT NULL,
-    width INTEGER DEFAULT(0),
-    height INTEGER DEFAULT(0),
-    radius INTEGER DEFAULT(0),
-    depth INTEGER DEFAULT(0),
+    lenght FLOAT DEFAULT(0),
+    width FLOAT DEFAULT(0),
+    height FLOAT DEFAULT(0),
+    radius FLOAT DEFAULT(0),
     FOREIGN KEY (plant_id) REFERENCES plant(id)
 );
 
@@ -92,26 +163,18 @@ create table if not exists damage(
     FOREIGN KEY (plant_id) REFERENCES plant(id)
 );
 
-create table if not exists harvest(
-    id INTEGER PRIMARY KEY AUTOINCREMENT,
-    plant_id INTEGER NOT NULL,
-    date DATE NOT NULL,
-    yield INTEGER NOT NULL,
-    FOREIGN KEY (plant_id) REFERENCES plant(id)
-);
-
 INSERT OR IGNORE INTO gender (name, description) VALUES
-('male', ''),
-('female', ''),
-('hermaphrodite', ''),
-('unknown', '');
+('Male', ''),
+('Female', ''),
+('Hermaphrodite', ''),
+('Unknown', '');
 
 INSERT OR IGNORE INTO photoperiod (name, description) VALUES
-('germination', ''),
-('seedling', ''),
-('vegetative', ''),
-('flowering', ''),
-('autoflower', '');
+('Germination', ''),
+('Seedling', ''),
+('Vegetative', ''),
+('Flowering', ''),
+('Autoflower', '');
 
 INSERT OR IGNORE INTO training_type (name, description) VALUES
 ('Low Stress Training', ''),
@@ -138,3 +201,22 @@ INSERT OR IGNORE INTO intensity (name, description) VALUES
 ('High', ''),
 ('Very High', '');
 
+INSERT OR IGNORE INTO sensor_type (name, description) VALUES
+('Air Temperature', ''),
+('Air Humidity', ''),
+('Soil Temperature', ''),
+('Soil Humidity', ''),
+('Soil HP', ''),
+('Water HP', ''),
+('PPFD', '');
+
+INSERT OR IGNORE INTO effector_type (name, description) VALUES
+('Fan', ''),
+('Lights', ''),
+('Water Supplier', ''),
+('Exhauster', ''),
+('Blower', '');
+
+INSERT OR IGNORE INTO user (email, password, is_admin) VALUES
+('root@root.com', 'root', 1),
+('user@user.com', 'user', 0);
