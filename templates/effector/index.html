@@ -1,12 +1,33 @@
 
-<div class="effector-container">
-    <fieldset>
-        <legend>{{ name }}</legend>
-        {% include 'device/update.html'%}
-        <table>
-            <tr><td>ID</td><td>{{ id }}</td></tr>
-            <tr><td>Name</td><td>{{ name }}</td></tr>
-            <tr><td>Power ON</td><td>{{ power_on }}</td></tr>
-        </table>
-    </fieldset>
+<div class="item-container">
+    <table>
+        <tr><td>ID</td><td>{{ effector_id }}</td></tr>
+        <tr><td>IP</td><td>{{ ip }}</td></tr>
+        <tr><td>Name</td><td>{{ name }}</td></tr>
+        <tr><td>Type</td><td>{{ effector_types[effector_type_id - 1][1] }}</td></tr>
+
+        {% if bounded == 1 %}
+            <tr><td>Bounded</td><td>{{ bounded }}</td></tr>
+            <tr><td>Bounded Sensor</td><td>{{ bounded_sensor_id }}</td></tr>
+            <tr><td>Threshold</td><td>{{ threshold }}</td></tr>
+        {% endif %}
+
+        {% if scheduled == 1 %}
+            <tr><td>Scheduled</td><td>{{ scheduled }}</td></tr>
+            <tr><td>ON Time</td><td>{{ on_time }}</td></tr>
+            <tr><td>OFF Time</td><td>{{ off_time }}</td></tr>
+        {% endif %}
+        
+        <tr>
+            <td>Power ON</td>
+            <td>
+                {% if power_on == 1 %}
+                    <div class="effector-on"></div>
+                {% else %}
+                    <div class="effector-off"></div>
+                {% endif %}
+            </td>
+        </tr>
+    </table>
+    {% include 'effector/update.html'%}
 </div>

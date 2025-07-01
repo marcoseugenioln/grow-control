@@ -1,10 +1,19 @@
-<button class="btn" onclick="togglePopupMenu('plant-edit-panel')">
-    <img src="{{ url_for('static', filename='image/edit-icon.png')}}" class="btn-img" id="create-btn">
-</button>
-<button class="btn" onclick="togglePopupMenu('plant-delete-panel')">
-    <img src="{{ url_for('static', filename='image/trash-icon.png')}}" class="btn-img" id="create-btn">
-</button>
-<div class="overlay" id="plant-delete-panel">
+
+<div class="item-edit-btn-container">
+    <button class="btn" onclick="togglePopupMenu('plant-edit-container-{{ plant_id }}')">
+        EDIT
+    </button>
+    <button class="btn" onclick="togglePopupMenu('plant-delete-container-{{ plant_id }}')">
+        DELETE
+    </button>
+    {% include 'watering/create.html' %}
+    {% include 'feeding/create.html' %}
+    {% include 'training/create.html' %}
+    {% include 'damage/create.html' %}
+    {% include 'transplanting/create.html' %}
+</div>
+
+<div class="overlay" id="plant-delete-container-{{ plant_id }}">
     <div class="centralized-div">
         <p>Are you sure you want to delete plant {{ name }}?</p>
         <table>
@@ -17,7 +26,7 @@
                     </form>
                 </td>
                 <td>
-                    <button class="btn" id="cancel-btn" onclick="togglePopupMenu('plant-delete-panel')">
+                    <button class="btn" id="cancel-btn" onclick="togglePopupMenu('plant-delete-container-{{ plant_id }}')">
                         <img src="{{ url_for('static', filename='image/cancel-icon.png')}}" class="btn-img" id="cancel-btn">
                     </button>
                 </td>
@@ -25,16 +34,16 @@
         </table>
     </div>
 </div>
-<div class="overlay" id="plant-edit-panel">
+<div class="overlay" id="plant-edit-container-{{ plant_id }}">
     <div class="centralized-div">
-        <form action="{{ url_for('update_plant', grow_id = grow_id, plant_id = plant_id) }}" method="post">
+        <form action="{{ url_for('update_plant', grow_id = id, plant_id = plant_id) }}" method="post">
             <fieldset>
                 <legend>Name</legend>
-                <td><input id="name-{{ id }}" type="text" class="text-field" name="name" value="{{ name }}"></td>
+                <td><input id="name-{{ plant_id }}" type="text" class="text-field" name="name" value="{{ name }}"></td>
             </fieldset>
             <fieldset>
                 <legend>Date</legend>
-                <td><input id="date-{{ id }}" type="date" class="text-field" name="date" value="{{ start_date }}"></td>
+                <td><input id="date-{{ plant_id }}" type="date" class="text-field" name="date" value="{{ start_date }}"></td>
             </fieldset>
             <fieldset>
                 <legend>Photoperiod</legend>
@@ -52,7 +61,7 @@
                 <legend>Gender</legend>
                 <select id="gender-id-{{ id }}" class="combo-box" name="gender_id">
                     {% for gid, gname, gdescription in genders %}
-                        {% if gid == grnder_id %}
+                        {% if gid == gender_id %}
                             <option value="{{ gid }}" selected>{{ gname }}</option>
                         {% else %}
                             <option value="{{ gid }}">{{ gname }}</option>
@@ -64,7 +73,7 @@
                 <button class="btn" type="submit">
                 <img src="{{ url_for('static', filename='image/confirm-icon.png')}}" class="btn-img" id="create-btn">
                 </button>
-                <button type="button" class="btn" onclick="togglePopupMenu('plant-edit-panel')">
+                <button type="button" class="btn" onclick="togglePopupMenu('plant-edit-container-{{ plant_id }}')">
                     <img src="{{ url_for('static', filename='image/cancel-icon.png')}}" class="btn-img" id="cancel-btn">
                 </button>
             </div>

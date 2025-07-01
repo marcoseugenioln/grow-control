@@ -1,9 +1,7 @@
-<div class="btn-container">
-    <button class="btn" onclick="togglePopupMenu('damage-create-panel')">
-        <img src="{{ url_for('static', filename='image/create-icon.png')}}" class="btn-img" id="create-btn">
-    </button>
-</div>
-<div class="overlay" id="damage-create-panel">
+<button class="btn" onclick="togglePopupMenu('damage-create-container-{{ plant_id }}')">
+    DAMAGE
+</button>
+<div class="overlay" id="damage-create-container-{{ plant_id }}">
     <div class="centralized-div">
         <form action="{{ url_for('create_damage', grow_id=grow_id, plant_id=id) }}" method="post">
             <fieldset>
@@ -30,7 +28,7 @@
                 <button class="btn" type="submit">
                     <img src="{{ url_for('static', filename='image/confirm-icon.png')}}" class="btn-img" id="create-btn">
                 </button>
-                <button type="button" class="btn" onclick="togglePopupMenu('damage-create-panel')">
+                <button type="button" class="btn" onclick="togglePopupMenu('damage-create-container-{{ plant_id }}')">
                     <img src="{{ url_for('static', filename='image/cancel-icon.png')}}" class="btn-img" id="cancel-btn">
                 </button>
             </div>

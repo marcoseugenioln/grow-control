@@ -1,19 +1,20 @@
 
-<button class="btn" onclick="togglePopupMenu('device-create-panel')">
+<button class="btn" onclick="togglePopupMenu('effector-create-container-{{ id }}')">
     <img src="{{ url_for('static', filename='image/create-icon.png')}}" class="btn-img" id="create-btn">
 </button>
-<div class="overlay" id="device-create-panel">
+<div class="overlay" id="effector-create-container-{{ id }}">
     <div class="centralized-div">
-        <form action="{{ url_for('create_device', grow_id=grow_id) }}" method="post">
+        <form action="{{ url_for('create_effector', grow_id=id) }}" method="post">
             <fieldset>
                 <legend>Name</legend>
                 <input type="text" class="text-field" name="name">
             </fieldset>
+
             <fieldset>
-                <legend>Device Type</legend>
-                <select id="device-type-id-{{ id }}" class="combo-box" name="device_type_id">
-                    {% for did, dname, ddescription in device_types %}
-                        <option value="{{ did }}">{{ dname }}</option>
+                <legend>Effector Type</legend>
+                <select id="effector-type-id-{{ id }}" class="combo-box" name="effector_type_id">
+                    {% for eid, ename, edescription in effector_types %}
+                        <option value="{{ eid }}">{{ ename }}</option>
                     {% endfor %}
                 </select>
             </fieldset>
@@ -21,7 +22,7 @@
             <button class="btn" type="submit">
                 <img src="{{ url_for('static', filename='image/confirm-icon.png')}}" class="btn-img" id="create-btn">
             </button>
-            <button type="button" class="btn" onclick="togglePopupMenu('device-create-panel')">
+            <button type="button" class="btn" onclick="togglePopupMenu('effector-create-container-{{ id }}')">
                 <img src="{{ url_for('static', filename='image/cancel-icon.png')}}" class="btn-img" id="cancel-btn">
             </button>
         </form>

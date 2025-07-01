@@ -72,7 +72,7 @@ create table if not exists effector(
     bounded BOOLEAN DEFAULT(0),
     bounded_sensor_id INTEGER,
     threshold FLOAT,
-    ip TEXT(20),
+    FOREIGN KEY (effector_type_id) REFERENCES effector_type(id),
     FOREIGN KEY (bounded_sensor_id) REFERENCES sensor(id),
     FOREIGN KEY (grow_id) REFERENCES grow(id) ON DELETE CASCADE
 );
@@ -83,18 +83,17 @@ create table if not exists sensor(
     ip TEXT(20),
     name TEXT(50) NOT NULL,
     sensor_type_id INTEGER NOT NULL,
-    last_value FLOAT,
+    last_value FLOAT DEFAULT(0),
     FOREIGN KEY (grow_id) REFERENCES grow(id) ON DELETE CASCADE,
     FOREIGN KEY (sensor_type_id) REFERENCES sensor_type(id)
 );
 
-create table if not exists measurement(
+create table if not exists sensor_data(
     id INTEGER PRIMARY KEY AUTOINCREMENT,
-    device_id INTEGER NOT NULL,
-    sensor_type_id INTEGER NOT NULL,
+    sensor_id INTEGER NOT NULL,
     value FLOAT NOT NULL,
-    FOREIGN KEY (device_id) REFERENCES device(id),
-    FOREIGN KEY (sensor_type_id) REFERENCES sensor_type(id)
+    datetime  DATETIME DEFAULT CURRENT_TIMESTAMP,
+    FOREIGN KEY (sensor_id) REFERENCES sensor(id)
 );
 
 create table if not exists plant(
@@ -163,6 +162,13 @@ create table if not exists damage(
     FOREIGN KEY (plant_id) REFERENCES plant(id)
 );
 
+CREATE TRIGGER IF NOT EXISTS last_sensor_data_value
+AFTER INSERT ON sensor_data
+FOR EACH ROW
+BEGIN
+    UPDATE sensor set last_value = NEW.value WHERE id = NEW.sensor_id;
+END;
+
 INSERT OR IGNORE INTO gender (name, description) VALUES
 ('Male', ''),
 ('Female', ''),
@@ -215,7 +221,9 @@ INSERT OR IGNORE INTO effector_type (name, description) VALUES
 ('Lights', ''),
 ('Water Supplier', ''),
 ('Exhauster', ''),
-('Blower', '');
+('Blower', ''),
+('Humidifier', ''),
+('Dehumidifier', '');
 
 INSERT OR IGNORE INTO user (email, password, is_admin) VALUES
 ('root@root.com', 'root', 1),

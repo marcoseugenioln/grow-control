@@ -1,22 +1,20 @@
-<div class="header-div">
-
+<div class="header-container">
     <form method="get" action="{{ url_for('index') }}">
-        <button title="home" class="header-btn" name="home-button">
+        <button title="home" class="btn" name="home-button">
             <img src="{{ url_for('static', filename='image/home-page-icon.png')}}" class="btn-img" id="home-btn">
         </button>
     </form>
 
     <form method="get" action="{{ url_for('user') }}">
-        <button class="header-btn" name="logout-button">
+        <button class="btn" name="logout-button">
             USER
         </button>
     </form>
 
      <form method="get" action="{{ url_for('logout') }}">
-        <button class="header-btn" name="logout-button">
+        <button class="btn" name="logout-button">
             <img src="{{ url_for('static', filename='image/logout-icon.png')}}" class="btn-img" id="logout-btn">
         </button>
     </form>
 
 </div>
-<hr>

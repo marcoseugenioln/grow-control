@@ -1,23 +1,26 @@
-<button class="btn" onclick="togglePopupMenu('device-edit-panel')">
-    <img src="{{ url_for('static', filename='image/edit-icon.png')}}" class="btn-img" id="create-btn">
-</button>
-<button class="btn" onclick="togglePopupMenu('plant-delete-panel')">
-    <img src="{{ url_for('static', filename='image/trash-icon.png')}}" class="btn-img" id="create-btn">
-</button>
-<div class="overlay" id="plant-delete-panel">
+
+<div class="item-edit-btn-container">
+    <button class="btn" onclick="togglePopupMenu('sensor-edit-container-{{ sensor_id }}')">
+        EDIT
+    </button>
+    <button class="btn" onclick="togglePopupMenu('sensor-delete-container-{{ sensor_id }}')">
+        DELETE
+    </button>
+</div>
+<div class="overlay" id="sensor-delete-container-{{ sensor_id }}">
     <div class="centralized-div">
-        <p>Are you sure you want to delete device {{ name }}?</p>
+        <p>Are you sure you want to delete sensor {{ name }}?</p>
         <table>
             <tr>
                 <td>
-                    <form method="get" action="{{ url_for('delete_plant', grow_id=grow_id, plant_id=plant_id) }}">
+                    <form method="get" action="{{ url_for('delete_sensor', grow_id=id, sensor_id=sensor_id) }}">
                         <button class="btn">
                             <img src="{{ url_for('static', filename='image/confirm-icon.png')}}" class="btn-img" id="create-btn">
                         </button>
                     </form>
                 </td>
                 <td>
-                    <button class="btn" id="cancel-btn" onclick="togglePopupMenu('plant-delete-panel')">
+                    <button class="btn" id="cancel-btn" onclick="togglePopupMenu('sensor-delete-container-{{ sensor_id }}')">
                         <img src="{{ url_for('static', filename='image/cancel-icon.png')}}" class="btn-img" id="cancel-btn">
                     </button>
                 </td>
@@ -25,30 +28,17 @@
         </table>
     </div>
 </div>
-<div class="overlay" id="device-edit-panel">
+<div class="overlay" id="sensor-edit-container-{{ sensor_id }}">
     <div class="centralized-div">
-        <form action="{{ url_for('update_plant', grow_id = grow_id, plant_id = plant_id) }}" method="post">
+        <form action="{{ url_for('update_sensor', grow_id = grow_id, sensor_id = sensor_id) }}" method="post">
             <fieldset>
                 <legend>Name</legend>
-                <input type="text" class="text-field" name="name">
-            </fieldset>
-
-            <fieldset>
-                <legend>Device Type</legend>
-                <select id="device-type-id-{{ id }}" class="combo-box" name="device_type_id">
-                    {% for did, dname, ddescription in device_types %}
-                        {% if did == device_type_id %}
-                            <option value="{{ did }}" selected>{{ dname }}</option>
-                        {% else %}
-                            <option value="{{ did }}">{{ dname }}</option>
-                        {% endif %}
-                    {% endfor %}
-                </select>
+                <input type="text" class="text-field" name="name" value="{{ name }}">
             </fieldset>
 
             <fieldset>
                 <legend>Sensor Type</legend>
-                <select id="device-type-id-{{ id }}" class="combo-box" name="device_type_id">
+                <select id="sensor-type-id-{{ sensor_id }}" class="combo-box" name="sensor_type_id">
                     {% for stid, stname, stdescription in sensor_types %}
                         {% if stid == sensor_type_id %}
                             <option value="{{ stid }}" selected>{{ stname }}</option>
@@ -61,62 +51,14 @@
 
             <fieldset>
                 <legend>Device IP</legend>
-                <input type="text" class="text-field" name="ip">
-            </fieldset>
-
-            <fieldset>
-                <legend>Normal On</legend>
-                <input type="checkbox" class="checkbox-field" name="normal_on">
-            </fieldset>
-
-            <fieldset>
-                <legend>Bound</legend>
-                <label>Bounded: </label>
-                <input type="checkbox" class="checkbox-field" name="bounded">
-
-                <label>Bounded Device ID: </label>
-                <select id="bounded-device-id-{{ id }}" class="combo-box" name="bounded_device_id">
-                    {% for sid, sname, pdescription in grow_sensors %}
-                        {% if sid == bounded_device_id %}
-                            <option value="{{ sid }}" selected>{{ sname }}</option>
-                        {% else %}
-                            <option value="{{ sid }}">{{ sname }}</option>
-                        {% endif %}
-                    {% endfor %}
-                </select>
-
-                <label>Bounded Device ID: </label>
-                <select id="sensor-type-id-{{ id }}" class="combo-box" name="bounded_sensor_type_id">
-                    {% for stid, stname, stdescription in sensor_types %}
-                        {% if stid == sensor_type_id %}
-                            <option value="{{ stid }}" selected>{{ stname }}</option>
-                        {% else %}
-                            <option value="{{ stid }}">{{ stname }}</option>
-                        {% endif %}
-                    {% endfor %}
-                </select>
-
-                <label>Threshold: </label>
-                <input type="number" class="text-field" name="threshold">
-            </fieldset>
-
-            <fieldset>
-                <legend>Schedule</legend>
-                <label>Scheduled: </label>
-                <input type="checkbox" name="scheduled">
-
-                <label>ON: </label>
-                <input type="time" class="text-field" name="on_time">
-
-                <label>OFF: </label>
-                <input type="time" class="text-field" name="off_time">
+                <input type="text" class="text-field" name="ip" value="{{ ip }}">
             </fieldset>
 
             <div class="btn-container">
                 <button class="btn" type="submit">
                 <img src="{{ url_for('static', filename='image/confirm-icon.png')}}" class="btn-img" id="create-btn">
                 </button>
-                <button type="button" class="btn" onclick="togglePopupMenu('device-edit-panel')">
+                <button type="button" class="btn" onclick="togglePopupMenu('sensor-edit-container-{{ sensor_id }}')">
                     <img src="{{ url_for('static', filename='image/cancel-icon.png')}}" class="btn-img" id="cancel-btn">
                 </button>
             </div>

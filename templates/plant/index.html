@@ -1,55 +1,15 @@
 
 {% set plant_id = id %}
-
-<div class="plant-container">
-    <fieldset>
-        <legend>{{ name }}</legend>
-        {% include 'plant/update.html'%}
-        <table>
-            <tr><td>ID</td><td>{{ id }}</td></tr>
-            <tr><td>Name</td><td>{{ name }}</td></tr>
-            <tr><td>Photoperiod</td><td>{{ photoperiods[photoperiod_id - 1][1] }}</td></tr>
-            <tr><td>Gender</td><td>{{ genders[gender_id - 1][1] }}</td></tr>
-            <tr><td>Start Date</td><td>{{ start_date }}</td></tr>
-            <tr><td>End Date</td><td>{{ end_date }}</td></tr>
-            <tr><td>Harvested</td><td>{{ harvested }}</td></tr>
-            <tr><td>Yield</td><td>{{ yield }}</td></tr>
-        </table>
-
-        <fieldset style="display: inline-block;">
-            <legend>Waterings</legend>
-            <div class="table-container">
-                {% include 'watering/index.html'%}
-            </div>
-            {% include 'watering/create.html'%}
-        </fieldset>
-        <fieldset style="display: inline-block;">
-            <legend>Feedings</legend>
-            <div class="table-container">
-                {% include 'feeding/index.html'%}
-            </div>
-            {% include 'feeding/create.html'%}
-        </fieldset>
-        <fieldset style="display: inline-block;">
-            <legend>Trainings</legend>
-            <div class="table-container">
-                {% include 'training/index.html'%}
-            </div>
-            {% include 'training/create.html'%}
-        </fieldset>
-        <fieldset style="display: inline-block;">
-            <legend>Damages</legend>
-            <div class="table-container">
-                {% include 'damage/index.html'%}
-            </div>
-            {% include 'damage/create.html'%}
-        </fieldset>
-        <fieldset style="display: inline-block;">
-            <legend>Transplantings</legend>
-            <div class="table-container">
-                {% include 'transplanting/index.html'%}
-            </div>
-            {% include 'transplanting/create.html'%}
-        </fieldset>
-    </fieldset>
+<div class="item-container">
+    <table>
+        <tr><td>ID</td><td>{{ plant_id }}</td></tr>
+        <tr><td>Name</td><td>{{ name }}</td></tr>
+        <tr><td>Photoperiod</td><td>{{ photoperiods[photoperiod_id - 1][1] }}</td></tr>
+        <tr><td>Gender</td><td>{{ genders[gender_id - 1][1] }}</td></tr>
+        <tr><td>Start Date</td><td>{{ start_date }}</td></tr>
+        <tr><td>End Date</td><td>{{ end_date }}</td></tr>
+        <tr><td>Harvested</td><td>{{ harvested }}</td></tr>
+        <tr><td>Yield</td><td>{{ yield }}</td></tr>
+    </table>
+    {% include 'plant/update.html'%}
 </div>

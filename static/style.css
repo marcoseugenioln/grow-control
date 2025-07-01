@@ -1,40 +1,12 @@
-.header-div{
+.header-container{
     display:flex;
     align-items: center;
     flex-direction: row;
     background-color:rgb(0, 150, 0);
     height: fit-content;
-}
-
-.header-btn{
-    background-color:rgb(0, 150, 0);
-    color:aliceblue;
-    width:fit-content;
-    height:fit-content;
-    margin:10px;
-    border-style: none;
-    border-radius: 5px;
-}
-
-.header-btn:active {
-    background-color: rgb(0, 150, 0);
-    transform: translateY(1px);
-    transform: translateX(1px); 
-} 
-
-.header-btn:hover{
-    background-color:rgb(80, 150, 80);
-}
-
-.header-btn-img{
-    width: 28px; 
-    height: 28px;
-    /* padding: 5px; */
-}
-
-#logout-img{
-    transform: translateY(10px);
-    transform: translateX(2px);
+    border: 1px solid #ccc;
+    box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2);
+    margin-bottom: 20px;
 }
 
 .btn {
@@ -43,8 +15,12 @@
     width:fit-content;
     height:fit-content;
     border-style: none;
-    border-radius: 5px;
     cursor: pointer;
+    min-height: 35px;
+    max-height: 35px;
+    min-width: 100px;
+    max-width: 100px;
+    box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2);
 }
 
 .btn:active {
@@ -60,10 +36,6 @@
 .btn-img{
     width: 28px; 
     height: 28px;
-}
-
-#create-btn{
-    transform: translateY(1.5px);
 }
 
 .combo-box{
@@ -108,32 +80,6 @@
     padding: 1px;
 }
 
-.card{
-    width:fit-content;
-    border-radius: 15px;
-    border-style: solid;
-}
-
-.plant-div{
-    display: none;
-}
-
-.menu-div{
-    display: none;
-    position: relative;
-    width: fit-content;
-    height: fit-content;
-    justify-content: center;
-    align-items: center;
-    text-align: center;
-}
-
-#close-btn
-{
-    margin-left: 100%; 
-    margin-right: 0;
-}
-
 .overlay {
     position: fixed; /* Sit on top of the page content */
     display: none; /* Hidden by default */
@@ -149,17 +95,6 @@
     align-self: center;
 }
 
-.content-table{
-    border-collapse: collapse;
-}
-
-.plant-container{
-    display: flex;
-    justify-content: space-evenly;
-    max-width: 1180px;
-    min-width: 1180px;
-}
-
 .table-container {
     max-height: 150px; /* Set the height of the scrollable area */
     min-height: 150px;
@@ -168,12 +103,66 @@
     border: 1px solid #ccc;
 }
 
-.grow-plants-container {
-    max-height: 500px; /* Set the height of the scrollable area */
-    min-height: 500px;
-    min-width: fit-content;
-    overflow-y: auto; /* Enable vertical scrolling */
+.watering-container{
+    display: inline-block;
     border: 1px solid #ccc;
+    padding: 20px;
+}
+
+.feeding-container{
+    display: inline-block;
+    border: 1px solid #ccc;
+    padding: 20px;
+}
+
+.training-container{
+    display: inline-block;
+    border: 1px solid #ccc;
+    padding: 20px;
+}
+
+.damage-container{
+    display: inline-block;
+    border: 1px solid #ccc;
+    padding: 20px;
+}
+
+.transplanting-container{
+    display: inline-block;
+    border: 1px solid #ccc;
+    padding: 20px;
+}
+
+.grow-item-container {
+    display: block;
+    border: 1px solid #ccc;
+    padding: 20px;  
+    max-width: fit-content;
+    min-width: fit-content;
+    padding: 20px;
+    box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2);
+}
+
+.grow-item-scroll-container {
+    max-height: 300px; /* Set the height of the scrollable area */
+    min-height: 300px;
+    max-width: fit-content;
+    min-width: fit-content;
+    overflow-x: auto; /* Enable horizontal scrolling */
+    border: 1px solid #ccc;
+    padding: 20px;
+    box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2);
+}
+
+.item-container{
+    display: flex;
+    justify-content: space-evenly;
+    max-width: 320px;
+    min-width: 320px;
+    border: 1px solid #ccc;
+    padding: 20px;
+    margin: 20px;
+    box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2);
 }
 
 fieldset {
@@ -187,4 +176,47 @@ fieldset {
     display: flex;
     justify-content: center; /* Horizontally center */
     align-items: center;    /* Vertically center */
+}
+
+.grow-container{
+    display: none; /* Hidden by default */
+    border: 1px solid #ccc;
+    padding: 20px;  
+    box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2);
+}
+
+.user-grows-container{
+    border: 1px solid #ccc;
+    padding: 20px; 
+    box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2);
+    margin-bottom: 20px;
+}
+
+/* Dropdown Content (Hidden by Default) */
+.item-edit-btn-container {
+  background-color: #f1f1f1;
+  min-width: 80px;
+  max-width: 80px;
+  max-height: fit-content;
+  box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2);
+  z-index: 1;
+}
+
+.effector-on {
+  height: 20px;
+  width: 20px;
+  background-color:rgb(0, 150, 0);
+  border-radius: 50%;
+  display: inline-block;
+  box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2);
+}
+
+.effector-off {
+  height: 18px;
+  width: 18px;
+  background-color:rgb(150, 0, 0);
+  border-radius: 50%;
+  display: inline-block;
+  box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2);
+  margin: 5px;
 }

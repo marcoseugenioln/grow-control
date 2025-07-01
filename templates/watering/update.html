@@ -1,7 +1,7 @@
-<button class="btn" onclick="togglePopupMenu('watering-delete-panel')">
+<button class="btn" onclick="togglePopupMenu('watering-delete-container-{{ plant_id }}')">
     <img src="{{ url_for('static', filename='image/trash-icon.png')}}" class="btn-img" id="create-btn">
 </button>
-<div class="overlay" id="watering-delete-panel">
+<div class="overlay" id="watering-delete-container-{{ plant_id }}">
     <div class="centralized-div">
         <p>Are you sure you want to delete watering ID {{ id }}?</p>
         <div class="btn-container">
@@ -9,7 +9,7 @@
                 <button type="submit" class="btn">
                     <img src="{{ url_for('static', filename='image/confirm-icon.png')}}" class="btn-img" id="create-btn">
                 </button>
-                <button type="button" class="btn" id="cancel-btn" onclick="togglePopupMenu('watering-delete-panel')">
+                <button type="button" class="btn" id="cancel-btn" onclick="togglePopupMenu('watering-delete-container-{{ plant_id }}')">
                     <img src="{{ url_for('static', filename='image/cancel-icon.png')}}" class="btn-img" id="cancel-btn">
                 </button>
             </form>

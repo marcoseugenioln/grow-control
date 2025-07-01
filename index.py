@@ -29,7 +29,27 @@ def index():
     
     grows = database.get_user_grows(session['user_id'])
 
-    return render_template('index.html', user_grows=grows)
+    grow_plants = {}
+    for grow in grows:
+        grow_plants[grow[0]] = database.get_grow_plants(grow[0])
+
+    grow_sensors = {}
+    for grow in grows:
+        grow_sensors[grow[0]] = database.get_grow_sensors(grow[0])
+
+    grow_effectors = {}
+    for grow in grows:
+        grow_effectors[grow[0]] = database.get_grow_effectors(grow[0])
+
+    return render_template('index.html',    user_grows=grows,
+                                            sensors=grow_sensors,
+                                            effectors=grow_effectors, 
+                                            plants=grow_plants, 
+                                            sensor_types=database.get_sensor_types(),
+                                            effector_types=database.get_effector_types(),
+                                            photoperiods=database.get_photoperiods(),
+                                            genders=database.get_genders(),
+                                            intensities=database.get_intensities())
 
 @app.route('/login', methods=['GET', 'POST'])
 def login():
@@ -142,44 +162,7 @@ def delete_user(id):
     database.delete_user(id)
     return redirect(url_for('user'))
 
-@app.route('/measurement/<device_id>/<measurement_type_id>/<value>', methods=['POST'])
-def measurement(device_id, measurement_type_id, value):
 
-    if 'device_id' in request.form and 'measurement_id' in request.form and 'value' in request.form:
-        # insert measurement into database
-        database.insert_measurement(device_id, measurement_type_id, value)
-
-    return '1'
-
-@app.route('/device/power_on/<device_id>', methods=['GET'])
-def device_power_on(device_id):
-
-    if 'device_id' in request.form:
-        # get device configuration
-        is_scheduled = database.get_device_scheduled(device_id)
-        is_bounded = database.get_device_bounded(device_id)
-        is_normal_on = database.get_device_normal_on(device_id)
-
-        if is_scheduled:
-            on_time = database.get_device_on_time(device_id)
-            off_time = database.get_device_off_time(device_id)
-            power_on = datetime.datetime.now().time() <= on_time and datetime.datetime.now().time() >= off_time
-            if is_normal_on:
-                power_on = not power_on
-            database.set_device_power_on(device_id, )
-        
-        elif is_bounded:
-            bounded_device_id = database.get_device_bounded_device_id(device_id)
-            bounded_measurement_type_id = database.get_device_bounded_measurement_type(device_id)
-            threshold = database.get_device_threshold(device_id)
-            power_on = database.get_last_measurement_value(bounded_device_id, bounded_measurement_type_id) > threshold
-            if is_normal_on:
-                power_on = not power_on
-            database.set_device_power_on(device_id, power_on)
-        else:
-            database.set_device_power_on(device_id, is_normal_on)
-    
-    return str(database.get_power_on(device_id))
 ##################################################################################################
 @app.route('/plant/<grow_id>/<plant_id>', methods=['GET', 'POST'])
 def plant_index(grow_id, plant_id):
@@ -208,7 +191,7 @@ def plant_index(grow_id, plant_id):
 def create_plant(grow_id):
     if 'name' in request.form and 'date' in request.form and 'photoperiod_id' in request.form and 'gender_id' in request.form:
         database.insert_plant(grow_id, request.form['name'], request.form['date'], request.form['photoperiod_id'], request.form['gender_id'])
-    return redirect(url_for('grow_index', grow_id=grow_id))
+    return redirect(url_for('index'))
 
 @app.route('/plant/update/<grow_id>/<plant_id>', methods=['GET', 'POST'])
 def update_plant(grow_id, plant_id):
@@ -219,7 +202,7 @@ def update_plant(grow_id, plant_id):
 @app.route('/plant/delete/<grow_id>/<plant_id>', methods=['GET', 'POST'])
 def delete_plant(grow_id, plant_id):
     database.delete_plant(plant_id)
-    return redirect(url_for('grow_index', grow_id=grow_id))
+    return redirect(url_for('index'))
 ################################################################################################## 
 @app.route('/watering/create/<grow_id>/<plant_id>', methods=['GET', 'POST'])
 def create_watering(grow_id, plant_id):
@@ -283,38 +266,115 @@ def create_grow():
 def update_grow(grow_id):
     if 'name' in request.form and 'lenght' in request.form and 'width' in request.form and 'height' in request.form:
         database.update_grow(grow_id, request.form['name'],  request.form['lenght'], request.form['width'], request.form['height'])
-    return redirect(url_for('grow_index', grow_id=grow_id))
+    return redirect(url_for('index'))
 
 @app.route('/grow/delete/<grow_id>', methods=['GET', 'POST'])
 def delete_grow(grow_id):
     database.delete_grow(grow_id)
     return redirect(url_for('index'))
-
-@app.route('/grow/<grow_id>', methods=['GET', 'POST'])
-def grow_index(grow_id):
-
-    grow = database.get_grow(grow_id)
-    if len(grow) == 0:
-        grow = [ None ]
-    else:
-        grow = grow[0]
-
-    return render_template('grow/index.html', 
-                           grow_id=grow_id,
-                           grow=grow, 
-                           devices=database.get_grow_devices(grow_id), 
-                           sensor_types=database.get_sensor_types(),
-                           effector_types=database.get_effector_types(),
-                           plants=database.get_grow_plants(grow_id), 
-                           photoperiods=database.get_photoperiods(),
-                           genders=database.get_genders(),
-                           intensities=database.get_intensities())
 ################################################################################################## 
-@app.route('/device/create/<grow_id>', methods=['GET', 'POST'])
-def create_device(grow_id):
-    if 'name' in request.form and 'device_type_id' in request.form:
-        database.insert_device(grow_id, request.form['device_type_id'], request.form['name'])
-    return redirect(url_for('grow_index', grow_id=grow_id))
+@app.route('/sensor/create/<grow_id>', methods=['GET', 'POST'])
+def create_sensor(grow_id):
+    if 'name' in request.form and 'sensor_type_id' in request.form:
+        database.insert_sensor(grow_id, request.form['name'], request.form['sensor_type_id'])
+    return redirect(url_for('index'))
+
+@app.route('/sensor/delete/<grow_id>/<sensor_id>', methods=['GET', 'POST'])
+def delete_sensor(grow_id, sensor_id):
+    database.delete_sensor(sensor_id)
+    return redirect(url_for('index'))
+
+@app.route('/sensor/update/<grow_id>/<sensor_id>', methods=['GET', 'POST'])
+def update_sensor(grow_id, sensor_id):
+    if 'name' in request.form and 'sensor_type_id' in request.form and 'ip' in request.form:
+        database.update_sensor(sensor_id, request.form['name'], request.form['sensor_type_id'], request.form['ip'])
+    return redirect(url_for('index'))
+
+@app.route('/sensor/data/<sensor_id>/<value>', methods=['GET', 'POST'])
+def sensor_data(sensor_id, value):
+    # insert sensor data into database
+    database.insert_sensor_data(sensor_id, value)
+    return '1'
+################################################################################################## 
+@app.route('/effector/create/<grow_id>', methods=['GET', 'POST'])
+def create_effector(grow_id):
+    if 'name' in request.form and 'effector_type_id' in request.form:
+        database.insert_effector(grow_id, request.form['effector_type_id'], request.form['name'])
+    return redirect(url_for('index'))
+
+@app.route('/effector/delete/<grow_id>/<effector_id>', methods=['GET', 'POST'])
+def delete_effector(grow_id, effector_id):
+    database.delete_effector(effector_id)
+    return redirect(url_for('index'))
+
+@app.route('/effector/update/<grow_id>/<effector_id>', methods=['GET', 'POST'])
+def update_effector(grow_id, effector_id):
+
+    print(request.form)
+
+    if 'name' in request.form and 'effector_type_id' in request.form and 'ip' in request.form:
+
+        bounded = False
+        scheduled = False
+        bounded_sensor_id = 0
+        threshold = 0
+        on_time = ''
+        off_time = ''
+        normal_on = False
+
+        if 'normal_on' in request.form:
+            normal_on = True
+
+        if 'bounded' in request.form and 'bounded_sensor_id' in request.form and 'threshold' in request.form:
+            bounded = True
+            bounded_sensor_id = request.form['bounded_sensor_id']
+            threshold = request.form['threshold']
+        
+        if 'scheduled' in request.form and 'on_time' in request.form and 'off_time' in request.form:
+            scheduled = True
+            on_time = request.form['on_time']
+            off_time = request.form['off_time']
+        
+        database.update_effector(effector_id, request.form['name'], request.form['effector_type_id'], request.form['ip'], normal_on, scheduled ,on_time, off_time, bounded, bounded_sensor_id, threshold)
+    
+    return redirect(url_for('index'))
+
+@app.route('/effector/data/<effector_id>', methods=['GET', 'POST'])
+def device_power_on(effector_id):
+
+    id, grow_id, effector_type_id, name, ip, normal_on, power_on, scheduled, on_time, off_time, bounded, bounded_sensor_id, threshold = database.get_effector(effector_id)[0]
+    
+    # get device configuration
+    is_scheduled = bool(scheduled) == True
+    is_bounded = bool(bounded) == True
+    is_normal_on = bool(normal_on) == True
+
+    power_on = is_normal_on
+
+    print(bounded)
+
+    if is_scheduled:
+        format_string = "%H:%M:%S"
+        on_time = datetime.datetime.strptime(on_time, format_string)
+        off_time = datetime.datetime.strptime(off_time, format_string)
+        now = datetime.datetime.now().time()
+        pass_on_time = now >= on_time.time()
+        before_off_time = now <= off_time.time()
+
+        power_on = pass_on_time and before_off_time
+        if is_normal_on:
+            power_on = not power_on
+
+    elif is_bounded:
+        print(database.get_last_sensor_data_value(bounded_sensor_id))
+        
+        power_on = database.get_last_sensor_data_value(bounded_sensor_id)[0][0] >= threshold
+        if is_normal_on:
+            power_on = not power_on
+        
+    database.set_effector_power_on(effector_id, power_on)
+
+    return str(power_on)
 
 if __name__ == '__main__':
     print(app_config)

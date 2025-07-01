@@ -1,45 +1,42 @@
-<!DOCTYPE html>
-<html>
+<div class="grow-container" id="grow-container-{{ id }}">
+    <table>
+        <tr><td>ID</td><td>{{ id }}</td></tr>
+        <tr><td>Name</td><td>{{ grow_name }}</td></tr>
+        <tr><td>Lenght</td><td>{{ grow_lenght }}</td></tr>
+        <tr><td>Width</td><td>{{ grow_width }}</td></tr>
+        <tr><td>Height</td><td>{{ grow_height }}</td></tr>
+    </table>
 
-<head>
-    <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='style.css')}}">
-    <title>Grow {{ grow[2] }}</title>
-</head>
- 
-<body>
-    {% include 'header.html'%}
     {% include 'grow/update.html'%}
-    <fieldset>
-        <legend>{{ grow[2] }}</legend>
-        <table>
-            <tr><td>ID</td><td>{{ grow[0] }}</td></tr>
-            <tr><td>Name</td><td>{{ grow[2] }}</td></tr>
-            <tr><td>Lenght</td><td>{{ grow[3] }}</td></tr>
-            <tr><td>Width</td><td>{{ grow[4] }}</td></tr>
-            <tr><td>Height</td><td>{{ grow[5] }}</td></tr>
-        </table>
-        <fieldset>
-            <legend>Devices</legend>
-            <div class="index-div">
-                {% include '/device/create.html'%}
-                {% for id, grow_id, device_type_id, name, normal_on, power_on, measurement_type_id, scheduled, on_time, off_time, bounded, bounded_measurement_type_id, bounded_device_id, threshold, ip in devices %}
-                    {% include '/device/index.html'%}
-                {% endfor %}
-            </div>
-        </fieldset>
-        <fieldset>
-            <legend>Plants</legend>
-            <div class="grow-plants-container">
-                {% for id, grow_id, name, start_date, end_date, photoperiod_id, gender_id, harvested, yield in plants %}
-                    {% include '/plant/index.html'%}
-                {% endfor %}
-            </div>
-            {% include '/plant/create.html'%}
-        </fieldset>
-    </fieldset>
-
     
+    
+    <div class="grow-item-container">
+        <legend>Sensors</legend>
+        {% include '/sensor/create.html'%}
+        <div class="grow-item-scroll-container">
+            {% for sensor_id, grow_id, ip, name, sensor_type_id, last_value in sensors[id] %}
+                {% include '/sensor/index.html'%}
+            {% endfor %}
+        </div>
+    </div>
 
-    <script src="{{ url_for('static', filename='scripts.js') }}"></script>
-</body>
-</html>
+    <div class="grow-item-container">
+        <legend>Effectors</legend>
+        {% include '/effector/create.html'%}
+        <div class="grow-item-scroll-container">
+            {% for effector_id, grow_id, effector_type_id, name, ip, normal_on, power_on, scheduled, on_time, off_time, bounded, bounded_sensor_id, threshold in effectors[id] %}
+                {% include '/effector/index.html'%}
+            {% endfor %}
+        </div>
+    </div>
+
+    <!-- <div class="grow-item-container">
+        <legend>Plants</legend>
+        {% include '/plant/create.html'%}
+        <div class="grow-item-scroll-container">
+            {% for plant_id, grow_id, name, start_date, end_date, photoperiod_id, gender_id, harvested, yield in plants[id] %}
+                {% include '/plant/index.html'%}
+            {% endfor %}
+        </div>
+    </div> -->
+</div>

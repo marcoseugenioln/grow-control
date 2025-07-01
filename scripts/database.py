@@ -17,6 +17,7 @@ class Database():
 
             self.query.executescript(sql_script)
             self.connection.commit()
+    
     def execute_query(self, query, fetch=False):
         print(f'{datetime.datetime.now()} - {query}')
         self.query.execute(query)
@@ -147,29 +148,86 @@ class Database():
     ##################################################################################################
     def get_training_types(self):
         return self.execute_query(f"select id, name, description from training_type;", True)
+    
     def get_photoperiods(self):
         return self.execute_query(f"select id, name, description from photoperiod;", True)
+    
     def get_genders(self):
         return self.execute_query(f"select id, name, description from gender;", True)
+    
     def get_damage_types(self):
         return self.execute_query(f"select id, name, description from damage_type;", True)
+    
     def get_intensities(self):
         return self.execute_query(f"select id, name, description from intensity;", True)
+    
     def get_device_types(self):
         return self.execute_query(f"select id, name, description from device_type;", True)
+    
     def insert_grow(self, user_id, name,  lenght, width, height):
         self.query.execute(f"INSERT INTO grow(user_id, name, lenght, width, height) values ({user_id}, '{name}', {lenght}, {width}, {height});")
         self.connection.commit()
         return True
+    
     def get_user_grows(self, user_id):
         return self.execute_query(f"select id, user_id, name, lenght, width, height from grow where user_id = {user_id};", True)
+    
     def get_grow(self, grow_id):
         return self.execute_query(f"select id, user_id, name, lenght, width, height from grow where id = {grow_id};", True)
+    
     def get_grow_plants(self, grow_id):
         return self.execute_query(f"select id, grow_id, name, start_date, end_date, photoperiod_id, gender_id, harvested, yield from plant where grow_id = {grow_id};", True)
+    
     def get_grow_devices(self, grow_id):
         return self.execute_query(f"select id, grow_id, device_type_id, name, normal_on, power_on, sensor_type_id, scheduled, on_time, off_time, bounded, bounded_sensor_type_id, bounded_device_id, threshold, ip from device where id = {grow_id};", True)
+    
     def insert_device(self, grow_id, device_type_id, name):
         return self.execute_query(f"insert into device (grow_id, device_type_id, name) VALUES ({grow_id}, {device_type_id}, '{name}');")
+    
     def delete_grow(self, grow_id):
         return self.execute_query(f"delete from grow where id = {grow_id};")
+    
+    def get_sensor_types(self):
+        return self.execute_query(f"select id, name, description from sensor_type;", True)
+    
+    def get_effector_types(self):
+        return self.execute_query(f"select id, name, description from effector_type;", True)
+
+    def get_grow_sensors(self, grow_id):
+        return self.execute_query(f"select id, grow_id, ip, name, sensor_type_id, last_value from sensor where grow_id = {grow_id};", True)
+    
+    def get_grow_effectors(self, grow_id):
+        return self.execute_query(f"select id, grow_id, effector_type_id, name, ip, normal_on, power_on, scheduled, on_time, off_time, bounded, bounded_sensor_id, threshold from effector where grow_id = {grow_id};", True)
+    
+    def insert_sensor(self, grow_id, name, sensor_type_id):
+        self.execute_query(f"insert into sensor (grow_id, name, sensor_type_id) values ({grow_id}, '{name}', {sensor_type_id});")
+
+    def update_sensor(self, sensor_id, name, sensor_type_id, ip):
+        self.execute_query(f"update sensor set name = '{name}', ip = '{ip}', sensor_type_id = {sensor_type_id} where id = {sensor_id};")
+
+    def delete_sensor(self, sensor_id):
+        return self.execute_query(f"delete from sensor where id = {sensor_id};")
+    
+    def insert_effector(self, grow_id, effector_type_id, name):
+        self.execute_query(f"insert into effector (grow_id, name, effector_type_id) values ({grow_id}, '{name}', {effector_type_id});")
+
+    def delete_effector(self, effector_id):
+        return self.execute_query(f"delete from effector where id = {effector_id};")
+    
+    def update_grow(self, grow_id, name, lenght, width, height):
+        self.execute_query(f"update grow set name = '{name}', lenght = {lenght}, width = {width}, height = {height} where id = {grow_id};")
+
+    def insert_sensor_data(self, sensor_id, value):
+        self.execute_query(f"insert into sensor_data (sensor_id, value) values ({sensor_id}, {value});")
+
+    def get_effector(self, effector_id):
+        return self.execute_query(f"select id, grow_id, effector_type_id, name, ip, normal_on, power_on, scheduled, on_time, off_time, bounded, bounded_sensor_id, threshold from effector where id = {effector_id};", True)
+    
+    def get_last_sensor_data_value(self, sensor_id):
+        return self.execute_query(f"select last_value from sensor where id = {sensor_id};", True)
+    
+    def set_effector_power_on(self, effector_id, power_on):
+        self.execute_query(f"update effector set power_on = {power_on} where id = {effector_id};")
+
+    def update_effector(self, effector_id, name, effector_type_id, ip, normal_on, scheduled, on_time, off_time, bounded, bounded_sensor_id, threshold):
+        self.execute_query(f"update effector set effector_type_id = {effector_type_id}, name = '{name}', ip = '{ip}', normal_on = {normal_on}, scheduled = {scheduled}, on_time = TIME('{on_time}'), off_time = TIME('{off_time}'), bounded = {bounded}, bounded_sensor_id = {bounded_sensor_id}, threshold = {threshold} where id = {effector_id};")
