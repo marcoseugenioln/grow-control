@@ -1,26 +1,37 @@
-<div class="create-div">
-    <table>
-        <tr>
-            <td><label class="text-field">Date</label></td>
-            <td><label class="text-field">Width</label></td>
-            <td><label class="text-field">Height</label></td>
-            <td><label class="text-field">Radius</label></td>
-            <td><label class="text-field">Depth</label></td>
-        </tr>
-        <tr>
-            <h1>Register Transplanting</h1>
-            <form action="{{ url_for('create_transplanting', id=id) }}" method="post">
-                <td><input type="date" class="text-field" name="date"></td>
-                <td><input type="number" min="0" max="10000" class="text-field" name="width"></td>
-                <td><input type="number" min="0" max="10000" class="text-field" name="height"></td>
-                <td><input type="number" min="0" max="10000" class="text-field" name="radius"></td>
-                <td><input type="number" min="0" max="10000" class="text-field" name="depth"></td>
-                <td>
-                    <button class="btn">
-                        <img src="{{ url_for('static', filename='image/create-icon.png')}}" class="btn-img" id="create-btn">
-                    </button>
-                </td>
-            </form>
-        </tr>
-    </table>
+<button class="btn" onclick="togglePopupMenu('transplanting-create-container-{{ plant_id }}')">
+    TRANSPLANT
+</button>
+<div class="overlay" id="transplanting-create-container-{{ plant_id }}">
+    <div class="centralized-div">
+        <form action="{{ url_for('create_transplanting', grow_id=grow_id, plant_id=id) }}" method="post">
+            <fieldset>
+                <legend>Date</legend>
+                <input type="date" class="text-field" name="date">
+            </fieldset>
+            <fieldset>
+                <legend>Lenght</legend>
+                <input type="number" min="0" max="10000" class="text-field" name="lenght">
+            </fieldset>
+            <fieldset>
+                <legend>Width</legend>
+                <input type="number" min="0" max="10000" class="text-field" name="width">
+            </fieldset>
+            <fieldset>
+                <legend>Height</legend>
+                <input type="number" min="0" max="10000" class="text-field" name="height">
+            </fieldset>
+            <fieldset>
+                <legend>Radius</legend>
+                <input type="number" min="0" max="10000" class="text-field" name="radius">
+            </fieldset>
+            <div class="btn-container">
+                <button class="btn" type="submit">
+                    <img src="{{ url_for('static', filename='image/confirm-icon.png')}}" class="btn-img" id="create-btn">
+                </button>
+                <button type="button" class="btn" onclick="togglePopupMenu('transplanting-create-container-{{ plant_id }}')">
+                    <img src="{{ url_for('static', filename='image/cancel-icon.png')}}" class="btn-img" id="cancel-btn">
+                </button>
+            </div>
+        </form>
+    </div>
 </div>

@@ -1,33 +1,18 @@
-<!DOCTYPE html>
-<html>
+<div class="index-div">
+    <table>
+        <tr>
+            <td><label class="text-field">ID</label></td>
+            <td><label class="text-field">Date</label></td>
+            <td><label class="text-field">Width</label></td>
+            <td><label class="text-field">Height</label></td>
+            <td><label class="text-field">Radius</label></td>
+            <td><label class="text-field">Depth</label></td>
+        </tr>
 
-<head>
-    <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='style.css')}}">
-    <title>Transplantings</title>
-</head>
- 
-<body>
-    {% include 'header.html'%}
+        {% for id, plant_id, date, lenght, width, height, radius in transplantings %}
+            {% include '/transplanting/update.html'%}
+        {% endfor %}
+    </table>
+</div>
 
-    <div class="index-div">
-        <table>
-            <tr>
-                <td><label class="text-field">ID</label></td>
-                <td><label class="text-field">Date</label></td>
-                <td><label class="text-field">Width</label></td>
-                <td><label class="text-field">Height</label></td>
-                <td><label class="text-field">Radius</label></td>
-                <td><label class="text-field">Depth</label></td>
-            </tr>
-
-            {% for id, date, width, height, radius, depth in transplantings %}
-                {% include '/transplanting/update.html'%}
-            {% endfor %}
-        </table>
-    </div>
-
-    {% include '/transplanting/create.html'%}
-
-</body>
- 
-</html>
+    

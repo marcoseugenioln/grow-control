@@ -1,29 +1,42 @@
-<div class="overlay" id="create-plant-div">
-    <fieldset class="menu">
-        <button class="btn" id="close-btn" onclick="closeMenu('create-plant-div')">
-            x
-        </button>
-        <legend>Register Plant</legend>
-        <form action="{{ url_for('create_plant') }}" method="post">
-            <input type="text" class="text-field" name="name" placeholder="Plant name">
-            <br><br>
-            <input type="date" class="text-field" name="date">
-            <br><br>
-            <select class="combo-box" name="photoperiod_id">
-                {% for pid, pname, pdescription in photoperiods %}
-                    <option value="{{ pid }}">{{ pname }}</option>
-                {% endfor %}
-            </select>
-            <br><br>
-            <select id="gender-id-{{ id }}" class="combo-box" name="gender_id">
-                {% for gid, gname, gdescription in genders %}
-                    <option value="{{ gid }}">{{ gname }}</option>
-                {% endfor %}
-            </select>
-            <br><br>
-            <button class="btn">
-                <img src="{{ url_for('static', filename='image/confirm-icon.png')}}" class="btn-img" id="create-btn">
-            </button>
+<button class="btn" onclick="togglePopupMenu('plant-create-container-{{ id }}')">
+    <img src="{{ url_for('static', filename='image/create-icon.png')}}" class="btn-img" id="create-btn">
+</button>
+
+<div class="overlay" id="plant-create-container-{{ id }}">
+    <div class="centralized-div">
+        <form action="{{ url_for('create_plant', grow_id = id) }}" method="post">
+            <fieldset>
+                <legend>Name</legend>
+                <input type="text" class="text-field" name="name" placeholder="Plant name">
+            </fieldset>
+            <fieldset>
+                <legend>Date</legend>
+                <input type="date" class="text-field" name="date">
+            </fieldset>
+            <fieldset>
+                <legend>Photoperiod</legend>
+                <select class="combo-box" name="photoperiod_id">
+                    {% for pid, pname, pdescription in photoperiods %}
+                        <option value="{{ pid }}">{{ pname }}</option>
+                    {% endfor %}
+                </select>
+            </fieldset>
+            <fieldset>
+                <legend>Gender</legend>
+                <select id="gender-id-{{ id }}" class="combo-box" name="gender_id">
+                    {% for gid, gname, gdescription in genders %}
+                        <option value="{{ gid }}">{{ gname }}</option>
+                    {% endfor %}
+                </select>
+            </fieldset>
+            <div class="btn-container">
+                <button class="btn" type="submit">
+                    <img src="{{ url_for('static', filename='image/confirm-icon.png')}}" class="btn-img" id="create-btn">
+                </button>
+                <button type="button" class="btn" onclick="togglePopupMenu('plant-create-container-{{ id }}')">
+                    <img src="{{ url_for('static', filename='image/cancel-icon.png')}}" class="btn-img" id="cancel-btn">
+                </button>
+            </div>
         </form>
-    </fieldset>
+    </div>
 </div>

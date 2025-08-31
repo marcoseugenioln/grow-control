@@ -1,34 +1,20 @@
-<!DOCTYPE html>
-<html>
+<div class="index-div">
+    <table>
+        <tr>
+            <td><label class="text-field">ID</label></td>
+            <td><label class="text-field">Date</label></td>
+            <td><label class="text-field">Dosage</label></td>
+            <td><label class="text-field">Nitrogen</label></td>
+            <td><label class="text-field">Phosphorus</label></td>
+            <td><label class="text-field">Potassium</label></td>
+            <td><label class="text-field">Concentration</label></td>
+            <td><label class="text-field">Delete</label></td>
+        </tr>
 
-<head>
-    <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='style.css')}}">
-    <title>Feedings</title>
-</head>
- 
-<body>
-    {% include 'header.html'%}
+        {% for id, date, dosage, nitrogen, phosphorus, potassium, concentration in feedings %}
+            {% include '/feeding/update.html'%}
+        {% endfor %}
+    </table>
+</div>
 
-    <div class="index-div">
-        <table>
-            <tr>
-                <td><label class="text-field">ID</label></td>
-                <td><label class="text-field">Date</label></td>
-                <td><label class="text-field">Dosage</label></td>
-                <td><label class="text-field">Nitrogen</label></td>
-                <td><label class="text-field">Phosphorus</label></td>
-                <td><label class="text-field">Potassium</label></td>
-                <td><label class="text-field">Concentration</label></td>
-            </tr>
-
-            {% for id, date, dosage, nitrogen, phosphorus, potassium, concentration in feedings %}
-                {% include '/feeding/update.html'%}
-            {% endfor %}
-        </table>
-    </div>
-
-    {% include '/feeding/create.html'%}
-
-</body>
- 
-</html>
+    

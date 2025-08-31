@@ -1,10 +1,5 @@
 {
-    "host" : "192.168.1.8",
+    "host" : "192.168.1.7",
     "port" : 3000,
-    "debug"  : false,
-    "auto_mode" : true,
-    "lights_on_time" : "06:00",
-    "lights_off_time" : "22:00",
-    "min_humidity" : 60,
-    "max_humidity" : 70
+    "debug"  : true
 }

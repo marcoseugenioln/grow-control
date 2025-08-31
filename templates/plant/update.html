@@ -1,20 +1,53 @@
-<div name="plant-{{ id }}" class="plant-div" id="plant-{{ id }}">
-    <fieldset class="card" >
-        <!-- <legend>{{ name }}</legend> -->
-        <form action="{{ url_for('update_plant', plant_id=id) }}" method="post">
-            <br>
 
+<div class="item-edit-btn-container">
+    <button class="btn" onclick="togglePopupMenu('plant-edit-container-{{ plant_id }}')">
+        EDIT
+    </button>
+    <button class="btn" onclick="togglePopupMenu('plant-delete-container-{{ plant_id }}')">
+        DELETE
+    </button>
+    {% include 'watering/create.html' %}
+    {% include 'feeding/create.html' %}
+    {% include 'training/create.html' %}
+    {% include 'damage/create.html' %}
+    {% include 'transplanting/create.html' %}
+</div>
+
+<div class="overlay" id="plant-delete-container-{{ plant_id }}">
+    <div class="centralized-div">
+        <p>Are you sure you want to delete plant {{ name }}?</p>
+        <table>
             <tr>
-                <td><label>Plant name: </label></td>
-                <td><input id="name-{{ id }}" type="text" class="text-field" name="name" value="{{ name }}"></td>
+                <td>
+                    <form method="get" action="{{ url_for('delete_plant', grow_id=grow_id, plant_id=plant_id) }}">
+                        <button class="btn">
+                            <img src="{{ url_for('static', filename='image/confirm-icon.png')}}" class="btn-img" id="create-btn">
+                        </button>
+                    </form>
+                </td>
+                <td>
+                    <button class="btn" id="cancel-btn" onclick="togglePopupMenu('plant-delete-container-{{ plant_id }}')">
+                        <img src="{{ url_for('static', filename='image/cancel-icon.png')}}" class="btn-img" id="cancel-btn">
+                    </button>
+                </td>
             </tr>
-            <tr>
-                <td><label>Planting date: </label></td>
-                <td><input id="date-{{ id }}" type="date" class="text-field" name="date" value="{{ date }}"></td>
-            </tr>
-            <tr>
-                <td><label>Photoperiod:</label></td>
-                <td><select id="photoperiod-id-{{ id }}" class="combo-box" name="photoperiod_id">
+        </table>
+    </div>
+</div>
+<div class="overlay" id="plant-edit-container-{{ plant_id }}">
+    <div class="centralized-div">
+        <form action="{{ url_for('update_plant', grow_id = id, plant_id = plant_id) }}" method="post">
+            <fieldset>
+                <legend>Name</legend>
+                <td><input id="name-{{ plant_id }}" type="text" class="text-field" name="name" value="{{ name }}"></td>
+            </fieldset>
+            <fieldset>
+                <legend>Date</legend>
+                <td><input id="date-{{ plant_id }}" type="date" class="text-field" name="date" value="{{ start_date }}"></td>
+            </fieldset>
+            <fieldset>
+                <legend>Photoperiod</legend>
+                <select id="photoperiod-id-{{ id }}" class="combo-box" name="photoperiod_id">
                     {% for pid, pname, pdescription in photoperiods %}
                         {% if pid == photoperiod_id %}
                             <option value="{{ pid }}" selected>{{ pname }}</option>
@@ -22,11 +55,11 @@
                             <option value="{{ pid }}">{{ pname }}</option>
                         {% endif %}
                     {% endfor %}
-                </select></td>
-            </tr>
-            <tr>
-                <td><label>Gender:</label></td>
-                <td><select id="gender-id-{{ id }}" class="combo-box" name="gender_id">
+                </select>
+            </fieldset>
+            <fieldset>
+                <legend>Gender</legend>
+                <select id="gender-id-{{ id }}" class="combo-box" name="gender_id">
                     {% for gid, gname, gdescription in genders %}
                         {% if gid == gender_id %}
                             <option value="{{ gid }}" selected>{{ gname }}</option>
@@ -34,49 +67,16 @@
                             <option value="{{ gid }}">{{ gname }}</option>
                         {% endif %}
                     {% endfor %}
-                </select></td>
-            </tr>
-            
-            <button title="update" class="btn" name="update-plant-{{ id }}">
-                <img src="{{ url_for('static', filename='image/edit-icon.png')}}" class="btn-img">
-            </button>
+                </select>
+            </fieldset>
+            <div class="btn-container">
+                <button class="btn" type="submit">
+                <img src="{{ url_for('static', filename='image/confirm-icon.png')}}" class="btn-img" id="create-btn">
+                </button>
+                <button type="button" class="btn" onclick="togglePopupMenu('plant-edit-container-{{ plant_id }}')">
+                    <img src="{{ url_for('static', filename='image/cancel-icon.png')}}" class="btn-img" id="cancel-btn">
+                </button>
+            </div>
         </form>
-
-        
-        {% set delete_url = url_for('delete_plant', plant_id=id) %}
-        <button title="delete" class="btn" name="delete-plant-{{ id }}"  onclick="window.location.href = '{{ delete_url }}';">
-            <img src="{{ url_for('static', filename='image/trash-icon.png')}}" class="btn-img">
-        </button>
-
-        {% set watering_url = url_for('watering', plant_id=id) %}
-        <button title="watering" class="btn" onclick="window.location.href = '{{ watering_url }}' ; ">
-            <img src="{{ url_for('static', filename='image/watering-icon.png')}}" class="btn-img">
-        </button>
-
-        {% set feeding_url = url_for('feeding', plant_id=id) %}
-        <button title="feeding" class="btn" onclick="window.location.href = '{{ feeding_url }}' ; ">
-                <img src="{{ url_for('static', filename='image/feeding-icon.png')}}" class="btn-img">
-        </button>
-
-        {% set training_url = url_for('training', plant_id=id) %}
-        <button title="training" class="btn" onclick="window.location.href = '{{ training_url }}' ; ">
-                <img src="{{ url_for('static', filename='image/training-icon.png')}}" class="btn-img">
-        </button>
-
-        {% set transplanting_url = url_for('transplanting', plant_id=id) %}
-        <button title="transplanting" class="btn" onclick="window.location.href = '{{ transplanting_url }}' ; ">
-                <img src="{{ url_for('static', filename='image/transplanting-icon.png')}}" class="btn-img">
-        </button>
-
-        {% set damage_url = url_for('damage', plant_id=id)  %}
-        <button title="damage" class="btn" onclick="window.location.href = '{{ damage_url }}' ; ">
-                <img src="{{ url_for('static', filename='image/damage-icon.png')}}" class="btn-img">
-        </button>
-
-        {% set harvest_url = url_for('harvest', plant_id=id) %}
-        <button title="harvest" class="btn" onclick="window.location.href = '{{ harvest_url }}' ; ">
-            <img src="{{ url_for('static', filename='image/harvest-icon.png')}}" class="btn-img">
-        </button>
-    </fieldset>
+    </div>
 </div>
-

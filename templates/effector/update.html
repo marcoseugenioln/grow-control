@@ -1,0 +1,182 @@
+<div class="item-edit-btn-container">
+    <button class="btn" onclick="togglePopupMenu('effector-edit-container-{{ effector_id }}')">
+        EDIT
+    </button>
+    <button class="btn" onclick="togglePopupMenu('effector-delete-container-{{ effector_id }}')">
+        DELETE
+    </button>
+</div>
+
+<div class="overlay" id="effector-delete-container-{{ effector_id }}">
+    <div class="centralized-div">
+        <p>Are you sure you want to delete effector {{ name }}?</p>
+        <table>
+            <tr>
+                <td>
+                    <form method="get" action="{{ url_for('delete_effector', grow_id=id, effector_id=effector_id) }}">
+                        <button class="btn">
+                            <img src="{{ url_for('static', filename='image/confirm-icon.png')}}" class="btn-img" id="create-btn">
+                        </button>
+                    </form>
+                </td>
+                <td>
+                    <button class="btn" id="cancel-btn" onclick="togglePopupMenu('effector-delete-container-{{ effector_id }}')">
+                        <img src="{{ url_for('static', filename='image/cancel-icon.png')}}" class="btn-img" id="cancel-btn">
+                    </button>
+                </td>
+            </tr>
+        </table>
+    </div>
+</div>
+<div class="overlay" id="effector-edit-container-{{ effector_id }}">
+    <div class="centralized-div">
+        <form action="{{ url_for('update_effector', grow_id = id, effector_id = effector_id) }}" method="post">
+            <fieldset>
+                <legend>Name</legend>
+                <input type="text" class="text-field" name="name" value="{{ name }}">
+            </fieldset>
+
+            <fieldset>
+                <legend>Effector Type</legend>
+                <select id="effector-type-id-{{ effector_id }}" class="combo-box" name="effector_type_id">
+                    {% for etid, etname, etdescription in effector_types %}
+                        {% if etid == effector_types[effector_type_id - 1][0] %}
+                            <option value="{{ etid }}" selected>{{ etname }}</option>
+                        {% else %}
+                            <option value="{{ etid }}">{{ etname }}</option>
+                        {% endif %}
+                    {% endfor %}
+                </select>
+            </fieldset>
+
+            <fieldset>
+                <legend>Device IP</legend>
+                <input type="text" class="text-field" name="ip" value="{{ ip }}">
+            </fieldset>
+
+            <fieldset>
+                <legend>Normal On</legend>
+                <input type="checkbox" class="checkbox-field" name="normal_on" value="{{ normal_on }}">
+            </fieldset>
+
+            <fieldset>
+                <legend>Bound</legend>
+                {% if scheduled == 1 %}
+                    <input id="bound-checkbox-{{ effector_id }}" type="checkbox" class="checkbox-field" name="bounded" value="{{ bounded }}" onchange="boundCheckboxChanged('{{ effector_id }}')" disabled>
+                {% else %}
+                    {% if bounded == 1 %}
+                        <input id="bound-checkbox-{{ effector_id }}" type="checkbox" class="checkbox-field" name="bounded" value="{{ bounded }}" onchange="boundCheckboxChanged('{{ effector_id }}')" checked>
+                    {% else %}
+                        <input id="bound-checkbox-{{ effector_id }}" type="checkbox" class="checkbox-field" name="bounded" value="{{ bounded }}" onchange="boundCheckboxChanged('{{ effector_id }}')">
+                    {% endif %}
+                {% endif %}
+            </fieldset>
+
+            {% if bounded == 1 %}
+                <fieldset>
+                    <legend>Sensor</legend>
+                    <select id="bounded-sensor-id-{{ effector_id }}" class="combo-box" name="bounded_sensor_id" >
+                        {% for sensor_id, grow_id, sensor_ip, sensor_name, sensor_sensor_type_id, last_value in sensors[id] %}
+                            {% if sensor_id == bounded_sensor_id %}
+                                <option value="{{ sensor_id }}" selected>
+                                    {{ sensor_name }} 
+                                    {% for stid, stname, stdescription in sensor_types %}
+                                        {% if stid == sensor_sensor_type_id %}
+                                            {{ stname }}
+                                        {% endif %}
+                                    {% endfor %}
+                                </option>
+                            {% else %}
+                                <option value="{{ sensor_id }}">
+                                    {{ sensor_name }} 
+                                    {% for stid, stname, stdescription in sensor_types %}
+                                        {% if stid == sensor_sensor_type_id %}
+                                            {{ stname }}
+                                        {% endif %}
+                                    {% endfor %}
+                                </option>
+                            {% endif %}
+                        {% endfor %}
+                    </select>
+                </fieldset>
+                <fieldset>
+                    <legend>Threshold</legend>
+                    <input id="threshold-{{ effector_id }}" type="number" class="text-field" name="threshold" value="{{ threshold }}" >
+                </fieldset>
+            {% else %}
+                <fieldset>
+                    <legend>Sensor</legend>
+                    <select id="bounded-sensor-id-{{ effector_id }}" class="combo-box" name="bounded_sensor_id" disabled>
+                        {% for sensor_id, grow_id, sensor_ip, sensor_name, sensor_sensor_type_id, last_value in sensors[id] %}
+                            {% if sensor_id == bounded_sensor_id %}
+                                <option value="{{ sensor_id }}" selected>
+                                    {{ sensor_name }} 
+                                    {% for stid, stname, stdescription in sensor_types %}
+                                        {% if stid == sensor_sensor_type_id %}
+                                            {{ stname }}
+                                        {% endif %}
+                                    {% endfor %}
+                                </option>
+                            {% else %}
+                                <option value="{{ sensor_id }}">
+                                    {{ sensor_name }} 
+                                    {% for stid, stname, stdescription in sensor_types %}
+                                        {% if stid == sensor_sensor_type_id %}
+                                            {{ stname }}
+                                        {% endif %}
+                                    {% endfor %}
+                                </option>
+                            {% endif %}
+                        {% endfor %}
+                    </select>
+                </fieldset>
+                <fieldset>
+                    <legend>Threshold</legend>
+                    <input id="threshold-{{ effector_id }}" type="number" class="text-field" name="threshold" value="{{ threshold }}" disabled>
+                </fieldset>
+            {% endif %}
+
+            <fieldset>
+                <legend>Schedule</legend>
+                {% if bounded == 1 %}
+                    <input id="schedule-checkbox-{{ effector_id }}" type="checkbox" class="checkbox-field" name="scheduled" value="{{ scheduled }}" onchange="scheduleCheckboxChanged('{{ effector_id }}')" disabled>
+                {% else %}
+                    {% if scheduled == 1 %}
+                        <input id="schedule-checkbox-{{ effector_id }}" type="checkbox" class="checkbox-field" name="scheduled" value="{{ scheduled }}" onchange="scheduleCheckboxChanged('{{ effector_id }}')" checked>
+                    {% else %}
+                        <input id="schedule-checkbox-{{ effector_id }}" type="checkbox" class="checkbox-field" name="scheduled" value="{{ scheduled }}" onchange="scheduleCheckboxChanged('{{ effector_id }}')">
+                    {% endif %}
+                {% endif %}
+            </fieldset>
+
+            {% if scheduled == 1 %}
+                <fieldset>
+                    <legend>ON</legend>
+                    <input id="on-time-{{ effector_id }}" type="time" class="text-field" name="on_time" value="{{ on_time }}">
+                </fieldset>
+                <fieldset>
+                    <legend>OFF</legend>
+                    <input id="off-time-{{ effector_id }}" type="time" class="text-field" name="off_time" value="{{ off_time }}">
+                </fieldset>
+            {% else %}
+                <fieldset>
+                    <legend>ON</legend>
+                    <input id="on-time-{{ effector_id }}" type="time" class="text-field" name="on_time" value="{{ on_time }}" disabled>
+                </fieldset>
+                <fieldset>
+                    <legend>OFF</legend>
+                    <input id="off-time-{{ effector_id }}" type="time" class="text-field" name="off_time" value="{{ off_time }}" disabled>
+                </fieldset>
+            {% endif %}
+
+            <div class="btn-container">
+                <button class="btn" type="submit">
+                    <img src="{{ url_for('static', filename='image/confirm-icon.png')}}" class="btn-img" id="create-btn">
+                </button>
+                <button type="button" class="btn" onclick="togglePopupMenu('effector-edit-container-{{ effector_id }}')">
+                    <img src="{{ url_for('static', filename='image/cancel-icon.png')}}" class="btn-img" id="cancel-btn">
+                </button>
+            </div>
+        </form>
+    </div>
+</div>
