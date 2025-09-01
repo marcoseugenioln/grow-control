@@ -15,8 +15,9 @@
 
 const char* ssid = "NICOLE_E_MARCOS";
 const char* password = "Dv010400";
+const String effector_id = "2";
 
-String URL   = "http://192.168.1.8:3000/m_lights_status/";
+String URL   = "http://grow-control.kinghost.net/grow/effector/data/" + effector_id;
 
 // the following variables are unsigned longs because the time, measured in
 // milliseconds, will quickly become a bigger number than can be stored in an int.
