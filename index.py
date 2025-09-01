@@ -237,7 +237,7 @@ class Database():
                 autocommit=True
             )
             
-            self.mycursor = self.mydb.cursor(buffered=True)
+            self.query = self.connection.cursor(buffered=True)
             print("Conexão MySQL estabelecida")
         except Exception as e:
             print(f"Erro ao conectar: {e}")
@@ -254,7 +254,6 @@ class Database():
 
     def execute_query(self, query, params=None):
         print(f'{datetime.datetime.now()} - {query}')
-        
         self.ensure_connection()
         
         try:
