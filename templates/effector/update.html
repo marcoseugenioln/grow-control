@@ -56,7 +56,11 @@
 
             <fieldset>
                 <legend>Normal On</legend>
-                <input type="checkbox" class="checkbox-field" name="normal_on" value="{{ normal_on }}">
+                {% if nromal_on == 1 %}
+                    <input type="checkbox" class="checkbox-field" name="normal_on" value="{{ normal_on }}" checked>
+                {% else %}
+                    <input type="checkbox" class="checkbox-field" name="normal_on" value="{{ normal_on }}">
+                {% endif %}
             </fieldset>
 
             <fieldset>

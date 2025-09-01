@@ -1,24 +1,21 @@
 from flask import Flask, redirect, url_for, request, render_template, Blueprint, flash, session, abort, jsonify
 from flask import Flask
 from scripts.database import Database
-import json
-import sys
 import logging
 import datetime
+import os
 
 app = Flask(__name__)
 app.secret_key = '1234'
-
 site = Blueprint('site', __name__, template_folder='templates')
-
-log = logging.getLogger('werkzeug')
-log.setLevel(logging.ERROR)
-
-with open(str(sys.argv[1])) as config_file:
-    app_config = json.load(config_file)
-
-database = Database(database_path='database/schema.db', schema_file='database/schema.sql')
-
+basedir = os.path.abspath(os.path.dirname(__file__))
+# Configurar logging
+logging.basicConfig(
+    filename='app.log',  # pasta com permissão de escrita
+    level=logging.DEBUG,
+    format='%(asctime)s %(levelname)s: %(message)s'
+)
+database = Database("localhost", "growcontrol", "root", "root")
 @app.route("/")
 def index():
     if 'logged_in' in session:
@@ -50,7 +47,6 @@ def index():
                                             photoperiods=database.get_photoperiods(),
                                             genders=database.get_genders(),
                                             intensities=database.get_intensities())
-
 @app.route('/login', methods=['GET', 'POST'])
 def login():
 
@@ -74,7 +70,6 @@ def login():
             is_login_valid = False
     
     return render_template('auth/login.html', is_login_valid = is_login_valid)
-
 @app.route('/logout', methods=['GET', 'POST'])
 def logout():
     if 'logged_in' in session:
@@ -87,7 +82,6 @@ def logout():
         session.pop('is_admin')
 
     return redirect(url_for(f'login'))
-    
 @app.route("/register", methods=['GET','POST'])
 def register():
 
@@ -107,9 +101,7 @@ def register():
                 is_logged = True                 
     
     return render_template('auth/register.html', logged_in = is_logged)
-
 ##################################################################################################
-
 @app.route('/user', methods=['GET', 'POST'])
 def user():
     
@@ -122,7 +114,6 @@ def user():
         current_user_password = database.get_user_password(session['user_id']),
         is_admin = session['is_admin']
         )
-
 @app.route('/user/create', methods=['GET', 'POST'])
 def create_user():
     
@@ -143,7 +134,6 @@ def create_user():
         return redirect('/login')
     
     return redirect('/login')
-
 @app.route('/user/update/<id>', methods=['GET', 'POST'])
 def update_user(id):
     if (request.method == 'POST' and 'email' in request.form and 'new_password' in request.form and 'is_admin' in request.form):
@@ -156,13 +146,10 @@ def update_user(id):
         return redirect(url_for('user'))  
         
     return redirect(url_for('user'))
-
 @app.route('/user/delete/<id>', methods=['GET', 'POST'])
 def delete_user(id):
     database.delete_user(id)
     return redirect(url_for('user'))
-
-
 ##################################################################################################
 @app.route('/plant/<grow_id>/<plant_id>', methods=['GET', 'POST'])
 def plant_index(grow_id, plant_id):
@@ -186,19 +173,16 @@ def plant_index(grow_id, plant_id):
         genders=database.get_genders(),
         intensities=database.get_intensities()
     )
-
 @app.route('/plant/create/<grow_id>', methods=['GET', 'POST'])
 def create_plant(grow_id):
     if 'name' in request.form and 'date' in request.form and 'photoperiod_id' in request.form and 'gender_id' in request.form:
         database.insert_plant(grow_id, request.form['name'], request.form['date'], request.form['photoperiod_id'], request.form['gender_id'])
     return redirect(url_for('index'))
-
 @app.route('/plant/update/<grow_id>/<plant_id>', methods=['GET', 'POST'])
 def update_plant(grow_id, plant_id):
     if 'name' in request.form and 'date' in request.form and 'photoperiod_id' in request.form and 'gender_id' in request.form:
         database.update_plant(plant_id, request.form['name'], request.form['date'], request.form['photoperiod_id'], request.form['gender_id'])
     return redirect(url_for('plant_index', grow_id=grow_id, plant_id=plant_id))
-
 @app.route('/plant/delete/<grow_id>/<plant_id>', methods=['GET', 'POST'])
 def delete_plant(grow_id, plant_id):
     database.delete_plant(plant_id)
@@ -209,7 +193,6 @@ def create_watering(grow_id, plant_id):
     if 'date' in request.form and 'mililiter' in request.form:
         database.insert_watering(plant_id, request.form['date'], request.form['mililiter'])
     return redirect(url_for('plant_index', grow_id=grow_id, plant_id=plant_id))
-
 @app.route('/watering/delete/<grow_id>/<plant_id>/<watering_id>', methods=['GET', 'POST'])
 def delete_watering(grow_id, plant_id, watering_id):
     database.delete_watering(watering_id)
@@ -219,7 +202,6 @@ def delete_watering(grow_id, plant_id, watering_id):
 def create_training(grow_id, plant_id):
     # TODO: create training
     return redirect(url_for('plant_index', grow_id=grow_id, plant_id=plant_id))
-
 @app.route('/training/delete/<grow_id>/<plant_id>', methods=['GET', 'POST'])
 def delete_training(grow_id, plant_id):
     # TODO: delete training
@@ -229,7 +211,6 @@ def delete_training(grow_id, plant_id):
 def create_feeding(grow_id, plant_id):
     # TODO: create feeding
     return redirect(url_for('plant_index', grow_id=grow_id, plant_id=plant_id))
-
 @app.route('/feeding/delete/<grow_id>/<plant_id>', methods=['GET', 'POST'])
 def delete_feeding(grow_id, plant_id):
     # TODO: delete feeding
@@ -239,7 +220,6 @@ def delete_feeding(grow_id, plant_id):
 def create_transplanting(grow_id, plant_id):
     # TODO: create transplanting
     return redirect(url_for('plant_index', grow_id=grow_id, plant_id=plant_id))
-
 @app.route('/transplanting/delete/<grow_id>/<plant_id>', methods=['GET', 'POST'])
 def delete_transplanting(grow_id, plant_id):
     # TODO: delete transplanting
@@ -249,7 +229,6 @@ def delete_transplanting(grow_id, plant_id):
 def create_damage(grow_id, plant_id):
     # TODO: create damage
     return redirect(url_for('plant_index', grow_id=grow_id, plant_id=plant_id))
-
 @app.route('/damage/delete/<grow_id>/<plant_id>', methods=['GET', 'POST'])
 def delete_damage(grow_id, plant_id):
     # TODO: delete damage
@@ -261,13 +240,11 @@ def create_grow():
         database.insert_grow(session['user_id'], request.form['name'],  request.form['lenght'], request.form['width'], request.form['height'])
         
     return redirect(url_for('index'))
-
 @app.route('/grow/update/<grow_id>', methods=['GET', 'POST'])
 def update_grow(grow_id):
     if 'name' in request.form and 'lenght' in request.form and 'width' in request.form and 'height' in request.form:
         database.update_grow(grow_id, request.form['name'],  request.form['lenght'], request.form['width'], request.form['height'])
     return redirect(url_for('index'))
-
 @app.route('/grow/delete/<grow_id>', methods=['GET', 'POST'])
 def delete_grow(grow_id):
     database.delete_grow(grow_id)
@@ -278,18 +255,15 @@ def create_sensor(grow_id):
     if 'name' in request.form and 'sensor_type_id' in request.form:
         database.insert_sensor(grow_id, request.form['name'], request.form['sensor_type_id'])
     return redirect(url_for('index'))
-
 @app.route('/sensor/delete/<grow_id>/<sensor_id>', methods=['GET', 'POST'])
 def delete_sensor(grow_id, sensor_id):
     database.delete_sensor(sensor_id)
     return redirect(url_for('index'))
-
 @app.route('/sensor/update/<grow_id>/<sensor_id>', methods=['GET', 'POST'])
 def update_sensor(grow_id, sensor_id):
     if 'name' in request.form and 'sensor_type_id' in request.form and 'ip' in request.form:
         database.update_sensor(sensor_id, request.form['name'], request.form['sensor_type_id'], request.form['ip'])
     return redirect(url_for('index'))
-
 @app.route('/sensor/data/<sensor_id>/<value>', methods=['GET', 'POST'])
 def sensor_data(sensor_id, value):
     # insert sensor data into database
@@ -301,12 +275,10 @@ def create_effector(grow_id):
     if 'name' in request.form and 'effector_type_id' in request.form:
         database.insert_effector(grow_id, request.form['effector_type_id'], request.form['name'])
     return redirect(url_for('index'))
-
 @app.route('/effector/delete/<grow_id>/<effector_id>', methods=['GET', 'POST'])
 def delete_effector(grow_id, effector_id):
     database.delete_effector(effector_id)
     return redirect(url_for('index'))
-
 @app.route('/effector/update/<grow_id>/<effector_id>', methods=['GET', 'POST'])
 def update_effector(grow_id, effector_id):
 
@@ -323,6 +295,7 @@ def update_effector(grow_id, effector_id):
         normal_on = False
 
         if 'normal_on' in request.form:
+            print(request.form['normal_on'])
             normal_on = True
 
         if 'bounded' in request.form and 'bounded_sensor_id' in request.form and 'threshold' in request.form:
@@ -338,7 +311,6 @@ def update_effector(grow_id, effector_id):
         database.update_effector(effector_id, request.form['name'], request.form['effector_type_id'], request.form['ip'], normal_on, scheduled ,on_time, off_time, bounded, bounded_sensor_id, threshold)
     
     return redirect(url_for('index'))
-
 @app.route('/effector/data/<effector_id>', methods=['GET', 'POST'])
 def device_power_on(effector_id):
 
@@ -351,17 +323,18 @@ def device_power_on(effector_id):
 
     power_on = is_normal_on
 
-    print(bounded)
-
     if is_scheduled:
-        format_string = "%H:%M:%S"
-        on_time = datetime.datetime.strptime(on_time, format_string)
-        off_time = datetime.datetime.strptime(off_time, format_string)
-        now = datetime.datetime.now().time()
-        pass_on_time = now >= on_time.time()
-        before_off_time = now <= off_time.time()
+        if isinstance(on_time, datetime.timedelta):
+            on_time = (datetime.datetime.min + on_time).time()
+        if isinstance(off_time, datetime.timedelta):
+            off_time = (datetime.datetime.min + off_time).time()
 
+        now = datetime.datetime.now().time()
+
+        pass_on_time = now >= on_time
+        before_off_time = now <= off_time
         power_on = pass_on_time and before_off_time
+
         if is_normal_on:
             power_on = not power_on
 
@@ -374,10 +347,7 @@ def device_power_on(effector_id):
         
     database.set_effector_power_on(effector_id, power_on)
 
-    return str(power_on)
+    return str(int(power_on))
 
 if __name__ == '__main__':
-    print(app_config)
-    app.run(host=app_config["host"], 
-            port=app_config["port"], 
-            debug=app_config["debug"])
+    app.run()
