@@ -778,7 +778,7 @@ def device_power_on(effector_id):
     is_bounded = bool(bounded) == True
     is_normal_on = bool(normal_on) == True
 
-    power_on = is_normal_on
+    turn_on = power_on
 
     if is_scheduled:
         if isinstance(on_time, datetime.timedelta):
@@ -790,21 +790,21 @@ def device_power_on(effector_id):
 
         pass_on_time = now >= on_time
         before_off_time = now <= off_time
-        power_on = pass_on_time and before_off_time
+        turn_on = pass_on_time and before_off_time
 
         if is_normal_on:
-            power_on = not power_on
+            turn_on = not power_on
 
     elif is_bounded:
         print(database.get_last_sensor_data_value(bounded_sensor_id))
         
-        power_on = database.get_last_sensor_data_value(bounded_sensor_id)[0][0] >= threshold
+        turn_on = database.get_last_sensor_data_value(bounded_sensor_id)[0][0] >= threshold
         if is_normal_on:
-            power_on = not power_on
+            turn_on = not power_on
         
-    database.set_effector_power_on(effector_id, power_on)
+    database.set_effector_power_on(effector_id, turn_on)
 
-    return str(int(power_on))
+    return str(int(turn_on))
 
 if __name__ == '__main__':
     app.run()
