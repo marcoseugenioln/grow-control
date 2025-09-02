@@ -1,222 +1,301 @@
-.header-container{
-    display:flex;
-    align-items: center;
-    flex-direction: row;
-    background-color:rgb(0, 150, 0);
-    height: fit-content;
-    border: 1px solid #ccc;
-    box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2);
-    margin-bottom: 20px;
+/* ========== ESTILOS BASE (DESKTOP) ========== */
+
+.header-container {
+  display: flex;
+  align-items: center;
+  flex-direction: row;
+  background-color: rgb(0, 150, 0);
+  height: fit-content;
+  border: 1px solid #ccc;
+  box-shadow: 0px 1vw 2vw 0px rgba(0,0,0,0.2);
+  margin: 0.25rem;
 }
 
 .btn {
-    background-color:rgb(0, 150, 0);
-    color:aliceblue;
-    width:fit-content;
-    height:fit-content;
-    border-style: none;
-    cursor: pointer;
-    min-height: 35px;
-    max-height: 35px;
-    min-width: 100px;
-    max-width: 100px;
-    box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2);
+  background-color: rgb(0, 150, 0);
+  color: aliceblue;
+  border: none;
+  cursor: pointer;
+
+  margin: 0.25rem;
+  padding: 0.2rem 1rem;
+
+  font-size: 1rem;
+  border-radius: 4px;
+
+  min-width: 120px;
+  max-width: 200px;
+  height: 40px;
+
+  box-shadow: 0 0.25rem 0.2rem rgba(0,0,0,0.2);
+  transition: background-color 0.2s ease, transform 0.1s ease;
 }
 
 .btn:active {
-    background-color: rgb(80, 150, 80);
-    transform: translateY(1px);
-    transform: translateX(1px);
+  background-color: rgb(80, 150, 80);
+  transform: translate(1px, 1px);
 }
 
-.btn:hover{
-    background-color:rgb(185, 235, 185);
+.btn:hover {
+  background-color: rgb(185, 235, 185);
 }
 
-.btn-img{
-    width: 28px; 
-    height: 28px;
+.btn-img {
+  width: 20px;
+  height: 20px;
 }
 
-.combo-box{
-    font-size: 14px;
-    width: 150px;
-    height: 28px;
+.combo-box,
+.text-field,
+.number-field {
+  font-size: 1rem;
+  width: 100%;
+  max-width: 250px;
+  height: 40px;
+
+  padding: 0.25rem 0.2rem;
+  margin: 0.25rem;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  box-sizing: border-box;
 }
 
-.text-field{
-    font-size: 14px;
-    width: 150px;
-    height: 22px;
-    padding: 1px;
+.checkbox-field {
+  font-size: 1rem;
+  margin: 0.25rem;
+  accent-color: rgb(0, 150, 0);
 }
 
-.checkbox-field{
-    font-size: 14px;
-    min-width: 22px;
-    min-height: 22px;
-    padding: 1px;
-}
-
-.centralized-div{
-    display: flex;
-    position: absolute;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%);
-    flex-direction:column;
-    align-items: center;
-    justify-content: center;
-    background-color: white;
-    width: auto; /* Full width (cover the whole page) */
-    height: auto; /* Full height (cover the whole page) */
-    padding: 2%;
-}
-
-.number-field{
-    font-size: 14px;
-    width: 150px;
-    height: 22px;
-    padding: 1px;
+.centralized-div {
+  display: flex;
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  background-color: white;
+  padding: 0.2rem;
+  margin: 0.2rem;
 }
 
 .overlay {
-    position: fixed; /* Sit on top of the page content */
-    display: none; /* Hidden by default */
-    width: 100%; /* Full width (cover the whole page) */
-    height: 100%; /* Full height (cover the whole page) */
-    top: 0;
-    left: 0;
-    right: 0;
-    bottom: 0;
-    background-color: rgba(0,0,0,0.5); /* Black background with opacity */
-    z-index: 2; /* Specify a stack order in case you're using a different order for other elements */
-    /* cursor: pointer; Add a pointer on hover */
-    align-self: center;
+  position: fixed;
+  display: none;
+  width: 100%;
+  height: 100%;
+  top: 0; left: 0; right: 0; bottom: 0;
+  background-color: rgba(0,0,0,0.5);
+  z-index: 2;
+  align-self: center;
 }
 
 .table-container {
-    max-height: 150px; /* Set the height of the scrollable area */
-    min-height: 150px;
-    min-width: fit-content;
-    overflow-y: auto; /* Enable vertical scrolling */
-    border: 1px solid #ccc;
+  max-height: 300px;
+  min-height: 150px;
+  max-width: 600px;
+  min-width: 300px;
+  overflow-y: auto;
+  border: 1px solid #ccc;
 }
 
-.watering-container{
-    display: inline-block;
-    border: 1px solid #ccc;
-    padding: 20px;
+.grow-container {
+  display: none;
+  border: 1px solid #ccc;
+  padding: 0.2rem;
+  margin: 1rem 0;
+  box-shadow: 0px 1vw 2vw 0px rgba(0,0,0,0.2);
 }
 
-.feeding-container{
-    display: inline-block;
-    border: 1px solid #ccc;
-    padding: 20px;
-}
-
-.training-container{
-    display: inline-block;
-    border: 1px solid #ccc;
-    padding: 20px;
-}
-
-.damage-container{
-    display: inline-block;
-    border: 1px solid #ccc;
-    padding: 20px;
-}
-
-.transplanting-container{
-    display: inline-block;
-    border: 1px solid #ccc;
-    padding: 20px;
+.grow-info-container {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  max-width: 900px;
+  height: 30vh;
+  border: 1px solid #ccc;
+  margin: 1rem auto;
+  box-shadow: 0 0.2rem 1rem rgba(0,0,0,0.2);
 }
 
 .grow-item-container {
-    display: block;
-    border: 1px solid #ccc;
-    padding: 20px;  
-    max-width: fit-content;
-    min-width: fit-content;
-    padding: 20px;
-    box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2);
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  max-width: 900px;
+  height: 50vh;
+  border: 1px solid #ccc;
+  margin: 1rem auto;
+  box-shadow: 0 0.2rem 1rem rgba(0,0,0,0.2);
 }
 
 .grow-item-scroll-container {
-    max-height: 300px; /* Set the height of the scrollable area */
-    min-height: 300px;
-    max-width: fit-content;
-    min-width: fit-content;
-    overflow-x: auto; /* Enable horizontal scrolling */
-    border: 1px solid #ccc;
-    padding: 20px;
-    box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2);
+  flex: 1;
+  width: 100%;
+  overflow-x: auto;
+  padding: 0.2rem;
+  gap: 0.2rem;
 }
 
-.item-container{
-    display: flex;
-    justify-content: space-evenly;
-    max-width: 320px;
-    min-width: 320px;
-    border: 1px solid #ccc;
-    padding: 20px;
-    margin: 20px;
-    box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2);
+.item-container {
+  flex: 0 0 auto;
+  width: 80%;
+  margin: 0.2rem auto;
+  padding: 1rem;
+  border: 1px solid #ccc;
+  box-shadow: 0 0.2rem 1rem rgba(0,0,0,0.2);
+  display: flex;
 }
 
 fieldset {
-    align-items: center;
-    width: fit-content;
-    height: fit-content;
-    background-color: white;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  width: 100%;
+  max-width: 400px;
+  min-width: 250px;
+
+  height: auto;
+  min-height: fit-content;
+
+  background-color: white;
+  padding: 0.2rem;
+  margin: 0.2rem auto;
+  border: 1px solid #ccc;
+  box-sizing: border-box;
 }
 
 .btn-container {
-    display: flex;
-    justify-content: center; /* Horizontally center */
-    align-items: center;    /* Vertically center */
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 0.25rem;
+  margin: 0.25rem;
 }
 
-.grow-container{
-    display: none; /* Hidden by default */
-    border: 1px solid #ccc;
-    padding: 20px;  
-    box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2);
+.user-grows-container {
+  border: 1px solid #ccc;
+  padding: 0.2rem;
+  margin: 0.2rem;
+  box-shadow: 0 0.2rem 1rem rgba(0,0,0,0.2);
 }
 
-.user-grows-container{
-    border: 1px solid #ccc;
-    padding: 20px; 
-    box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2);
-    margin-bottom: 20px;
-}
-
-/* Dropdown Content (Hidden by Default) */
 .item-edit-btn-container {
   background-color: #f1f1f1;
   min-width: 80px;
-  max-width: 80px;
+  max-width: 100px;
   max-height: fit-content;
-  box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2);
+  box-shadow: 0px 1vw 2vw 0px rgba(0,0,0,0.2);
   z-index: 1;
+  padding: 0.25rem;
+  margin: 0.25rem;
 }
 
-.effector-on {
-  height: 20px;
-  width: 20px;
-  background-color:rgb(0, 150, 0);
-  border-radius: 50%;
-  display: inline-block;
-  box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2);
-}
-
+.effector-on,
 .effector-off {
-  height: 18px;
-  width: 18px;
-  background-color:rgb(150, 0, 0);
+  height: 16px;
+  width: 16px;
   border-radius: 50%;
   display: inline-block;
-  box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2);
-  margin: 5px;
+  box-shadow: 0 0.25rem 0.2rem rgba(0,0,0,0.2);
+  margin: 0.25rem;
+}
+
+
+.effector-on { background-color: rgb(0, 150, 0); }
+.effector-off { background-color: rgb(150, 0, 0); }
+
+/* ========== NOVOS ESTILOS PARA LOGIN ========== */
+.login-buttons-container {
+  display: flex;
+  justify-content: center;
+  gap: 10px;
+  margin-top: 10px;
+  width: 100%;
+}
+
+/* ========== MEDIA QUERIES ========== */
+
+/* Tablet (≤ 1024px) */
+@media (max-width: 1024px) {
+  .btn {
+    min-width: 100px;
+    max-width: 150px;
+    height: 36px;
+    font-size: 0.95rem;
+  }
+
+  .combo-box,
+  .text-field,
+  .number-field {
+    max-width: 200px;
+    font-size: 0.95rem;
+  }
+
+  .grow-info-container,
+  .grow-item-container {
+    max-width: 95%;
+    height: auto;
+    min-height: 250px;
+  }
+  
+  .login-buttons-container {
+    flex-direction: column;
+    align-items: center;
+  }
+}
+
+/* Celular grande (≤ 768px) */
+@media (max-width: 768px) {
+  .header-container {
+    flex-direction: column;
+    padding: 0.2rem;
+  }
+
+  .btn {
+    width: 100%;
+    max-width: 100%;
+    height: 45px;
+    font-size: 1rem;
+  }
+
+  .combo-box,
+  .text-field,
+  .number-field {
+    width: 100%;
+    max-width: 100%;
+  }
+
+  .item-container {
+    width: 100%;
+  }
+
+  fieldset {
+    max-width: 100%;
+    min-width: auto;
+  }
+}
+
+/* Celular pequeno (≤ 480px) */
+@media (max-width: 480px) {
+  .btn {
+    font-size: 0.5rem;
+    padding: 0.2rem;
+  }
+
+  .grow-info-container,
+  .grow-item-container {
+    margin: 0.2rem;
+    padding: 0.2rem;
+  }
+
+  .item-container {
+    padding: 0.2rem;
+  }
+  
+  .login-buttons-container {
+    gap: 5px;
+  }
 }

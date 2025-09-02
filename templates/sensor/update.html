@@ -1,5 +1,7 @@
-
 <div class="item-edit-btn-container">
+    <button onclick='showSensorChartModal({{ sensor_id }}, "{{ name }}", {{ sensor_data[grow_id][sensor_id] | tojson }})' class="btn btn-sm btn-info">
+        CHART
+    </button>
     <button class="btn" onclick="togglePopupMenu('sensor-edit-container-{{ sensor_id }}')">
         EDIT
     </button>
@@ -7,6 +9,8 @@
         DELETE
     </button>
 </div>
+
+<!-- Modal para confirmar exclusão -->
 <div class="overlay" id="sensor-delete-container-{{ sensor_id }}">
     <div class="centralized-div">
         <p>Are you sure you want to delete sensor {{ name }}?</p>
@@ -28,6 +32,8 @@
         </table>
     </div>
 </div>
+
+<!-- Modal para edição -->
 <div class="overlay" id="sensor-edit-container-{{ sensor_id }}">
     <div class="centralized-div">
         <form action="{{ url_for('update_sensor', grow_id = grow_id, sensor_id = sensor_id) }}" method="post">
@@ -54,6 +60,11 @@
                 <input type="text" class="text-field" name="ip" value="{{ ip }}">
             </fieldset>
 
+            <fieldset>
+                <legend>Data Retention Days</legend>
+                <input type="number" class="text-field" name="data_retention_days" step="1" min="0" max="30" value="{{ data_retention_days }}">
+            </fieldset>
+
             <div class="btn-container">
                 <button class="btn" type="submit">
                 <img src="{{ url_for('static', filename='image/confirm-icon.png')}}" class="btn-img" id="create-btn">
@@ -63,5 +74,20 @@
                 </button>
             </div>
         </form>
+    </div>
+</div>
+
+<!-- Modal para o gráfico - ADICIONEI ESTE NOVO MODAL -->
+<div class="overlay" id="sensor-chart-container-{{ sensor_id }}">
+    <div class="centralized-div" style="width: 80%; max-width: 900px;">
+        <h2>Gráfico do Sensor: {{ name }}</h2>
+        <div id="chart-container-{{ sensor_id }}" style="height: 400px; width: 100%;">
+            <!-- O gráfico será renderizado aqui -->
+        </div>
+        <div style="text-align: center; margin-top: 20px;">
+            <button class="btn" onclick="togglePopupMenu('sensor-chart-container-{{ sensor_id }}')">
+                Fechar
+            </button>
+        </div>
     </div>
 </div>
