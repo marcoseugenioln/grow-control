@@ -1,2 +1,6 @@
-
-database.db
+*.db
+*.pyc
+*/*.pyc
+__pycache__
+*/__pycache__
+*/*/__pycache__

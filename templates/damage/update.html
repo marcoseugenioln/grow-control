@@ -1,0 +1,39 @@
+<div name="damage-{{ id }}">
+    
+    <tr>
+        <form action="{{ url_for('update_damage', grow_id=grow_id, plant_id=id) }}" method="post">
+            <td><label>{{ id }}</label></td>
+            <td><input id="date-{{ id }}" type="text" class="text-field" name="date" value="{{ date }}"></td>
+            <td><select class="combo-box" name="damage_type_id">
+                {% for did, dname, ddescription in damage_types %}
+                    {% if did == damage_type_id %}
+                        <option value="{{ did }}" selected>{{ dname }}</option>
+                    {% else %}
+                        <option value="{{ did }}">{{ dname }}</option>
+                    {% endif %}
+                {% endfor %}
+            </select></td>
+            <td><select class="combo-box" name="intensity__id">
+                {% for iid, iname, idescription in intensities %}
+                    {% if iid == intensity_id %}
+                        <option value="{{ iid }}" selected>{{ iname }}</option>
+                    {% else %}
+                        <option value="{{ iid }}">{{ iname }}</option>
+                    {% endif %}
+                {% endfor %}
+            </select></td>
+            <td>
+                <button class="action-btn" name="update-damage-{{ id }}">
+                    <img src="{{ url_for('static', filename='image/edit-icon.png')}}" class="action-btn-img">
+                </button>
+            </td>
+        </form>
+        <form action="{{ url_for('delete_damage', grow_id=grow_id, plant_id=id ) }}" method="post">
+            <td>
+                <button class="action-btn" name="delete-damage-{{ id }}">
+                    <img src="{{ url_for('static', filename='image/trash-icon.png')}}" class="action-btn-img">
+                </button>
+            </td>
+        </form>
+    </tr>
+</div>

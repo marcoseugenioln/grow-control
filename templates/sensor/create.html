@@ -1,0 +1,32 @@
+
+<button class="btn" onclick="togglePopupMenu('sensor-create-container-{{ id }}')">
+    <img src="{{ url_for('static', filename='image/create-icon.png')}}" class="btn-img" id="create-btn">
+</button>
+<div class="overlay" id="sensor-create-container-{{ id }}">
+    <div class="centralized-div">
+        <form action="{{ url_for('create_sensor', grow_id=id) }}" method="post">
+
+            <fieldset>
+                <legend>Name</legend>
+                <input type="text" class="text-field" name="name">
+            </fieldset>
+            <fieldset>
+                <legend>Sensor Type</legend>
+                <select id="sensor-type-id-{{ id }}" class="combo-box" name="sensor_type_id">
+                    {% for sid, sname, sdescription in sensor_types %}
+                        <option value="{{ sid }}">{{ sname }}</option>
+                    {% endfor %}
+                </select>
+            </fieldset>
+
+            <div class="btn-container">
+                <button class="btn" type="submit">
+                    <img src="{{ url_for('static', filename='image/confirm-icon.png')}}" class="btn-img" id="create-btn">
+                </button>
+                <button type="button" class="btn" onclick="togglePopupMenu('sensor-create-container-{{ id }}')">
+                    <img src="{{ url_for('static', filename='image/cancel-icon.png')}}" class="btn-img" id="cancel-btn">
+                </button>
+            </div>
+        </form>
+    </div>
+</div>

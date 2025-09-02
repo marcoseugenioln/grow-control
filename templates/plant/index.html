@@ -1,0 +1,15 @@
+
+{% set plant_id = id %}
+<div class="item-container">
+    <table>
+        <tr><td>ID</td><td>{{ plant_id }}</td></tr>
+        <tr><td>Name</td><td>{{ name }}</td></tr>
+        <tr><td>Photoperiod</td><td>{{ photoperiods[photoperiod_id - 1][1] }}</td></tr>
+        <tr><td>Gender</td><td>{{ genders[gender_id - 1][1] }}</td></tr>
+        <tr><td>Start Date</td><td>{{ start_date }}</td></tr>
+        <tr><td>End Date</td><td>{{ end_date }}</td></tr>
+        <tr><td>Harvested</td><td>{{ harvested }}</td></tr>
+        <tr><td>Yield</td><td>{{ yield }}</td></tr>
+    </table>
+    {% include 'plant/update.html'%}
+</div>

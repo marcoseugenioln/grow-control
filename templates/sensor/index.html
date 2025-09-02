@@ -1,0 +1,11 @@
+
+<div class="item-container">
+    <table>
+        <tr><td>ID</td><td>{{ sensor_id }}</td></tr>
+        <tr><td>IP</td><td>{{ ip }}</td></tr>
+        <tr><td>Name</td><td>{{ name }}</td></tr>
+        <tr><td>Type</td><td>{{ sensor_types[sensor_type_id - 1][1] }}</td></tr>
+        <tr><td>Value</td><td>{{ last_value }}</td></tr>
+    </table>
+    {% include 'sensor/update.html'%}
+</div>

@@ -1,0 +1,67 @@
+
+<div class="item-edit-btn-container">
+    <button class="btn" onclick="togglePopupMenu('sensor-edit-container-{{ sensor_id }}')">
+        EDIT
+    </button>
+    <button class="btn" onclick="togglePopupMenu('sensor-delete-container-{{ sensor_id }}')">
+        DELETE
+    </button>
+</div>
+<div class="overlay" id="sensor-delete-container-{{ sensor_id }}">
+    <div class="centralized-div">
+        <p>Are you sure you want to delete sensor {{ name }}?</p>
+        <table>
+            <tr>
+                <td>
+                    <form method="get" action="{{ url_for('delete_sensor', grow_id=id, sensor_id=sensor_id) }}">
+                        <button class="btn">
+                            <img src="{{ url_for('static', filename='image/confirm-icon.png')}}" class="btn-img" id="create-btn">
+                        </button>
+                    </form>
+                </td>
+                <td>
+                    <button class="btn" id="cancel-btn" onclick="togglePopupMenu('sensor-delete-container-{{ sensor_id }}')">
+                        <img src="{{ url_for('static', filename='image/cancel-icon.png')}}" class="btn-img" id="cancel-btn">
+                    </button>
+                </td>
+            </tr>
+        </table>
+    </div>
+</div>
+<div class="overlay" id="sensor-edit-container-{{ sensor_id }}">
+    <div class="centralized-div">
+        <form action="{{ url_for('update_sensor', grow_id = grow_id, sensor_id = sensor_id) }}" method="post">
+            <fieldset>
+                <legend>Name</legend>
+                <input type="text" class="text-field" name="name" value="{{ name }}">
+            </fieldset>
+
+            <fieldset>
+                <legend>Sensor Type</legend>
+                <select id="sensor-type-id-{{ sensor_id }}" class="combo-box" name="sensor_type_id">
+                    {% for stid, stname, stdescription in sensor_types %}
+                        {% if stid == sensor_type_id %}
+                            <option value="{{ stid }}" selected>{{ stname }}</option>
+                        {% else %}
+                            <option value="{{ stid }}">{{ stname }}</option>
+                        {% endif %}
+                    {% endfor %}
+                </select>
+            </fieldset>
+
+            <fieldset>
+                <legend>Device IP</legend>
+                <input type="text" class="text-field" name="ip" value="{{ ip }}">
+            </fieldset>
+
+            <div class="btn-container">
+                <button class="btn" type="submit">
+                <img src="{{ url_for('static', filename='image/confirm-icon.png')}}" class="btn-img" id="create-btn">
+                </button>
+                <button type="button" class="btn" onclick="togglePopupMenu('sensor-edit-container-{{ sensor_id }}')">
+                    <img src="{{ url_for('static', filename='image/cancel-icon.png')}}" class="btn-img" id="cancel-btn">
+                </button>
+            </div>
+        </form>
+    </div>
+</div>

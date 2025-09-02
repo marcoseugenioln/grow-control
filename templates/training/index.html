@@ -1,0 +1,7 @@
+<div class="index-div">
+    <table>
+        {% for id, name, date, training_type_id in trainings %}
+            {% include '/training/update.html'%}
+        {% endfor %}
+    </table>
+</div>

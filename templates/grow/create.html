@@ -1,0 +1,35 @@
+
+<button class="btn" onclick="togglePopupMenu('grow-create-panel')">
+    <img src="{{ url_for('static', filename='image/create-icon.png')}}" class="btn-img" id="create-btn">
+</button>
+
+<div class="overlay" id="grow-create-panel">
+    <div class="centralized-div">
+        <form action="{{ url_for('create_grow') }}" method="post">
+            <fieldset>
+                <legend>Name</legend>
+                <input type="text" class="text-field" name="name" placeholder="Grow name">
+            </fieldset>
+            <fieldset>
+                <legend>Lenght</legend>
+                <input type="number" class="text-field" name="lenght">
+            </fieldset>
+            <fieldset>
+                <legend>Width</legend>
+                <input type="number" class="text-field" name="width">
+            </fieldset>
+            <fieldset>
+                <legend>Height</legend>
+                <input type="number" class="text-field" name="height">
+            </fieldset>
+            <div class="btn-container">
+                <button class="btn" type="submit">
+                    <img src="{{ url_for('static', filename='image/confirm-icon.png')}}" class="btn-img" id="create-btn">
+                </button>
+                <button type="button" class="btn" onclick="togglePopupMenu('grow-create-panel')">
+                    <img src="{{ url_for('static', filename='image/cancel-icon.png')}}" class="btn-img" id="cancel-btn">
+                </button>
+            </div>
+        </form>
+    </div>
+</div>

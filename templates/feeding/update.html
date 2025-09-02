@@ -1,0 +1,26 @@
+<div name="feeding-{{ id }}">
+    
+    <tr>
+        <form action="{{ url_for('update_feeding', id=id) }}" method="post">
+            <td><label>{{ id }}</label></td>
+            <td><input type="date" class="text-field" name="date" value="{{ date }}"></td>
+            <td><input type="number" min="0" max="10000" class="text-field" name="dosage" value="{{ dosage }}"></td>
+            <td><input type="number" min="0" max="10000" class="text-field" name="nitrogen" value="{{ nitrogen }}"></td>
+            <td><input type="number" min="0" max="10000" class="text-field" name="phosphorus" value="{{ phosphorus }}"></td>
+            <td><input type="number" min="0" max="10000" class="text-field" name="potassium" value="{{ potassium }}"></td>
+            <td><input type="number" min="0" max="10000" class="text-field" name="concentration" value="{{ concentration }}"></td>
+            <td>
+                <button class="btn" name="update-feeding-{{ id }}">
+                    <img src="{{ url_for('static', filename='image/edit-icon.png')}}" class="btn-img">
+                </button>
+            </td>
+        </form>
+        <form action="{{ url_for('delete_feeding', id=id) }}" method="post">
+            <td>
+                <button class="btn" name="delete-feeding-{{ id }}">
+                    <img src="{{ url_for('static', filename='image/trash-icon.png')}}" class="btn-img">
+                </button>
+            </td>
+        </form>
+    </tr>
+</div>

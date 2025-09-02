@@ -1,0 +1,18 @@
+<div class="index-div">
+    <table>
+        <tr>
+            <td><label class="text-field">ID</label></td>
+            <td><label class="text-field">Date</label></td>
+            <td><label class="text-field">Width</label></td>
+            <td><label class="text-field">Height</label></td>
+            <td><label class="text-field">Radius</label></td>
+            <td><label class="text-field">Depth</label></td>
+        </tr>
+
+        {% for id, plant_id, date, lenght, width, height, radius in transplantings %}
+            {% include '/transplanting/update.html'%}
+        {% endfor %}
+    </table>
+</div>
+
+    

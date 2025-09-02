@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Home</title>
+    <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='style.css')}}">
+</head>
+<body>
+    {% include 'header/index.html'%}
+    <div class="user-grows-container">
+        {% include 'grow/create.html'%}
+
+        {% for id, user_id, grow_name, grow_lenght, grow_width, grow_height in user_grows %}
+            <button onclick="togglePopupMenu('grow-container-{{ id }}')" class="btn">
+                {{ grow_name }}
+            </button>
+        {% endfor %}
+    </div>
+
+    {% for id, user_id, grow_name, grow_lenght, grow_width, grow_height in user_grows %}
+        {% include 'grow/index.html'%}
+    {% endfor %}
+    
+    <script src="{{ url_for('static', filename='scripts.js') }}"></script>
+</body>
+</html>

@@ -1,0 +1,16 @@
+<table class="content-table">
+    <tr>
+        <td><label class="text-field">ID</label></td>
+        <td><label class="text-field">Date</label></td>
+        <td><label class="text-field">Mililiter</label></td>
+        <td>Delete</td>
+    </tr>
+    {% for id, date, mililiter in waterings %}
+        <tr>
+            <td><label class="text-field">{{ id }}</label></td>
+            <td><label class="text-field">{{ date }}</label></td>
+            <td><label class="text-field">{{ mililiter }}</label></td>
+            <td>{% include 'watering/update.html'%}</td>
+        </tr>
+    {% endfor %}
+</table>
