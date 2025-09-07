@@ -752,7 +752,7 @@ class Database():
         finally:
             session.close()
 
-    def get_sensor_data(self, sensor_id, limit=100):
+    def get_sensor_data(self, sensor_id, limit=100000):
         session = self._get_session()
         try:
             # Buscar dados do sensor ordenados por data mais recente

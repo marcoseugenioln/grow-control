@@ -120,9 +120,10 @@ function createSensorChartFromData(sensorId, sensorData, chartContainerId) {
         return;
     }
 
-    // Calcular valor máximo para o eixo Y
+    // Encontrar valores mínimo e máximo para os eixos
+    const minTimestamp = new Date(Math.min(...timestamps.map(d => d.getTime())));
+    const maxTimestamp = new Date(Math.max(...timestamps.map(d => d.getTime())));
     const maxValue = Math.max(...values);
-    // Garantir que o valor mínimo seja 0
     const minValue = 0;
 
     let canvas = document.getElementById(`sensor-chart-${sensorId}`);
@@ -161,8 +162,8 @@ function createSensorChartFromData(sensorId, sensorData, chartContainerId) {
                     })),
                     borderColor: 'rgb(75, 192, 192)',
                     backgroundColor: 'rgba(75, 192, 192, 0.1)',
-                    tension: 0.1, // Reduzir a tensão para linhas mais retas
-                    fill: false,   // Não preencher área sob a linha
+                    tension: 0.1,
+                    fill: false,
                     pointRadius: 2,
                     pointBackgroundColor: 'rgb(75, 192, 192)'
                 }]
@@ -174,16 +175,24 @@ function createSensorChartFromData(sensorId, sensorData, chartContainerId) {
                     x: {
                         type: 'time',
                         time: {
-                            unit: 'minute',
+                            unit: 'hour', // Definir passo de 1 hora
+                            stepSize: 1,  // Garantir passo de 1 hora
                             displayFormats: {
-                                minute: 'HH:mm',
-                                hour: 'HH:mm'
+                                hour: 'HH:mm',
+                                day: 'DD/MM'
                             },
                             tooltipFormat: 'DD/MM/YYYY HH:mm:ss'
                         },
                         title: {
                             display: true,
                             text: 'Tempo'
+                        },
+                        min: minTimestamp, // Primeira data como mínimo
+                        max: maxTimestamp, // Última data como máximo
+                        ticks: {
+                            source: 'auto',
+                            autoSkip: true,
+                            maxTicksLimit: 10 // Limitar número de ticks para melhor legibilidade
                         }
                     },
                     y: {
@@ -191,9 +200,12 @@ function createSensorChartFromData(sensorId, sensorData, chartContainerId) {
                             display: true,
                             text: 'Valor'
                         },
-                        beginAtZero: true, // Garante que começa em 0
-                        suggestedMin: minValue, // Valor mínimo fixo em 0
-                        suggestedMax: maxValue * 1.1 // Adiciona 10% de margem no topo
+                        beginAtZero: true,
+                        min: minValue, // Valor mínimo fixo em 0
+                        max: maxValue * 1.1, // Valor máximo com 10% de margem
+                        ticks: {
+                            stepSize: Math.ceil(maxValue / 10) // Passo automático baseado no valor máximo
+                        }
                     }
                 },
                 plugins: {

@@ -507,7 +507,7 @@ def effector_data(effector_id):
         return "0"
     
     effector = effector_data[0]
-    id, grow_id, effector_type_id, name, ip, normal_on, power_on, scheduled, on_time, off_time, bounded, bounded_sensor_id, threshold = effector
+    id, grow_id, effector_type_id, name, ip, normal_on, power_on, scheduled, on_time, off_time, bounded, bounded_sensor_id, threshold, last_request = effector
     
     is_scheduled = bool(scheduled) == True
     is_bounded = bool(bounded) == True
