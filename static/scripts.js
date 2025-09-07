@@ -66,6 +66,7 @@ function createSensorChartFromData(sensorId, sensorData, chartContainerId) {
     const timestamps = [];
     const values = [];
     
+    // Processar dados brutos
     sensorData.forEach(dataPoint => {
         if (dataPoint && dataPoint.length >= 2) {
             const value = parseFloat(dataPoint[0]);
@@ -76,21 +77,15 @@ function createSensorChartFromData(sensorId, sensorData, chartContainerId) {
                 
                 // Converter diferentes formatos de timestamp
                 if (typeof timestamp === 'string') {
-                    // Para formato "Sat, 06 Sep 2025 19:29:39 GMT"
                     try {
-                        // Remover dia da semana e timezone para simplificar
-                        const dateParts = timestamp.split(' ');
-                        if (dateParts.length >= 5) {
-                            // Formatar como "06 Sep 2025 19:29:39"
-                            const dateString = `${dateParts[1]} ${dateParts[2]} ${dateParts[3]} ${dateParts[4]}`;
-                            date = new Date(dateString);
-                            
-                            // Se ainda for inválido, tentar parse direto
-                            if (isNaN(date.getTime())) {
-                                date = new Date(timestamp);
+                        date = new Date(timestamp);
+                        if (isNaN(date.getTime())) {
+                            // Tentar formato alternativo se o padrão falhar
+                            const dateParts = timestamp.split(' ');
+                            if (dateParts.length >= 5) {
+                                const dateString = `${dateParts[1]} ${dateParts[2]} ${dateParts[3]} ${dateParts[4]}`;
+                                date = new Date(dateString);
                             }
-                        } else {
-                            date = new Date(timestamp);
                         }
                     } catch (e) {
                         console.warn('Erro ao converter data:', timestamp, e);
@@ -106,8 +101,7 @@ function createSensorChartFromData(sensorId, sensorData, chartContainerId) {
                     console.log('Data convertida:', date, 'Valor:', value);
                 } else {
                     console.warn('Data inválida para sensor', sensorId, timestamp);
-                    // Adicionar fallback: usar timestamp sequencial
-                    const fallbackDate = new Date(Date.now() - (values.length * 60000)); // 1 minuto entre pontos
+                    const fallbackDate = new Date(Date.now() - (values.length * 60000));
                     timestamps.push(fallbackDate);
                     values.push(value);
                 }
@@ -120,11 +114,39 @@ function createSensorChartFromData(sensorId, sensorData, chartContainerId) {
         return;
     }
 
+    // Combinar e ordenar dados por timestamp
+    const combined = timestamps.map((timestamp, i) => ({ 
+        timestamp: new Date(timestamp.getTime()), 
+        value: values[i] 
+    }));
+    
+    combined.sort((a, b) => a.timestamp - b.timestamp);
+    
+    // Preparar dados para o gráfico
+    const chartTimestamps = [];
+    const chartValues = [];
+    
+    // Adicionar todos os pontos de dados originais
+    combined.forEach(item => {
+        chartTimestamps.push(item.timestamp);
+        chartValues.push(item.value);
+    });
+    
+    // Adicionar ponto final com a data atual e último valor
+    const lastValue = chartValues[chartValues.length - 1];
+    const now = new Date();
+    
+    // Só adiciona o ponto final se a última data for diferente da atual
+    if (chartTimestamps[chartTimestamps.length - 1].getTime() !== now.getTime()) {
+        chartTimestamps.push(now);
+        chartValues.push(lastValue);
+    }
+
     // Encontrar valores mínimo e máximo para os eixos
-    const minTimestamp = new Date(Math.min(...timestamps.map(d => d.getTime())));
-    const maxTimestamp = new Date(Math.max(...timestamps.map(d => d.getTime())));
-    const maxValue = Math.max(...values);
-    const minValue = 0;
+    const minTimestamp = new Date(Math.min(...chartTimestamps.map(d => d.getTime())));
+    const maxTimestamp = new Date(); // Usar a data atual como máximo
+    const maxValue = Math.max(...chartValues);
+    const minValue = Math.min(0, Math.min(...chartValues));
 
     let canvas = document.getElementById(`sensor-chart-${sensorId}`);
     const container = document.getElementById(chartContainerId);
@@ -156,16 +178,17 @@ function createSensorChartFromData(sensorId, sensorData, chartContainerId) {
             data: {
                 datasets: [{
                     label: `Sensor ${sensorId}`,
-                    data: values.map((value, index) => ({
-                        x: timestamps[index],
+                    data: chartValues.map((value, index) => ({
+                        x: chartTimestamps[index],
                         y: value
                     })),
                     borderColor: 'rgb(75, 192, 192)',
                     backgroundColor: 'rgba(75, 192, 192, 0.1)',
-                    tension: 0.1,
+                    tension: 0.4,
                     fill: false,
-                    pointRadius: 2,
-                    pointBackgroundColor: 'rgb(75, 192, 192)'
+                    pointRadius: 0, // Remover as bolinhas (pontos)
+                    pointHoverRadius: 0, // Remover as bolinhas no hover
+                    spanGaps: true,
                 }]
             },
             options: {
@@ -175,8 +198,8 @@ function createSensorChartFromData(sensorId, sensorData, chartContainerId) {
                     x: {
                         type: 'time',
                         time: {
-                            unit: 'hour', // Definir passo de 1 hora
-                            stepSize: 1,  // Garantir passo de 1 hora
+                            unit: 'hour',
+                            stepSize: 1,
                             displayFormats: {
                                 hour: 'HH:mm',
                                 day: 'DD/MM'
@@ -187,12 +210,12 @@ function createSensorChartFromData(sensorId, sensorData, chartContainerId) {
                             display: true,
                             text: 'Tempo'
                         },
-                        min: minTimestamp, // Primeira data como mínimo
-                        max: maxTimestamp, // Última data como máximo
+                        min: minTimestamp,
+                        max: maxTimestamp,
                         ticks: {
                             source: 'auto',
                             autoSkip: true,
-                            maxTicksLimit: 10 // Limitar número de ticks para melhor legibilidade
+                            maxTicksLimit: 10
                         }
                     },
                     y: {
@@ -200,11 +223,11 @@ function createSensorChartFromData(sensorId, sensorData, chartContainerId) {
                             display: true,
                             text: 'Valor'
                         },
-                        beginAtZero: true,
-                        min: minValue, // Valor mínimo fixo em 0
-                        max: maxValue * 1.1, // Valor máximo com 10% de margem
+                        beginAtZero: false,
+                        min: minValue,
+                        max: maxValue * 1.1,
                         ticks: {
-                            stepSize: Math.ceil(maxValue / 10) // Passo automático baseado no valor máximo
+                            stepSize: Math.ceil(maxValue / 10) || 1
                         }
                     }
                 },
@@ -216,15 +239,32 @@ function createSensorChartFromData(sensorId, sensorData, chartContainerId) {
                     tooltip: {
                         callbacks: {
                             label: function(context) {
-                                return `Valor: ${context.parsed.y.toFixed(2)}`;
+                                const isCurrentPoint = context.dataIndex === chartValues.length - 1;
+                                const pointInfo = isCurrentPoint ? ' (atual)' : '';
+                                return `Valor: ${context.parsed.y.toFixed(2)}${pointInfo}`;
+                            },
+                            afterLabel: function(context) {
+                                const isCurrentPoint = context.dataIndex === chartValues.length - 1;
+                                if (isCurrentPoint) {
+                                    return 'Último valor extendido até o momento atual';
+                                }
                             }
                         }
+                    }
+                },
+                elements: {
+                    line: {
+                        tension: 0.4
+                    },
+                    point: {
+                        radius: 0 // Garantir que os pontos não sejam exibidos
                     }
                 }
             }
         });
         
         console.log('Gráfico criado com sucesso para sensor', sensorId);
+        console.log('Pontos do gráfico:', chartTimestamps.map((t, i) => ({ x: t, y: chartValues[i] })));
     } catch (error) {
         console.error('Erro ao criar gráfico:', error);
     }
