@@ -2,10 +2,9 @@
     <table>
         <tr>
             <h1>Cadastrar Usuário</h1>
-            <form action="{{ url_for('create_grow') }}" method="post">
+            <form action="{{ url_for('create_user') }}" method="post">
                 <td><input type="text" class="text-field" name="email" placeholder="Email"></td>
-                <td><input type="password" class="text-field" name="new_password" placeholder="Senha"></td>
-        
+                <td><input type="password" class="text-field" name="password" placeholder="Senha"></td>
                 {% if not logged_in %}
                     <td><input type="password" class="text-field" name="c_password" placeholder="Confirmar Senha"></td>
                 {% endif %}

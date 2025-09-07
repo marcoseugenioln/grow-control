@@ -1,11 +1,15 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="pt-BR">
 <head>
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Home</title>
+    <title>GrowControl - Home</title>
     <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='style.css')}}">
+    
+    <!-- Bibliotecas para gráficos -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chartjs-adapter-date-fns"></script>
 </head>
 <body>
     {% include 'header/index.html'%}
@@ -24,5 +28,56 @@
     {% endfor %}
     
     <script src="{{ url_for('static', filename='scripts.js') }}"></script>
+    <script>
+    // Código de inicialização específico do template
+    document.addEventListener('DOMContentLoaded', function() {
+        // Tornar os dados do sensor disponíveis globalmente
+        window.sensorData = {{ sensor_data | tojson }};
+        
+        console.log('Dados dos sensores carregados:', window.sensorData);
+        
+        // Inicializar gráficos para todos os sensores
+        {% for grow_id, sensors in sensors.items() %}
+            {% for sensor in sensors %}
+                {% if sensor_data[grow_id][sensor[0]] %}
+                    try {
+                        createSensorChartFromData(
+                            {{ sensor[0] }}, 
+                            {{ sensor_data[grow_id][sensor[0]] | tojson }},
+                            'chart-container-{{ sensor[0] }}'
+                        );
+                        console.log('Gráfico inicializado para sensor {{ sensor[0] }}');
+                    } catch (error) {
+                        console.error('Erro ao criar gráfico para sensor {{ sensor[0] }}:', error);
+                    }
+                {% endif %}
+            {% endfor %}
+        {% endfor %}
+    });
+
+    // Função para mostrar gráfico (chamada pelo template)
+    function showSensorChart(sensorId, sensorName) {
+        try {
+            let growId = null;
+            {% for grow_id, sensors in sensors.items() %}
+                {% for sensor in sensors %}
+                    if ({{ sensor[0] }} === sensorId) {
+                        growId = {{ grow_id }};
+                    }
+                {% endfor %}
+            {% endfor %}
+            
+            if (growId && window.sensorData[growId] && window.sensorData[growId][sensorId]) {
+                showSensorChartModal(sensorId, sensorName, window.sensorData[growId][sensorId]);
+            } else {
+                console.error('Dados do sensor não encontrados:', sensorId);
+                alert('Dados do sensor não disponíveis para visualização.');
+            }
+        } catch (error) {
+            console.error('Erro ao mostrar gráfico:', error);
+            alert('Erro ao carregar gráfico.');
+        }
+    }
+    </script>
 </body>
 </html>

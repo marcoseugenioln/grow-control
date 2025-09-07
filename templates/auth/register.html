@@ -6,7 +6,23 @@
 </head>
 
 <body>
-    {% include 'header.html'%}
-    {% include 'user/create.html'%}
+    {% include 'header/index.html'%}
+    <div class="create-div">
+    <table>
+        <tr>
+            <h1>Cadastrar Usuário</h1>
+            <form action="{{ url_for('register') }}" method="post">
+                <td><input type="text" class="text-field" name="email" placeholder="Email"></td>
+                <td><input type="password" class="text-field" name="password" placeholder="Senha"></td>
+                <td><input type="password" class="text-field" name="c_password" placeholder="Confirmar Senha"></td>
+                <td>
+                    <button class="btn" type="submit">
+                        <img src="{{ url_for('static', filename='image/confirm-icon.png')}}" class="btn-img" id="create-btn">
+                    </button>
+                </td>
+            </form>
+        </tr>
+    </table>
+</div>
 </body>
 </html>

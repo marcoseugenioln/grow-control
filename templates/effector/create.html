@@ -18,13 +18,15 @@
                     {% endfor %}
                 </select>
             </fieldset>
-            
-            <button class="btn" type="submit">
-                <img src="{{ url_for('static', filename='image/confirm-icon.png')}}" class="btn-img" id="create-btn">
-            </button>
-            <button type="button" class="btn" onclick="togglePopupMenu('effector-create-container-{{ id }}')">
-                <img src="{{ url_for('static', filename='image/cancel-icon.png')}}" class="btn-img" id="cancel-btn">
-            </button>
+
+            <div class="btn-container">
+                <button class="btn" type="submit">
+                    <img src="{{ url_for('static', filename='image/confirm-icon.png')}}" class="btn-img" id="create-btn">
+                </button>
+                <button type="button" class="btn" onclick="togglePopupMenu('effector-create-container-{{ id }}')">
+                    <img src="{{ url_for('static', filename='image/cancel-icon.png')}}" class="btn-img" id="cancel-btn">
+                </button>
+            </div>
         </form>
     </div>
 </div>

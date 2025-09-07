@@ -28,13 +28,13 @@
 
                 <input type="checkbox" name="lembrar-me" value="lembrar-me">Lembrar-me</input><br><br>
                 
-                <input type="submit" name="login-button" class="btn" value="Entrar"/><br>
-
+                <div class="login-buttons-container">
+                    <input type="submit" name="login-button" class="btn" value="Entrar"/>
+                    
+                    <input type="button" name="register-button" class="btn" value="Registrar-se" 
+                           onclick="window.location.href='/register'">
+                </div>
             </form>
-
-            <form action="/register" method="POST">
-                <input type="submit" name="register-button" class="btn" value="Registrar-se">
-            </form> 
         </div>  
     </body>
 
