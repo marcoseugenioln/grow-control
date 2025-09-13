@@ -5,6 +5,10 @@ window.onload = function () {
     if (grows.length > 0) {
         togglePopupMenu(grows[0].id);
     }
+    
+    // Iniciar atualização automática
+    const updater = new AutoUpdater();
+    updater.start();
 }
 
 function togglePopupMenu(div_id) {
@@ -51,6 +55,151 @@ function boundCheckboxChanged(effector_id) {
         schedule_checkbox.disabled = false;
         sensor_id_field.disabled = true;
         threshold_field.disabled = true;
+    }
+}
+
+// Classe para atualização automática
+class AutoUpdater {
+    constructor() {
+        this.updateInterval = 3000; // 3 segundos
+        this.isUpdating = false;
+        this.sensorUpdateCount = 0;
+    }
+
+    start() {
+        // Atualizar imediatamente ao iniciar
+        this.updateSensors();
+        this.updateEffectors();
+        
+        // Configurar intervalos separados
+        setInterval(() => {
+            this.updateSensors();
+        }, this.updateInterval);
+        
+        setInterval(() => {
+            this.updateEffectors();
+        }, this.updateInterval);
+    }
+
+    async updateSensors() {
+        if (this.isUpdating) return;
+        
+        this.isUpdating = true;
+        try {
+            this.sensorUpdateCount++;
+            console.log(`Atualizando sensores (${this.sensorUpdateCount})...`);
+            
+            const response = await fetch('/sensor/status');
+            if (!response.ok) {
+                throw new Error(`HTTP error! status: ${response.status}`);
+            }
+            const data = await response.json();
+            
+            console.log('Dados de sensores recebidos:', Object.keys(data).length, 'sensores');
+            
+            // Atualizar valores dos sensores
+            for (const [sensorId, sensorData] of Object.entries(data)) {
+                this.updateSensorElement(sensorId, sensorData);
+            }
+        } catch (error) {
+            console.error('Erro ao atualizar sensores:', error);
+        }
+        this.isUpdating = false;
+    }
+
+    async updateEffectors() {
+        // Permitir que efetores atualizem mesmo se sensores estiverem atualizando
+        try {
+            console.log('Atualizando efetores...');
+            
+            const response = await fetch('/effector/status');
+            if (!response.ok) {
+                throw new Error(`HTTP error! status: ${response.status}`);
+            }
+            const data = await response.json();
+            
+            console.log('Dados de efetores recebidos:', Object.keys(data).length, 'atuadores');
+            
+            // Atualizar status dos efetores
+            for (const [effectorId, effectorData] of Object.entries(data)) {
+                this.updateEffectorElement(effectorId, effectorData);
+            }
+        } catch (error) {
+            console.error('Erro ao atualizar efetores:', error);
+        }
+    }
+
+    updateSensorElement(sensorId, sensorData) {
+        const valueElement = document.querySelector(`.sensor-value[data-sensor-id="${sensorId}"]`);
+        const timeElement = document.querySelector(`.sensor-time[data-sensor-id="${sensorId}"]`);
+        
+        if (valueElement) {
+            valueElement.textContent = sensorData.value ? sensorData.value.toFixed(2) : '0.00';
+            console.log(`Sensor ${sensorId} valor atualizado:`, valueElement.textContent);
+        } else {
+            console.log(`Elemento de valor não encontrado para sensor: ${sensorId}`);
+        }
+        
+        if (timeElement && sensorData.timestamp) {
+            timeElement.textContent = this.formatTime(sensorData.timestamp);
+            console.log(`Sensor ${sensorId} tempo atualizado:`, timeElement.textContent);
+        }
+    }
+
+    updateEffectorElement(effectorId, effectorData) {
+        const wrapperElement = document.querySelector(`.effector-status-wrapper[data-effector-id="${effectorId}"]`);
+        const onElement = wrapperElement ? wrapperElement.querySelector('.effector-on') : null;
+        const offElement = wrapperElement ? wrapperElement.querySelector('.effector-off') : null;
+        const timeElement = document.querySelector(`.effector-time[data-effector-id="${effectorId}"]`);
+        
+        console.log(`Atualizando efetor ${effectorId}:`, effectorData);
+        
+        if (onElement && offElement) {
+            const isOn = effectorData.power_on;
+            
+            if (isOn) {
+                onElement.style.display = 'block';
+                offElement.style.display = 'none';
+            } else {
+                onElement.style.display = 'none';
+                offElement.style.display = 'block';
+            }
+            
+            console.log(`Efetor ${effectorId} status atualizado:`, isOn ? 'Ligado' : 'Desligado');
+        } else {
+            console.log(`Elementos de status não encontrados para efetor: ${effectorId}`);
+        }
+        
+        if (timeElement && effectorData.last_request) {
+            timeElement.textContent = this.formatTime(effectorData.last_request);
+            console.log(`Efetor ${effectorId} tempo atualizado:`, timeElement.textContent);
+        } else if (timeElement) {
+            console.log(`Efetor ${effectorId} sem dados de last_request`);
+        } else {
+            console.log(`Elemento de tempo não encontrado para efetor: ${effectorId}`);
+        }
+    }
+
+    formatTime(timestamp) {
+        try {
+            // Adiciona 3 horas para compensar o fuso horário
+            const date = new Date(timestamp);
+            if (isNaN(date.getTime())) {
+                return 'Data inválida';
+            }
+            
+            // Adiciona 3 horas (UTC-3 para Brasília)
+            date.setHours(date.getHours() + 3);
+            
+            return date.toLocaleTimeString('pt-BR', {
+                hour: '2-digit',
+                minute: '2-digit',
+                second: '2-digit'
+            });
+        } catch (e) {
+            console.error('Erro ao formatar tempo:', e, timestamp);
+            return timestamp; // Retorna o timestamp original em caso de erro
+        }
     }
 }
 

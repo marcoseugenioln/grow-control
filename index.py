@@ -537,6 +537,9 @@ def effector_data(effector_id):
                 current_power_on = not current_power_on
         else:
             current_power_on = False
+
+    else:
+        current_power_on = is_normal_on
         
     db.set_effector_power_on(effector_id, current_power_on)
 
@@ -544,35 +547,46 @@ def effector_data(effector_id):
 
     return str(int(current_power_on))
 
-# No index.py, adicione esta rota
-@app.route('/api/sensor/data/<sensor_id>')
-def api_sensor_data(sensor_id):
-    try:
-        session = db._get_session()
-        # Buscar dados dos últimos 7 dias por padrão
-        sensor_data = session.execute(
-            text("SELECT datetime, value FROM sensor_data WHERE sensor_id = :sensor_id AND datetime > NOW() - INTERVAL 7 DAY ORDER BY datetime"),
-            {'sensor_id': sensor_id}
-        ).fetchall()
-        
-        # Converter para formato JSON
-        data = []
-        for row in sensor_data:
-            data.append([
-                row[0].strftime('%Y-%m-%d %H:%M:%S'),  # timestamp como string
-                float(row[1])  # valor como float
-            ])
-        
-        return jsonify(data)
-    except Exception as e:
-        print(f"Erro ao buscar dados do sensor: {e}")
-        return jsonify([])
-    finally:
-        session.close()
 @app.route('/favicon.ico')
 def favicon():
     return send_from_directory(os.path.join(app.root_path, 'static'),
                                'favicon.ico', mimetype='image/vnd.microsoft.icon')
+
+@app.route('/sensor/status')
+def api_sensors_last_data():
+    if 'logged_in' not in session:
+        return jsonify({'error': 'Not authenticated'}), 401
+    
+    try:
+        sensors_data = db.get_all_sensors_last_data()
+        result = {}
+        for sensor_id, value, timestamp in sensors_data:
+            result[sensor_id] = {
+                'value': float(value) if value else 0,
+                'timestamp': timestamp if timestamp else None
+            }
+        return jsonify(result)
+    except Exception as e:
+        print(f"Erro ao buscar dados dos sensores: {e}")
+        return jsonify({})
+
+@app.route('/effector/status')
+def api_effectors_status():
+    if 'logged_in' not in session:
+        return jsonify({'error': 'Not authenticated'}), 401
+    
+    try:
+        effectors_data = db.get_all_effectors_status()
+        result = {}
+        for effector_id, power_on, last_request in effectors_data:
+            result[effector_id] = {
+                'power_on': bool(power_on),
+                'last_request': last_request if last_request else None
+            }
+        return jsonify(result)
+    except Exception as e:
+        print(f"Erro ao buscar status dos efetores: {e}")
+        return jsonify({})
 
 if __name__ == '__main__':
     app.run(host='192.168.1.7', debug=True)

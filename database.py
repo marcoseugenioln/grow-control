@@ -777,3 +777,35 @@ class Database():
             return []
         finally:
             session.close()
+
+    def get_all_sensors_last_data(self):
+        """Retorna os últimos dados de todos os sensores"""
+        query = """
+        SELECT s.id, sd.value, sd.datetime 
+        FROM sensor s 
+        LEFT JOIN sensor_data sd ON s.id = sd.sensor_id 
+        WHERE sd.datetime = (SELECT MAX(datetime) FROM sensor_data WHERE sensor_id = s.id)
+        OR sd.datetime IS NULL
+        """
+        return self.execute_query(query)
+
+    def get_all_effectors_status(self):
+        """Retorna o status atual de todos os efetores"""
+        query = "SELECT id, power_on, last_request FROM effector"
+        return self.execute_query(query)
+
+    def get_sensor_last_data(self, sensor_id):
+        """Retorna o último dado de um sensor específico"""
+        query = """
+        SELECT value, datetime 
+        FROM sensor_data 
+        WHERE sensor_id = %s 
+        ORDER BY datetime DESC 
+        LIMIT 1
+        """
+        return self.execute_query(query, (sensor_id,))
+
+    def get_effector_status(self, effector_id):
+        """Retorna o status atual de um efetor específico"""
+        query = "SELECT power_on, last_request FROM effector WHERE id = %s"
+        return self.execute_query(query, (effector_id,))

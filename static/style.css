@@ -203,9 +203,25 @@ fieldset {
   margin: 0.25rem;
 }
 
+.effector-status-wrapper {
+  display: inline-block;
+  width: 20px;
+  height: 20px;
+}
 
-.effector-on { background-color: rgb(0, 150, 0); }
-.effector-off { background-color: rgb(150, 0, 0); }
+.effector-on {
+  display: block;
+  background-color: rgb(0, 150, 0); 
+  width: 100%;
+  height: 100%;
+}
+
+.effector-off {
+  display: block;
+  background-color: rgb(150, 0, 0);
+  width: 100%;
+  height: 100%;
+}
 
 /* ========== NOVOS ESTILOS PARA LOGIN ========== */
 .login-buttons-container {
